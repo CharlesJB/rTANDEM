@@ -1,0 +1,1345 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>X! tandem relase notes</title>
+		<style>
+			td {color: #444444; 
+			font-weight: normal;
+			font-family: Verdana, Arial, Helvetica;
+			font-size: 10pt;}
+			li {color: #444444; 
+			font-weight: normal;
+			font-family: Verdana, Arial, Helvetica;
+			font-size: 10pt;
+			padding-bottom: .5em;}
+			.td_b {color: black; 
+			font-weight: bold;
+			font-family: Verdana, Arial, Helvetica;
+			font-size: 10pt;}
+		</style>
+	</head>
+	<body>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">X! tandem release notes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">X! tandem will be released periodically, 
+					with the version numbering system formulated from the date of release. The 
+					changes made to the system on each release are detailed in the list below. 
+					Releases are listed with the most recent release on top.
+					<hr>
+				</td>
+			</tr>
+		</table>
+
+
+<table border="0" cellpadding="3" cellspacing="3">
+<tr>
+	<td class="td_b" bgcolor="#dd6622"><span class="top_label">Latest release: CYCLONE (2011.12.01)</span></td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top">This is the second release in the CYCLONE project. There are
+	numerous small fixes and changes from the first CYCLONE release, associated with reducing the memory requirements for
+	large data sets. Specific new features are listed below.
+	</td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top"><ol>
+		<li>Additional testing for adventitious cleavage at Asp-Pro residues. These tests are made
+		for all enzyme cleavage types, except [X]|[X] (cleavage at all residues). Testing Asp-Pro
+		cleavage does not affect the "missed cleavage" count in an analysis.
+		</li>
+		<li>The load balancing method for starting multiple threads has been improved to
+		take account of data sets that have been re-arranged from their original order in an LC/MS/MS
+		file.
+		</li>
+		<li>Several changes have been made to keep up with changes to "standard" data file formats.
+		</li>
+		</ol>
+	</td>
+</tr>
+</table>
+
+
+
+
+
+<table border="0" cellpadding="3" cellspacing="3">
+<tr>
+	<td class="td_b" bgcolor="#dd6622"><span class="top_label">CYCLONE (2010.12.01)</span></td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top">This is the first release in the CYCLONE project. There are
+	numerous small fixes and changes from the last TORNADO release, mainly aimed at improving the
+	speed of the application. Some of the new features are listed below.
+	</td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top"><ol>
+		<LI>An improved scoring function for ETD data, incorporating the ideas described in Sun, R-X, et al.
+		J. Proteome Res. 2010 (DOI: 10.1021/pr100648r).
+		</LI>
+		<li>A more complete implementation of the mzML v. 1.1.0 file format (in collaboration with Fredrik Levander). 
+		</li>
+		<li>A mechanism for reading the fragmentation type from mzXML files, when available. This mechanism
+		allows X! Tandem to read mzXML files that contain mixtures of CID/HCD and ETD generated spectra
+		and correctly apply the appropriate set of fragment ions to the individual spectra for interpretation (in collaboration with Peter Lobel).
+		</li>
+		<li>A change to the interpretation of the &quot;refine, unanticipated cleavage&quot; directive to
+		being a "semi"-type cleavage rather than a full non-specific cleavage. The previous behavior can
+		be obtained using the new &quot;refine, full unanticipated cleavage&quot; directive.
+		</li>
+		<LI>An improved implementation of the &quot;quick acetyl&quot; checking mechanism brought
+		out in the last TORNADO release.
+		</LI>
+		<LI>Explicit use of SIMD pragmas in the Windows version to speed up the native X! Tandem scoring function.
+		</LI>
+		</ol>
+	</td>
+</tr>
+</table>
+<table border="0" cellpadding="3" cellspacing="3">
+<tr>
+	<td class="td_b" bgcolor="#dd6622"><span class="top_label">Latest release: TORNADO (2010.01.01)</span></td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top">This release adds several new features to X! Tandem, as well as
+	compatibility with changes to some of the existing standard file formats. The new features are listed
+	below.
+	</td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top"><ol>
+		<LI>New parameter &quot;<a href="http://www.thegpm.org/TANDEM/api/pqa.html">quick acetyl</a>&quot;
+		added to control a simplified check for acetylated protein N-terminii.
+		</LI>
+		<li>New parameter &quot;<a href="http://www.thegpm.org/TANDEM/api/pqp.html">quick pyrolidone</a>&quot;
+		added to control the previously existing peptide N-terminal cyclization check.
+		</li>
+		<li>New parameter &quot;<a href="http://www.thegpm.org/TANDEM/api/pstpb.html">stP bias</a>&quot;
+		added to control new behavior regarding the detection and assignment of phosphorylation sites.
+		</li>
+		<li>Compatibility with the current mzData format used by PRIDE. 
+		</li>
+		</ol>
+	</td>
+</tr>
+</table>
+<table border="0" cellpadding="3" cellspacing="3">
+<tr>
+	<td class="td_b" bgcolor="#dd6622"><span class="top_label">TORNADO (2009.04.01)</span></td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top">This release is a maintenance release that adds one new feature
+	that is designed to be used in analyzing SILAC experiments. It also has minor changes to improve the
+	detection of new input data file types.
+	</td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top"><ol>
+		<LI>It is now possible to specify multiple sets of &quot;complete&quot; modifications to be applied
+			sequentially. This was achieved by adding new commands to the input X! file format that
+			look like the following:
+			<br><i>&nbsp;&nbsp;&lt;note type=&quot;input&quot; label=&quot;residue, modification mass&quot;&gt;57@C&lt;/note&gt;</i>
+			<br><i>&nbsp;&nbsp;&lt;note type=&quot;input&quot; label=&quot;residue, modification mass 1&quot;&gt;57@C,8@K,10@R&lt;/note&gt;</i>
+			<br>In this case, the data would be checked both for peptides with only cysteine modified by carboxyamidomethyl and for
+			peptides with carboxyamidomethyl and SILAC labeled lysine and arginine residues. This applies to both the initial round of analysis
+			as well as all refinement rounds. Any number of sets of complete modifications
+			can be added, by incrementing the count in the label (<i>&quot;residue, modification mass 2&quot;</i>, <i>&quot;residue, modification mass 3&quot;</i>, etc.). Processing
+			stops when either a count increment label is missing (e.g., there is a <i>residue, modification mass 2</i> label but no 
+			<i>residue, modification mass 3</i> label). Processing is also stopped with a zero length string is passed, for example the following string would stop processing at count = 1,<br>
+			<i>&nbsp;&nbsp;&lt;note type=&quot;input&quot; label=&quot;residue, modification mass 1&quot;&gt;&lt;/note&gt;</i><br>
+			A non-zero length string that cannot be interpreted as a residue modification is interpretted as meaning that the data should be
+			analyzed with no residue modifications, for example:<br>
+			<i>&nbsp;&nbsp;&lt;note type=&quot;input&quot; label=&quot;residue, modification mass 1&quot;&gt;none&lt;/note&gt;</i>, or<br>
+			<i>&nbsp;&nbsp;&lt;note type=&quot;input&quot; label=&quot;residue, modification mass 1&quot;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/note&gt;</i>.
+		</LI>
+		<li>Compatibility for version 1.1 of the CMN format has been added, allowing long description strings (&gt; 255 characters).
+		</li>
+		<li>Detection of new, non-standard variants of mzXML files has been added. 
+		</li>
+		</ol>
+	</td>
+</tr>
+</table>
+<table border="0" cellpadding="3" cellspacing="3">
+<tr>
+	<td class="td_b" bgcolor="#dd6622"><span class="top_label">TORNADO (2008.02.01)</span></td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top">This release is the first of the new TORNADO versions of X! Tandem,
+	which have the goal of utilizing available external annotation information it improve the performance of
+	sequence identifications. The 2007.04.01 release started this project, by adding single nucleotide
+	induce amino acid polymorphism annotation to searches. TORNADO introduces the capability of setting
+	the potential modifications tested on a sequence by sequence basis, controlled by a BIOML annotation
+	file.
+	</td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+</tr>
+<tr>
+	<td width="600" align="left" valign="top"><ol>
+		<LI>A fix for the method to force the use of specific file formats (made by Patrick Lacasse)
+		</LI>
+		<li>Addition of a class to handle sequence annotation files in BIOML format (<i>saxmodhandler</i>).
+		</li>
+		<li>Addition of a method to load the annotation file information into an STL map, in the class
+		<i>mprocess</i>.
+		</li>
+		<li>When compiling on Linux platforms, several possible makefiles are provided. The default
+		makefile will work for GCC version 4, with the expat libraries dynamically linked. The other
+		makefiles are all in the src directory, with names like &quot;Makefile_XXX&quot; where XXX
+		is a descriptive name indicating in which situations this file is appropriate. To use these files,
+		use a command line like this:<br>
+		<pre>	&gt;make -f Makefile_GCCv3</pre>
+		</li>
+		</ol>
+	</td>
+</tr>
+</table>
+			<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2007.07.01</span></td>
+
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release adds compatibility with 64 bit floating point
+				data in mzXML or mzData formats.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+
+				<td width="600" align="left" valign="top"><ol>
+						<LI>An new override of the dtohl method in the saxhandler.cpp file
+						was added to deal with 64 bit floats.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table5">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2007.04.01</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release is the first version to support amino acid residue
+					polymorphism annotation. A file containing known coding mutations can be specified and the
+					search engine will check each specified version of those modified residues.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>Including SAPS required modification of the classes <i>mprocess</i> and
+							<i>mscore</i> as well as the addition of a new classs <i>mscoresap</i>, which
+							is specified in the mscorepam.h file. The new class follows the
+							same pattern as the other state machines for tracking sequence modifications. A class
+							that reads the XML-formatted SAPS annotation information has also
+							been added, <i>saxsaphandler</i>, which follows the same pattern as
+							the other BIOML processing classes.
+						</LI>
+						<LI>This version (and all subsequent ones) will use the preprocessor commands associated with
+							the compiler make processor to specify the platform being compiled. Previous
+							versions required the commenting out undesired options in the stdafx.h file. This
+							change includes the PLUGGABLE_SCORING preprocessor definition in mscore.h that
+							is necessary to alter the peptide scoring portion of the code.
+						</LI>
+						<LI>The Mac OSX version of the executable binaries is statically linked to
+							the most recent version of the XML parser expat. Unlike previous versions
+							it will not be necessary to have expat installed on the computer used
+							to run the search engine. The Linux/Unix builds are now the only
+							platforms onwhich dynamic linking is necessary.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table5">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2007.01.01</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release is the first release to support rho-diagrams
+				for the determination of expectation value thresholds. It also has a minor, but important
+				change to the interpretation of results to make the results of refinement rounds more
+				consistent. This release is also the first to support the Mac OS X 10.4 version for Intel
+				processors. Support for non-Intel processors will be discontinued as of the next release.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>The output file has a new output value in the &quot;performance parameters&quot; group,
+						for example:
+						<pre>
+&lt;group label=&quot;performance parameters&quot; type=&quot;parameters&quot;&gt;
+    &lt;note label=&quot;quality values&quot;&gt;117 34 22 10 5 2 1 0 0 1 0 1 0 0 0 0 0 0 0 0&lt;/note&gt;
+&lt;/group&gt;</pre>
+						This change was necessary to support the use of rho-diagrams in the GPM display software.
+						</LI>
+						<LI>The proteins reported as possible correct identifications have been changed somewhat.
+						In previous versions, it was possible for a protein to be reported as identified even if
+						it did not have any qualifying peptides that were found to have the specified enzymatic
+						cleavage: a protein could have peptides found only during the cleavage-at-every site round
+						or the point-mutation round. This behavior has been changed so that a protein must have
+						at least one significant peptide found to have the specified enzymatic cleavage.
+						</LI>
+						<LI>The implementation of point mutation detection has been altered so that if a particular
+						possible point mutation has been explained by any set of potential modifications, it will not
+						be included as a possible solution in the output.
+						</LI>
+						<li>The stdafx.h file has been altered to add in new preprocessor statements that
+						deal with the different versions of Mac OS X. These new statements are #OSX_TIGER
+						and #OSX_INTEL. To compile with OS X 10.4 on a PPC computer, uncomment both #OSX
+						and #OSX_TIGER. To compile with OS X 10.4 on an Intel computer, uncomment only
+						#OSX_INTEL.
+						</li>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table5">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2006.09.15</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release of X! Tandem/P3 contains several
+				minor changes to maintain cross-platform compatibility.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							Code that uses iterator math to determine the limits of a calculation
+							have been altered so that the iterators are not incremented passed the
+							end of an STL container. Incrementing iterators passed the end of a
+							container generates a run-time error when compiled with Microsoft Visual
+							C++ 2005. The precompiler variable _CRT_SECURE_NO_DEPRECATE has been
+							defined for the Visual C++ compiler, to prevent the generation of
+							unnecessary compiler warnings for the use of C string functions, such as &quot;strcpy&quot;. 
+						</LI>
+						<LI>
+							The SAXTandemInputHandler::characters method has been updated to
+							improve its performance and to handle escape characters correctly (suggested by Brendan Maclean).
+						</LI>
+						<LI>
+							The documentation and precompiler defines in stdafx.h that provide cross-platform compatibility
+							for 64-bit integer types have been updated. 
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2006.06.01</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release of X! Tandem contains two 
+					fixes to improve compatibility with Linux and one adjustment to be compatible 
+					with X! Hunter.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							On at least some Linux platforms, astersiks (*) in FASTA file were not being 
+							processed properly. This has been corrected by Brendan Maclean.
+						</LI>
+						<LI>
+							Some mzXML files could produce memory problems, when combined with some 
+							spectrum processing parameters because a vector was not being cleared between 
+							processing individual spectra. This problem did not affect the results of the 
+							search, but it could cause memory paging when using a large file.
+						</LI>
+						<LI>
+							The taxonomy xml file has always contained <i>type</i> specification, which was 
+							not used by X! Tandem. Now X! Tandem enforces that FASTA or FASTA.PRO files 
+							must be specificed with <i>type=&quot;peptide&quot;</i>.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2006.04.01</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><p>This release of X! Tandem includes a 
+						number of additions to the system API. These changes are mainly for 
+						programmers, allowing for greater customization of searches. Some of these 
+						features have been present in previous versions of X! Tandem, but have been 
+						either undocumented or unsufficiently well tested.</p>
+					<p>This version of the X! Tandem code also merges the code for X! P3. The P3 
+						executable can be compiled by uncommenting the preprocessor variable X_P3 in 
+						&quot;stdafx.h&quot;. Adding in the P3 code was done by creating several 
+						classes that are extensions of the normal Tandem classes and using a small 
+						number of preprocessor directives. These new classes have the prefix <b>p3</b>.</p>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">Added parameters:
+					<ol>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/olp.html">output, log path</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/om.html">output, message</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/oosc.html">output, one sequence copy</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/osp.html">output, sequence path</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/refmm.html">refine, modification mass</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/rsp.html">refine, sequence path</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/rtp.html">refine, tic percent</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/scp.html">scoring, cyclic permuation</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/sir.html">scoring, include reverse</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/spsbs.html">spectrum, sequence batch size</a>
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2006.04.01</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><p>This release of X! Tandem includes a 
+						number of additions to the system API. These changes are mainly for 
+						programmers, allowing for greater customization of searches. Some of these 
+						features have been present in previous versions of X! Tandem, but have been 
+						either undocumented or unsufficiently well tested.</p>
+					<p>This version of the X! Tandem code also merges the code for X! P3. The P3 
+						executable can be compiled by uncommenting the preprocessor variable X_P3 in 
+						&quot;stdafx.h&quot;. Adding in the P3 code was done by creating several 
+						classes that are extensions of the normal Tandem classes and using a small 
+						number of preprocessor directives. These new classes have the prefix <b>p3</b>.</p>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">Added parameters:
+					<ol>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/olp.html">output, log path</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/om.html">output, message</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/oosc.html">output, one sequence copy</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/osp.html">output, sequence path</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/refmm.html">refine, modification mass</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/rsp.html">refine, sequence path</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/rtp.html">refine, tic percent</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/scp.html">scoring, cyclic permutation</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/sir.html">scoring, include reverse</a>
+						</LI>
+						<LI>
+							<a href="http://www.thegpm.org/TANDEM/api/spsbs.html">spectrum, sequence batch size</a>
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2006.02.01</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release of X! Tandem contains 
+					several small fixes in response to error reports.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							The C-ion mass calculation has been improved for electron-capture ion source 
+							identifications, suggested by David Fenyo.
+						</LI>
+						<LI>
+							A problem relating to an include file that caused compilation difficulties for 
+							some versions of GCC on some version of Linux has been fixed.
+						</LI>
+						<li>
+							The calculation of parent ion mass difference has been improved, to provide 
+							better consistency for very accurate (&lt; 1 ppm) parent ion mass 
+							determinations.
+						</li>
+						<li>
+							The &quot;semi&quot; cleavage state machine has been adjusted for better 
+							performance.
+						</li>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2005.12.01</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release of X! Tandem adds several 
+					new features, as well as improving the XML standards compatibility of the 
+					system.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							An improved handling of hex encoded binary information in mzXML and mzData 
+							files, for 64-bit processors, added by Steven Wiley.
+						</LI>
+						<LI>
+							Addition of testing for N-terminal glutamic acid cyclization, suggested by Oleg 
+							Krohkin.
+						</LI>
+						<li>
+							Addition of &quot;semi&quot; enzymatic cleavage (specific enzyme cleavage at 
+							one end of a peptide and non-specific cleavage at the other), suggested by Matt 
+							Monroe.
+						</li>
+						<li>
+							An improved system for detecting XML file types, suggested by Steven Wiley.
+						</li>
+						<li>
+							Support for variant methods of expressing parent ion charge in mzData v. 1.05, 
+							added by Fredrik Levander.
+						</li>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2005.10.01</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release of X! Tandem adds several 
+					new features, as well as improving on some of the existing features. It 
+					contains a number of engineering architectural changes meant to allow simpler 
+					access to some of the key algorithms in the system.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							An improved version of the state machine that lists all of the possible 
+							potential modification states of a peptide sequence was written by Brendan 
+							Maclean. This version is both more thorough and faster than the previous code.
+						</LI>
+						<LI>
+							The capability of using chemical average masses for fragment ion mass 
+							calculations was added by Brendan Maclean.
+						</LI>
+						<li>
+							A simplification of the mprocess class that allows for a &quot;pluggin&quot; 
+							approach to adding new refinement modules was designed and implemented by Rob 
+							Craig.
+						</li>
+						<li>
+							An improved routine for correcting for isotope peaks and multiple observations 
+							of similar masses was made by Patrick Lacasse.
+						</li>
+						<li>
+							An additional state machine using cyclic peptide sequence permutation to 
+							compensate for small sequence collections and for large mass peptides was 
+							added. This feature is based on a suggestions made separately by Tom Blackwell 
+							&amp; David States and Patrick Lacasse.</li>
+						<li>
+							An improved sorting method to improve the consistency of homologous sequence 
+							assignments was added by Rob Craig.
+						</li>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2005.08.15</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">The changes in this release are aimed at 
+					increasing XML compliance and high accuracy mass calculation consistency.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							The handlers for GAML spectra, taxonomy files and input parameter files have to 
+							changed to using expat, rather than custom routines.
+						</LI>
+						<LI>
+							A more flexible mass calculation class has been added to improve molecular mass 
+							consistency for high accuracy calculations.
+						</LI>
+						<li>
+							The input spectrum file type detection method has been improved by adding the 
+							possibility of forcing it to select one file type. This forcing is done using 
+							the input parameter &quot;spectrum, path type&quot; parameters, which can have 
+							the values: dta, pkl, mgf, gaml, mzxml or mzdata. If this parameter is missing 
+							or of zero length, the normal file type detection scheme is used.
+						</li>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td class="td_b" bgcolor="#dd6622"><span class="top_label">2005.06.01</span></td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This version corrects an issue that could 
+					arise in large MudPIT data sets with large numbers of redundant 
+					identifications. The calculation of the protein expectation value in previous 
+					versions was susceptible to floating point overflows when making this 
+					calculation, resulting in unpredictable values.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2005.03.21</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release adds the ability to process <a href="http://sashimi.sourceforge.net/software_glossolalia.html">
+						mzxml</a> and <a href="http://psidev.sourceforge.net/ms/#mzdata">mzdata</a> 
+					file formats using <a href="http://expat.sourceforge.net/">eXpat</a> library of 
+					functions. Most of the changes in this release were initially made by Patrick 
+					Lacasse (Université Laval, Dept. of Medicine, supported by Genome Québec) with 
+					the final version and optimizations made by Brendan MacLean, from the Fred 
+					Hutchinson Cancer Research Center. Also, the ability to define the amino acid 
+					residue masses has been added allowing users to change the default masses when 
+					doing N15 experiments for example.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							New classes have been added to allow the processing of mzxml and mzdata file 
+							formats.<br />
+							Two of the new classes are publicly derived from loadspectrum, a custom class 
+							specific to Tandem. Two others are publicly derived from the xml parser class 
+							SAXSpectraHandler which is imported from the expat library of functions. The 
+							xml parser classes use the expat functions exclusively to parse the input in 
+							order to load it into the traditional Tandem spectra data members.
+						</LI>
+						<LI>
+							base64.cpp and base64.h have been added to allow b64_decode_mio() function 
+							calls, which are needed to decode the spectra in mzxml and mzdata spectra 
+							files.
+						</LI>
+						<LI>
+							Included in the src folder is the libexpat.lib which is required to compile new 
+							versions of the executable on Windows. Linux and OSX machines should have the 
+							required libraries as part of the core operating system.
+						</LI>
+						<LI>
+							A new function has been added to msequtilites that allows amino acid residue 
+							masses to be defined by an xml input file. If the parameter 'protein, modified 
+							residue mass file' is defined in the input.xml, the masses are taken from the 
+							file defined by that parameter. An example of the format can be viewed <a href="http://human.thegpm.org/tandem/methods/n15.xml">
+								here</a>.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2005.02.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release contains modifications 
+					necessary to insert new types of peptide scoring systems as well as to deal 
+					effectively with high accuracy parent ion measurements, which are now available 
+					in some types of mass spectrometers. Most of the changes in this release were 
+					made by Brendan MacLean, from the Fred Hutchinson Cancer Research Center.
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							Several new classes have been added, to make the scoring system 
+							&quot;pluggable&quot;, i.e., it is now much easier to alter the scoring system 
+							used, for the purposes of bioinformatics investigations. These changes are 
+							mainly of interest to informatics professionals and they should not affect the 
+							normal operation of the software for users.
+						</LI>
+						<LI>
+							The calculation of parent ion mass has been changed, taking more care as to the 
+							mass of added groups and correctly accounting for electron masses.
+						</LI>
+						<LI>
+							Better statistical methods have been added to deal with the small number of 
+							possible peptides generated from a list of protein sequences that have a very 
+							high accurately determined parent ion mass.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.11.15.3</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release adds in several features 
+					that were originally scheduled to appear in the 2004.11.15 release, but which 
+					were pushed back from the initial release. The 2004.11.15.2 version was not 
+					generally released.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							Spectra that are interpreted as being caused by a prompt neutral loss now have 
+							the prompt loss specified in the appropriate &lt;aa&gt; node in the output.
+						</LI>
+						<LI>
+							Correction of an issue with the OS X version that resulted in improper reading 
+							of &quot;.pro&quot; sequence files. Initially, the &quot;.pro&quot; format was 
+							to have both little endian and big endian versions, however this became too 
+							confusing to maintain. The current plan is to only use the little endian format 
+							and to compensate for this on-the-fly in the OS X version.
+						</LI>
+						<LI>
+							The maximum parent ion charge to be used can now be specified using the 
+							&quot;spectrum, maximum parent charge&quot; parameter. This parameter has a 
+							default value of 4. This change was made necessary because of high charge 
+							states being called by some MS peak assignment software, which caused spurious 
+							assignments.
+						</LI>
+						<LI>
+							The first round of refinement (finding partially cleaved peptides) has been 
+							extended, so that it possible to repeat it with different sets of modifications 
+							and motifs. These additional refinement rounds are specified by adding 
+							parameters using the following format:
+							<ul>
+								<li>
+									Round 1: &quot;refine, potential modification mass&quot;<br>
+									&quot;refine, potential modification motif&quot;
+								</li>
+								<li>
+									Round 2: &quot;refine, potential modification mass 1&quot;<br>
+									&quot;refine, potential modification motif 1&quot;
+								</li>
+								<li>
+									Round 3: &quot;refine, potential modification mass 2&quot;<br>
+									&quot;refine, potential modification motif 2&quot;
+								</li>
+							</ul>
+							This will continue until both of the next pair of parameters are either missing 
+							or neither contain an ampersand (@).
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.11.15</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This is a maintenance release, to correct 
+					one issue identified in the 2004.09.01 release.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							An error that resulted in the incorrect interpretation of some motifs was 
+							corrected.
+						</LI>
+						<LI>
+							Addition of spectrum prefiltering to remove repeated spectra from the initial 
+							set of mass spectra. This feature compares spectra using a dot product 
+							calculation and removes spectra that have vector representations that point in 
+							the same direction. The most intense spectrum out of a set of repeated spectra 
+							is kept and used for analysis. This type of filtering can remove up to 90% of 
+							spectra from a MudPit-style run, making data analysis and interpretation 
+							easier.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.09.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This is a maintenance release, to correct 
+					one issue identified in the 2004.08.01 release.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							A possible floating-point overrun error that could lead to 0.0 expectation 
+							values for high scoring peptides was detected from GPMDB submissions has been 
+							corrected.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.08.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This is a maintenance release, to correct 
+					several issues identified in the 2004.07.15 release.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							An error that reduced the score for triply-charged ions was corrected.
+						</LI>
+						<LI>
+							Quantitation information was added to the output XML file.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table4">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.07.15</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This is a major release of TANDEM, 
+					sufficiently different from previous releases to merit a major revision number: 
+					this release will be referred to as TANDEM 2.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							The memory management throughout the program has been analyzed and altered to 
+							minimize the amount of memory used per spectrum. This effort has reduced the 
+							amount of memory used in single threaded operation by as much as 60%: the 
+							improvement for double threaded operation may be as much as 80%.
+						</LI>
+						<LI>
+							The threading model has been changed to allow for the use of multiple 
+							processeors in the refinement process. TANDEM 1 separated work between the 
+							threads by dividing up the sequences to search, so that each thread would only 
+							search a subset of the sequences in a FASTA file. TANDEM 2 divides up the mass 
+							spectra between threads, so that each thread searches a subset of the mass 
+							spectra. This change makes it easier to divide up the refinement job, but means 
+							that running more than one thread on a single processor will degrade the 
+							performance of the software. For best performance, it is now important to keep 
+							the number of threads and the number of processors the same.
+						</LI>
+						<LI>
+							The refinement process has been improved in accuracy by applying a logical 
+							filter after each step of refinement. This means that once a refinement step is 
+							completed, the new results obtained from the refinement are examined and it the 
+							new results are not significantly better than those obtained from a simpler 
+							search, they are discarded and the simpler results retained. This filtering 
+							significantly reduces the complexity of analyzing results when there may be a 
+							variety of similar modification patterns or point mutations that explain a 
+							particular spectrum.
+						</LI>
+						<LI>
+							Validation of results using reversed sequence databases has been built-in to 
+							the search process. This validation may be turned on or off, using the new 
+							input parameter &quot<i>scoring, include reverse</i>&quot; (values = yes|no). 
+							This validation process tabulates the number of unique high probability hits 
+							from the reversed sequence search and places them in the output file, along 
+							with estimates of the false positive rate based on TANDEM's stochastic 
+							histogramming technique and the estimate derived from the reversed sequence 
+							process. NOTE: When this validation method is used, twice as many sequences 
+							must be processed (both forward and reversed), which may require significantly 
+							more processing time.
+						</LI>
+						<LI>
+							Numerous small optimizations have been made, particularly for loading and 
+							reporting the results for very large collections of mass spectra.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table4">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.06.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release adds three new 
+					functionalities to X! TANDEM. These new functions make it possible to modify 
+					protein sequences in new ways.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							The ability to specify modifications based on sequence motifs was added to both 
+							the normal search and refinement steps. A comma separated list of motifs in 
+							slightly modified PROSITE format can be used to only modify specific residues. 
+							An example of this format is:<BR>
+							204@[N!]{P}[ST]{P} - which says a motif that has an N, followed by any residue 
+							except P, followed by an S or a T, followed by any residue except P is 
+							specified. Modify the residue in the group containing the exclamation point (in 
+							this case the N) by adding 204 Da.
+							<BR>
+							The peptides containing this motif are checked both with and without this 
+							modification, so it is interpreted the same way that a "potential" modification 
+							is interpretted. The rules for creating these motifs are:
+							<ul>
+								<li>
+									Square brackets &quot;[]&quot; indicate any of the residues contained is 
+									possible;</li>
+								<li>
+									French brackets &quot;{}&quot; indicate that any of the residues contained is 
+									forbidden;</li>
+								<li>
+									A bare letter is interpreted as if it was in square brackets and can be 
+									modified with an exclamation point, e.g. 16@[M!] is the same as 16M!;</li>
+								<li>
+									An exclamation point indicates the position of modification;</li>
+								<li>
+									The letter &quot;X&quot; indicates any residue;</li>
+								and
+								<li>
+									Round brackets &quot;()&quot; indicate a count, e.g. &quot;X(10)&quot; means 
+									ten X's in a row;</li>
+								<li>
+									All other characters are ignored, e.g. 80@[ST!]PX[KR] is the same as 
+									80@[ST!]-P-X-[KR].</li>
+							</ul>
+						</LI>
+						<LI>
+							The ability to specify prompt neutral losses for potential modifications 
+							(including motifs) has been added. This neutral loss is specified by adding a 
+							colon followed by the mass corresponding to the loss. For example:<BR>
+							80@S specified phosporylation without loss, while 80:-98@S specifies the 
+							neutral loss of the phosphate group.
+						</LI>
+						<LI>
+							The ability to specify on a sequence by sequence level specific fixed 
+							modifications of residues by the residue number has been added. This capability 
+							cannot be exploited currently because of a lack of sequence lists that contain 
+							this type of information. However, an appropriately translated version of a 
+							database such as SWISSPROT could be used to provide this information.
+						</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table4">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.05.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release is a maintenance release. It 
+					should improve memory usage for very long sequence lists, but other wise should 
+					be neutral.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							The mechanism for storing sequences in the mprocess class has been changed. 
+							Previously, a copy of each protein sequence was stored with each peptide model 
+							associated with a spectrum. Now, a master list of protein sequences is kept and 
+							only a lookup number is stored with each peptide model. This change improves 
+							memory management for very large pools of redundant proteins or very long lists 
+							of spectra.</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table4">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.04.10</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release corrects an interpretation 
+					problem introduced in the 2004.04.01 release. This problem results in an 
+					overemphasis on peptides found in the refinement steps.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							The refinement processing was returned to its previous state, so that only the 
+							best scoring peptides from the refinement process are reported.</LI>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table4">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.04.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release is the result of an effort 
+					to reduce memory usage by TANDEM. This effort has resulted in a 70% reduction 
+					in memory usage, when using large data files.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							GAML spectra, such as those in output xml files, can now be used as input data.</LI>
+						<LI>
+							The length of scoring histogram arrays have been altered to improve memory 
+							usage.
+						</LI>
+						<LI>
+							Several instances of temporary copies of data have been removed and other data 
+							structures cleared as soon as possible after use.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Corrected problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							A behavior that resulted in the lost of the last character in sequences in some 
+							FASTA files has been corrected.</LI>
+						<LI>
+							A compatibility issue resulting from various choices for the size of the size_t 
+							STL variable on unix platforms has been corrected, so that most unix platforms 
+							should compile without modifying the linux version of the code.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Known problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							No problems known at time of release</LI>
+					</ol>
+					<hr>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table4">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.03.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release fixes a number of 
+					compatibility issues and unexpected behaviors in Tandem and associated 
+					formating files.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							A new state machine was added to perform N- and C- terminal partial 
+							modifications. Previous versions used these modifications as complete 
+							modifications only.</LI>
+						<LI>
+							The optimization for the minimum number of residues considered was removed and 
+							replaced with the constant value of 4. The prior optimization did not produce a 
+							significant improvement in speed, but it did cause occasional problems with 
+							large neutral losses.</LI>
+						<LI>
+							The xslt and css files have been updated to conform more closely to 
+							specification, making them compatible with the FireFox browser.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Corrected problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							A behavior that allowed the occasional consideration of peptides with too many 
+							missed cleavage sites was fixed.</LI>
+						<LI>
+							A compatibility issue for starting threads on some unix platforms has been 
+							corrected, so that most unix platforms should compile without modifying the 
+							linux version of the code.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Known problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							No problems known at time of release</LI>
+					</ol>
+					<hr>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table3">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2004.02.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release introduces the capability of 
+					detecting point mutations in protein sequences</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							A new state machine was added to the mscore object to track point mutations.</LI>
+						<LI>
+							A new report value was added so that a protein sequence would only recorded 
+							once in the XML output, if desired.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Corrected problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							Several problems associated with detected unsupported spectrum files types were 
+							corrected. Previous version could hang indefinately if binary files were used.</LI>
+						<LI>
+							A LINUX compilation problem with some flavours of LINUX that caused a failure 
+							to create new threads was corrected.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Known problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							No problems known at time of release</LI>
+					</ol>
+					<hr>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table2">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2003.06.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This release introduces a new statistical 
+					model for multiple model correlations.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							A new statistical interpretation was added, to combine expectation values when 
+							multiple models from the same sequence are found to be the best model in 
+							different spectra. Using this model, expectation values for the collections of 
+							models are now listed as the base-10 log of the expectation value, beside the 
+							FASTA description line.</LI>
+						<LI>
+							The way FASTA description lines are listed has been changed. Rather than 
+							listing the descriptions in the same order they were encountered in the search, 
+							they are now listed by length: the longest entry first. The logic to this 
+							choice is that for the NCBI database nr, the oldest entry for a similar 
+							sequence tends to be the longest and the first line of that entry tends to have 
+							the best description of the protein's common name. Unfortunately, this is not 
+							always true.</LI>
+						<LI>
+							A new way of organizing the output was added. It can be accessed by setting the <i>output, 
+								sort results by</i> parameter value to <i>protein</i>. Models corresponding 
+							to a given sequence are grouped together, with the best set of models at the 
+							top of the page.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Corrected problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							FASTA file name problem fixed.</LI>
+						<LI>
+							Multiple modification reporting problem fixed.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Known problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							No problems known at time of release</LI>
+					</ol>
+					<hr>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3" ID="Table1">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2003.05.15</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This was the first release of a 
+					multithreading version of tandem.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">System level changes</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							A threading model was introduced that allows up to 16 threads. Each thread is 
+							given a unique set of sequences to model and the results of all of the models 
+							are summed at the end. The threads are started in a simple manner and then the 
+							program waits for all threads to return before summing and correlating the 
+							data.</LI>
+						<LI>
+							A new class called &quot;<u>mspectrumcondition</u>&quot; was added to perform 
+							any spectrum filtering necessary. The initial release had this functionality in 
+							the &quot;<u>mscore</u>&quot; class.</LI>
+						<LI>
+							An example XSLT and CSS stylesheet pair were added, that allow viewing the 
+							output XML with a browser somewhat easier. They also are an example of how such 
+							a pair of files can be constructed to create a GUI from the output XML.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Corrected problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							The memory leak found in the 2003.05.01 release was found and fixed.</LI>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Known problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							Some FASTA sequence list file names are not being recorded in the output XML.</LI>
+						<LI>
+							Occasionally, multiple potential modifications are noted for the same residue.</LI>
+						<LI>
+							The XSLT is not compatible with Internet Explorer 5.5. This is by design and it 
+							will not change in later releases.</LI>
+					</ol>
+					<hr>
+				</td>
+			</tr>
+		</table>
+		<table border="0" cellpadding="3" cellspacing="3">
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b" bgcolor="#dd6622">2003.05.01</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top">This was the first release of tandem.</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top" class="td_b">Known problems</td>
+			</tr>
+			<tr>
+				<td width="600" align="left" valign="top"><ol>
+						<LI>
+							Soon after the release, a serious memory leak was reported, which became 
+							evident when searching large data files. This leak reduced system performance 
+							dramatically.</LI>
+					</ol>
+					<hr>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
