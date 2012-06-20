@@ -178,29 +178,27 @@ bool lessThanSpec(const mspectrum &_l,const mspectrum &_r)
 }
 
 //int main(int argc, char* argv[]) // rTANDEM
-SEXP tandem(SEXP param) // rTANDEM
+SEXP tandem(SEXP path)
 {
 	/*
 	* Check the argv array for at least one parameter.
 	* mprocess checks the validity of the file.
 	*/
-// rTANDEM : for the moment, we will remove the usage infos
-//	if(argc < 2 || argc > 1 && strstr(argv[1],"-L") == argv[1] || argc > 1 && strstr(argv[1],"-h") == argv[1])	{
-//		cout << "\n\nUSAGE: tandem filename\n\nwhere filename is any valid path to an XML input file.\n\n+-+-+-+-+-+-+\n";
-// 		cout << "\nX! TANDEM " << VERSION << "\n";
-//		cout << "\nCopyright (C) 2003-2011 Ronald C Beavis, all rights reserved\n";
-// 		cout << "This software is a component of the GPM  project.\n";
-//		cout << "Use of this software governed by the Artistic license.\n";
-//		cout << "If you do not have this license, you can get a copy at\n";
-//		cout << "http://www.perl.com/pub/a/language/misc/Artistic.html\n";
-//		cout << "\n+-+-+-+-+-+-+\n\npress <Enter> to continue ...";
-//		char *pValue = new char[128];
-//		cin.getline(pValue,127);
-//		delete pValue;
-//		return -1;
-//	}
-//	cout << "\nX! TANDEM " << VERSION << "\n\n";
-
+//	if(argc < 2 || argc > 1 && strstr(argv[1],"-L") == argv[1] || argc > 1 && strstr(argv[1],"-h") == argv[1])	{ // rTANDEM
+//		cout << "\n\nUSAGE: tandem filename\n\nwhere filename is any valid path to an XML input file.\n\n+-+-+-+-+-+-+\n"; // rTANDEM
+// 		cout << "\nX! TANDEM " << VERSION << "\n"; // rTANDEM
+//		cout << "\nCopyright (C) 2003-2011 Ronald C Beavis, all rights reserved\n"; // rTANDEM
+// 		cout << "This software is a component of the GPM  project.\n"; // rTANDEM
+//		cout << "Use of this software governed by the Artistic license.\n"; // rTANDEM
+//		cout << "If you do not have this license, you can get a copy at\n"; // rTANDEM
+//		cout << "http://www.perl.com/pub/a/language/misc/Artistic.html\n"; // rTANDEM
+//		cout << "\n+-+-+-+-+-+-+\n\npress <Enter> to continue ..."; // rTANDEM
+//		char *pValue = new char[128]; // rTANDEM
+//		cin.getline(pValue,127); // rTANDEM
+//		delete pValue; // rTANDEM
+//		return -1; // rTANDEM
+//	} // rTANDEM
+//	cout << "\nX! TANDEM " << VERSION << "\n\n"; // rTANDEM
 	/*
 	* Create an mprocess object array
 	*/
@@ -208,7 +206,8 @@ SEXP tandem(SEXP param) // rTANDEM
 	mprocess **pProcess = new mprocess*[lMaxThreads];
 	if(pProcess == NULL)	{
 		cout << "An error was detected creating the processing objects.\nPlease contact a GPM administrator.\n";
-		return -2;
+//		return -2; // rTANDEM
+		return R_NilValue; // rTANDEM
 	}
 #ifdef MSVC
 	DWORD *pId = new DWORD[lMaxThreads];
@@ -233,21 +232,27 @@ SEXP tandem(SEXP param) // rTANDEM
 	* Initialize the first mprocess object with the input file name.
 	*/
 	char *pS = new char[1024];
-	
+	Rcpp::CharacterVector v_path(path); // rTANDEM
+	string s_path(v_path[0]); // rTANDEM
+	strcpy(pS, s_path.c_str()); // rTANDEM
+//	Rprintf("pS: %s", pS);
+//	return R_NilValue;
 //	strcpy(pS,argv[1]); // rTANDEM
-//	if(!pProcess[0]->load(pS))	{ // rTANDEM
-//		cout << "\n\nAn error was detected while loading the input parameters.\nPlease follow the advice above or contact a GPM administrator to help you."; // rTANDEM
-//		delete pProcess[0]; // rTANDEM
-//		delete pProcess; // rTANDEM
+	if(!pProcess[0]->load(pS))	{
+		cout << "\n\nAn error was detected while loading the input parameters.\nPlease follow the advice above or contact a GPM administrator to help you.";
+		delete pProcess[0];
+		delete pProcess;
 //		return -4; // rTANDEM
-//	} // rTANDEM
+		return R_NilValue; // rTANDEM
+	}
 	cout << " loaded.\n";
 	if(pProcess[0]->m_vSpectra.size() == 0)	{
 		cout << "No input spectra met the acceptance criteria.\n";
 		cout.flush();
 		delete pProcess[0];
 		delete pProcess;
-		return 1;
+//		return 1; // rTANDEM
+		return R_NilValue; // rTANDEM
 	}
 	pProcess[0]->serialize();
 	cout << "Spectra matching criteria = " << (unsigned long)pProcess[0]->m_vSpectra.size() << "\n";
@@ -324,7 +329,8 @@ SEXP tandem(SEXP param) // rTANDEM
 			if(!pProcess[dCount]->load(pS,pProcess[0]))	{
 				cout <<	"error pProcess->LoadParameters	returned error (main)\r\n";
 				delete pProcess;
-				return -4;
+//				return -4; // rTANDEM
+				return R_NilValue; // rTANDEM
 			}
 			dCount--;
 			cout <<	".";
@@ -613,7 +619,8 @@ SEXP tandem(SEXP param) // rTANDEM
 	delete pProcess;
 	delete pId;
 	delete pHandle;
-	return 0;
+//	return 0; // rTANDEM
+	return R_NilValue; // rTANDEM
 }
 /*
  * Process thread is used to create the worker threads for each mprocess object
