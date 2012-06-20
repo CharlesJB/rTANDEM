@@ -6,9 +6,8 @@ RTandem <-
     if(! input %in% ls() || class(input)!=RTandemParam ) {
       input<-.paramFromXML(input)
     }
-    RTinput<-.paramFromXML(input)
-    RTsexp<-.sexpFromParam(RTinput)
-    .Call(RTsexp['param'], RTsexp['peptide'], RTsexp['saps'], RTsexp['mods'], RTsexp['spectrum'])
+    RTsexp<-.sexpFromParam(input)
+    .Call("tandem",as.vector(RTsexp$param, mode="character"), as.vector(RTsexp$peptide, mode="character"), as.vector(RTsexp$saps, mode="character"), as.vector(RTsexp$mods, mode="character"), as.vector(RTsexp$spectrum, mode="character"), PACKAGE = "rTANDEM")
   }
 
 .sexpFromParam<-
@@ -27,7 +26,7 @@ RTandem <-
     # Merge params and default_param in a single object.
     # In case of conflict, param (i.e. input.xml) will prevails.
     merged_params<-.mergeParams(param,default_param) 
-    param_list<- .makeList(merged_params)
+    param_vec<-.makeList(merged_params)
 
     ## if the content of 'list path, taxonomy information' is not an R object of class RTandemTaxo,
     ## we consider it to be a path to an xml parameter file.
@@ -40,12 +39,12 @@ RTandem <-
 
     #Create peptide path list (and, saps path list, mod path list, spectrum path list)
     taxa<-strsplit(merged_params$"protein, taxon", split=",[[:space:]]*")
-    pep_list<-taxonomy$peptide.path[taxonomy$peptide.taxon %in% taxa]
-    sap_list<-taxonomy$saps.path[taxonomy$sap.taxon %in% taxa]
-    mod_list<-taxonomy$mods.path[taxonomy$mod.taxon %in% taxa]
-    spectrum_list<-taxonomy$spectrum.path[taxonomy$spectrum.taxon %in% taxa]
+    pep_vec<-taxonomy$peptide.path[taxonomy$peptide.taxon %in% taxa]
+    sap_vec<-taxonomy$saps.path[taxonomy$sap.taxon %in% taxa]
+    mod_vec<-taxonomy$mods.path[taxonomy$mod.taxon %in% taxa]
+    spectrum_vec<-taxonomy$spectrum.path[taxonomy$spectrum.taxon %in% taxa]
     
-    RTsexp<-list(param=param_list, peptide=pep_list, saps=sap_list, mods=mod_list, spectrum=spectrum_list, check.rows=FALSE)
+    RTsexp<-list(param=param_vec, peptide=pep_vec, saps=sap_vec, mods=mod_vec, spectrum=spectrum_vec)
     return(RTsexp)
   }
 
