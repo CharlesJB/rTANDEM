@@ -178,8 +178,48 @@ bool lessThanSpec(const mspectrum &_l,const mspectrum &_r)
 }
 
 //int main(int argc, char* argv[]) // rTANDEM
-SEXP tandem(SEXP path)
+// .Call("tandem",RTsexp['param'], RTsexp['peptide'], RTsexp['saps'], RTsexp['mods'], RTsexp['spectrum'])
+SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rTANDEM
 {
+	// rTANDEM
+	// To make sure the SEXP are ok
+	Rcpp::CharacterVector v_param(param); // rTANDEM
+	Rcpp::CharacterVector v_peptide(peptide); // rTANDEM
+	Rcpp::CharacterVector v_saps(saps); // rTANDEM
+	Rcpp::CharacterVector v_mods(mods); // rTANDEM
+	Rcpp::CharacterVector v_spectrum(spectrum); // rTANDEM
+	
+	cout << "param: " << endl; // rTANDEM
+	for (size_t i = 0; i < v_param.size(); i++) { // rTANDEM
+		string toPrint(v_param[i]); // rTANDEM
+		cout << toPrint << endl; // rTANDEM
+	} // rTANDEM
+	
+	cout << "peptide: " << endl; // rTANDEM
+	for (size_t i = 0; i < v_peptide.size(); i++) { // rTANDEM
+		string toPrint(v_peptide[i]); // rTANDEM
+		cout << toPrint << endl; // rTANDEM
+	} // rTANDEM
+	
+	cout << "saps: " << endl; // rTANDEM
+	for (size_t i = 0; i < v_saps.size(); i++) { // rTANDEM
+		string toPrint(v_saps[i]); // rTANDEM
+		cout << toPrint << endl; // rTANDEM
+	} // rTANDEM
+	
+	cout << "mods: " << endl; // rTANDEM
+	for (size_t i = 0; i < v_mods.size(); i++) { // rTANDEM
+		string toPrint(v_mods[i]); // rTANDEM
+		cout << toPrint << endl; // rTANDEM
+	} // rTANDEM
+	
+	cout << "spectrum: " << endl; // rTANDEM
+	for (size_t i = 0; i < v_spectrum.size(); i++) { // rTANDEM
+		string toPrint(v_spectrum[i]); // rTANDEM
+		cout << toPrint << endl; // rTANDEM
+	} // rTANDEM
+	
+
 	/*
 	* Check the argv array for at least one parameter.
 	* mprocess checks the validity of the file.
@@ -232,9 +272,10 @@ SEXP tandem(SEXP path)
 	* Initialize the first mprocess object with the input file name.
 	*/
 	char *pS = new char[1024];
-	Rcpp::CharacterVector v_path(path); // rTANDEM
-	string s_path(v_path[0]); // rTANDEM
-	strcpy(pS, s_path.c_str()); // rTANDEM
+//	Rcpp::CharacterVector v_path(path); // rTANDEM
+//	string s_path(v_path[0]); // rTANDEM
+//	strcpy(pS, s_path.c_str()); // rTANDEM
+	strcpy(pS, "input.xml"); // rTANDEM
 //	Rprintf("pS: %s", pS);
 //	return R_NilValue;
 //	strcpy(pS,argv[1]); // rTANDEM
