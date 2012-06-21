@@ -135,6 +135,7 @@ The End
 #include <string>	// strcpm
 #include <vector>
 #include "mspectrum.h"
+#include <string.h>  // rTANDEM
 
 /**
 * eXpat SAX parser wrapper.

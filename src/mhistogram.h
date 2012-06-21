@@ -131,6 +131,7 @@ The End
 #ifndef MHISTOGRAM_H
 #define MHISTOGRAM_H
 
+#include <string.h>  // rTANDEM
 // File version: 2003-07-01
 
 /*
