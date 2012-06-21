@@ -136,46 +136,9 @@ The End
 	containing the parameters for performing the protein modelling session. The input file 
 	also contains the name of an output file, which will contain the output from the session.
 */
-
-#include "stdafx.h"
-#include <sys/timeb.h>
-#include <ctime>
-#include <algorithm>
-
-#include "msequence.h"
-#include "msequencecollection.h"
-#include "msequenceserver.h"
-#include "msequtilities.h"
-#include "mspectrum.h"
-#include "xmlparameter.h"
-#include "mscore.h"
-#include "mprocess.h"
-
-#include "tandem.h" // rTANDEM
-
 #ifndef X_P3
 
-/*
- * windows.h and the definition of ProcessThread are necessary for multithreading
- * in the Windows 32 environment. UNIX platforms that use POSIX threads use an
- * alternate version of this file.
- */
-#ifdef MSVC
-	#include "windows.h"
-	DWORD WINAPI ProcessThread(LPVOID);
-	DWORD WINAPI RefineThread(LPVOID);
-#else
-	#include <pthread.h>
-	void* ProcessThread(void *pParam);
-	void* RefineThread(void *pParam);
-#endif
-
-bool lessThanSpec(const mspectrum &_l,const mspectrum &_r);
-
-bool lessThanSpec(const mspectrum &_l,const mspectrum &_r)
-{
-	return _l.m_dMH < _r.m_dMH;
-}
+#include "tandem.h"
 
 //int main(int argc, char* argv[]) // rTANDEM
 // .Call("tandem",RTsexp['param'], RTsexp['peptide'], RTsexp['saps'], RTsexp['mods'], RTsexp['spectrum'])
@@ -183,62 +146,64 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 {
 	// rTANDEM
 	// To make sure the SEXP are ok
-	Rcpp::CharacterVector v_param(param); // rTANDEM
-	Rcpp::CharacterVector v_peptide(peptide); // rTANDEM
-	Rcpp::CharacterVector v_saps(saps); // rTANDEM
-	Rcpp::CharacterVector v_mods(mods); // rTANDEM
-	Rcpp::CharacterVector v_spectrum(spectrum); // rTANDEM
+//	Rcpp::CharacterVector v_param(param); // rTANDEM
+//	Rcpp::CharacterVector v_peptide(peptide); // rTANDEM
+//	Rcpp::CharacterVector v_saps(saps); // rTANDEM
+//	Rcpp::CharacterVector v_mods(mods); // rTANDEM
+//	Rcpp::CharacterVector v_spectrum(spectrum); // rTANDEM
 	
-	cout << "param: " << endl; // rTANDEM
-	for (size_t i = 0; i < v_param.size(); i++) { // rTANDEM
-		string toPrint(v_param[i]); // rTANDEM
-		cout << toPrint << endl; // rTANDEM
-	} // rTANDEM
+//	cout << "param: " << endl; // rTANDEM
+//	for (size_t i = 0; i < v_param.size(); i++) { // rTANDEM
+//		string toPrint(v_param[i]); // rTANDEM
+//		cout << toPrint << endl; // rTANDEM
+//	} // rTANDEM
 	
-	cout << "peptide: " << endl; // rTANDEM
-	for (size_t i = 0; i < v_peptide.size(); i++) { // rTANDEM
-		string toPrint(v_peptide[i]); // rTANDEM
-		cout << toPrint << endl; // rTANDEM
-	} // rTANDEM
+//	cout << "peptide: " << endl; // rTANDEM
+//	for (size_t i = 0; i < v_peptide.size(); i++) { // rTANDEM
+//		string toPrint(v_peptide[i]); // rTANDEM
+//		cout << toPrint << endl; // rTANDEM
+//	} // rTANDEM
 	
-	cout << "saps: " << endl; // rTANDEM
-	for (size_t i = 0; i < v_saps.size(); i++) { // rTANDEM
-		string toPrint(v_saps[i]); // rTANDEM
-		cout << toPrint << endl; // rTANDEM
-	} // rTANDEM
+//	cout << "saps: " << endl; // rTANDEM
+//	for (size_t i = 0; i < v_saps.size(); i++) { // rTANDEM
+//		string toPrint(v_saps[i]); // rTANDEM
+//		cout << toPrint << endl; // rTANDEM
+//	} // rTANDEM
 	
-	cout << "mods: " << endl; // rTANDEM
-	for (size_t i = 0; i < v_mods.size(); i++) { // rTANDEM
-		string toPrint(v_mods[i]); // rTANDEM
-		cout << toPrint << endl; // rTANDEM
-	} // rTANDEM
+//	cout << "mods: " << endl; // rTANDEM
+//	for (size_t i = 0; i < v_mods.size(); i++) { // rTANDEM
+//		string toPrint(v_mods[i]); // rTANDEM
+//		cout << toPrint << endl; // rTANDEM
+//	} // rTANDEM
 	
-	cout << "spectrum: " << endl; // rTANDEM
-	for (size_t i = 0; i < v_spectrum.size(); i++) { // rTANDEM
-		string toPrint(v_spectrum[i]); // rTANDEM
-		cout << toPrint << endl; // rTANDEM
-	} // rTANDEM
+//	cout << "spectrum: " << endl; // rTANDEM
+//	for (size_t i = 0; i < v_spectrum.size(); i++) { // rTANDEM
+//		string toPrint(v_spectrum[i]); // rTANDEM
+//		cout << toPrint << endl; // rTANDEM
+//	} // rTANDEM
 	
 
 	/*
 	* Check the argv array for at least one parameter.
 	* mprocess checks the validity of the file.
 	*/
-//	if(argc < 2 || argc > 1 && strstr(argv[1],"-L") == argv[1] || argc > 1 && strstr(argv[1],"-h") == argv[1])	{ // rTANDEM
-//		cout << "\n\nUSAGE: tandem filename\n\nwhere filename is any valid path to an XML input file.\n\n+-+-+-+-+-+-+\n"; // rTANDEM
-// 		cout << "\nX! TANDEM " << VERSION << "\n"; // rTANDEM
-//		cout << "\nCopyright (C) 2003-2011 Ronald C Beavis, all rights reserved\n"; // rTANDEM
-// 		cout << "This software is a component of the GPM  project.\n"; // rTANDEM
-//		cout << "Use of this software governed by the Artistic license.\n"; // rTANDEM
-//		cout << "If you do not have this license, you can get a copy at\n"; // rTANDEM
-//		cout << "http://www.perl.com/pub/a/language/misc/Artistic.html\n"; // rTANDEM
-//		cout << "\n+-+-+-+-+-+-+\n\npress <Enter> to continue ..."; // rTANDEM
-//		char *pValue = new char[128]; // rTANDEM
-//		cin.getline(pValue,127); // rTANDEM
-//		delete pValue; // rTANDEM
-//		return -1; // rTANDEM
-//	} // rTANDEM
-//	cout << "\nX! TANDEM " << VERSION << "\n\n"; // rTANDEM
+// rTANDEM : since we don't use argc and argv, usage was disabled
+//	if(argc < 2 || argc > 1 && strstr(argv[1],"-L") == argv[1] || argc > 1 && strstr(argv[1],"-h") == argv[1])	{ 
+//		cout << "\n\nUSAGE: tandem filename\n\nwhere filename is any valid path to an XML input file.\n\n+-+-+-+-+-+-+\n"; 
+// 		cout << "\nX! TANDEM " << VERSION << "\n"; 
+//		cout << "\nCopyright (C) 2003-2011 Ronald C Beavis, all rights reserved\n"; 
+// 		cout << "This software is a component of the GPM  project.\n"; 
+//		cout << "Use of this software governed by the Artistic license.\n"; 
+//		cout << "If you do not have this license, you can get a copy at\n"; 
+//		cout << "http://www.perl.com/pub/a/language/misc/Artistic.html\n"; 
+//		cout << "\n+-+-+-+-+-+-+\n\npress <Enter> to continue ..."; 
+//		char *pValue = new char[128]; 
+//		cin.getline(pValue,127); 
+//		delete pValue; 
+//		return -1; 
+//	} 
+//	cout << "\nX! TANDEM " << VERSION << "\n\n"; 
+//
 	/*
 	* Create an mprocess object array
 	*/
@@ -261,8 +226,11 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	unsigned long a = 0;
 	while(a < lMaxThreads)	{
 		pProcess[a] = NULL;
-		pHandle[a] = NULL;
-		pId[a] = NULL;
+// rTANDEM : There was a warning here during package installation.
+//		pHandle[a] = NULL; // rTANDEM
+//		pId[a] = NULL; // rTANDEM
+		pHandle[a] = 0; // rTANDEM
+		pId[a] = 0; // rTANDEM
 		a++;
 	}
 	pProcess[0] = new mprocess;
@@ -272,20 +240,15 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	* Initialize the first mprocess object with the input file name.
 	*/
 	char *pS = new char[1024];
-//	Rcpp::CharacterVector v_path(path); // rTANDEM
-//	string s_path(v_path[0]); // rTANDEM
-//	strcpy(pS, s_path.c_str()); // rTANDEM
-	strcpy(pS, "input.xml"); // rTANDEM
-//	Rprintf("pS: %s", pS);
-//	return R_NilValue;
+// rTANDEM: We need to change the code so data is no longer loader from file
 //	strcpy(pS,argv[1]); // rTANDEM
-	if(!pProcess[0]->load(pS))	{
-		cout << "\n\nAn error was detected while loading the input parameters.\nPlease follow the advice above or contact a GPM administrator to help you.";
-		delete pProcess[0];
-		delete pProcess;
+//	if(!pProcess[0]->load(pS))	{
+	if(!pProcess[0]->load(param, peptide, saps, mods, spectrum));
+//		cout << "\n\nAn error was detected while loading the input parameters.\nPlease follow the advice above or contact a GPM administrator to help you."; // rTANDEM
+//		delete pProcess[0]; // rTANDEM
+//		delete pProcess; // rTANDEM
 //		return -4; // rTANDEM
-		return R_NilValue; // rTANDEM
-	}
+//	} // rTANDEM
 	cout << " loaded.\n";
 	if(pProcess[0]->m_vSpectra.size() == 0)	{
 		cout << "No input spectra met the acceptance criteria.\n";

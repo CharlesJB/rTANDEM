@@ -148,6 +148,9 @@ typedef map<size_t,string> SEQMAP;
 #include "mrefine.h" 
 #include <set>
 
+#include <Rcpp.h>  // rTANDEM
+#include "dataLoader.h" // rTANDEM
+
 /*
  * the process object coordinates the function of tandem. it contains the information
  * loaded from the input XML file in the m_xmlValues object and performance
@@ -286,6 +289,7 @@ public:
 	long get_reversed(); // gets the number of reversed peptide models
 	double get_threshold(); // gets the number of valid peptide models
 	bool load(const char *_f,mprocess *_p = NULL); // loads input parameters
+	bool load(SEXP param, SEXP taxonomy, SEXP saps, SEXP mods, SEXP spectrum, mprocess *_p = NULL);  // rTANDEM
 	bool load_saps(mprocess *_p); // loads sap information, if it exists
 	bool load_annotation(mprocess *_p); // loads sequence annotation information, if it exists
 	virtual bool merge_spectra(); // adds externally generated mspectrum vector to m_vSpectra

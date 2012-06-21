@@ -839,6 +839,62 @@ size_t mprocess::get_valid()
  * load takes a path name to the input XML parameter file and uses that file name
  * to initialize an XmlParameters object
  */
+
+// rTANDEM : The function load is overloaded (no pun intended) to load the data from SEXP variable 
+// 	     instead of using the path to the input file
+bool mprocess::load(SEXP param, SEXP taxonomy, SEXP saps, SEXP mods, SEXP spectrum, mprocess *_p) {
+	// Load the parameters
+	dataLoader::convertSEXPToMap(param, &m_xmlValues.m_mapParam);
+
+	// Load the taxonomy
+	dataLoader::convertSEXPToVector(taxonomy, &(m_svrSequences.m_vstrFasta));
+	dataLoader::convertSEXPToDeque(taxonomy, &(m_svrSequences.m_dstrFasta));
+
+	// Load the scoring object
+	bool bReturn = true;
+	if (bReturn) {
+		m_pScore = mscoremanager::create_mscore(m_xmlValues);
+		if (m_pScore != NULL) {
+			bReturn = m_pScore->load_param(m_xmlValues);
+		} 
+		else {
+			bReturn = false;
+		}
+	}
+
+	// Load parameters
+	if (bReturn) {
+		bReturn = (m_specCondition.load(m_xmlValues));
+	}
+
+	// obtain the tandem MS spectra to analyze
+	string strValue;
+	if(bReturn)	{
+		bReturn = spectra();			
+		string strKey = "spectrum, check all charges";
+		m_xmlValues.get(strKey,strValue);
+		if(bReturn && strValue == "yes" && (m_lThread == 0 || m_lThread == 0xFFFFFFFF))	{
+			charge();
+			cout << "#";
+		}
+	}
+	if(bReturn)	{
+//		bReturn = load_saps(saps, _p);
+		bReturn = load_saps(_p);
+	}
+	if(bReturn)	{
+		bReturn = load_annotation(_p);
+	}
+/*
+ * load the msequenceutilities object in the m_pScore member class with the amino acid
+ * modification information
+ */
+	if(bReturn)	{
+		bReturn = modify();
+	}
+	return bReturn;
+}
+
 bool mprocess::load(const char *_f,mprocess *_p)
 {
 /*
