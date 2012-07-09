@@ -1,0 +1,17 @@
+README
+
+SYSTEM REQUIREMENTS: 
+
+RTandem uses 'expat' and 'pthreads' libraries. Their avalability might vary according to operating system.
+
+expat:
+The eXpat library should be available on OSX (since 10.4).
+The eXpat library for linux can be downloaded at http://sourceforge.net/projects/expat/files. 
+The eXpat library for Windows can be downloaded at http://sourceforge.net/projects/expat/files . 
+
+pthreads:
+The pthreads library should be available on OSX since 10.3.
+The pthreads library is available on most linux plateforms.
+A version of pthread is available for win-32 and can be downloaded at http://sourceware.org/pthreads-win32. (Unfortunately, this prevents the use of pthreads on x64 windows for now.)
+
+
