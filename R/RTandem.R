@@ -158,7 +158,7 @@ WriteParamToXML <- function(param, file) {
   #   param: A RTandemParam object (correspond to X!Tandem input.xml file).
   #   default_param: A RTandemParam object (correspond to X!Tandem default_input.xml file).
   
-  for (col %in% names(default_param)) {
+  for (col in names(default_param)) {
     # If param already has an element, we do nothing: values from param ARE NOT OVERWRITTEN 
     if (col %in% names(param) && !is.na(eval(substitute(param$COL, list(COL=col))))) {
        next
@@ -179,7 +179,7 @@ WriteParamToXML <- function(param, file) {
   #   A character vector alternating parameter names and their values.
   
   param.vec <- vector(mode="character")
-  for (col %in% names(merged.param)) {
+  for (col in names(merged.param)) {
     val=eval(substitute(merged.param$COL, list(COL=col)))
     if(!is.na(val)) {
       param.vec[[length(param.vec)+1]] <- col

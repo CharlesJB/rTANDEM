@@ -6,7 +6,7 @@
  *
  */
 
-#idfndef DATALOADER_H
+#ifndef DATALOADER_H
 #define DATALOADER_H
 
 #include <Rcpp.h>
