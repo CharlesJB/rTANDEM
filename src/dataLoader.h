@@ -15,7 +15,9 @@
 
 class dataLoader {
 public:
-	static void convertSEXP(SEXP RData, std::map<std::string, std::string>* ptrMap);
+	static void convertSEXPToMap(SEXP RData, std::map<std::string, std::string>* ptrMap);
+	static void convertSEXPToVector(SEXP RData, std::vector<std::string>* ptrVector);
+	static void convertSEXPToDeque(SEXP RData, std::deque<std::string>* ptrDeque);
 	
 private:
 	dataLoader() { }
