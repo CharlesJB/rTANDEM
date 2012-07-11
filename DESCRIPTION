@@ -1,7 +1,7 @@
 Package: rTANDEM
 Type: Package
 Title: Encapsulate X!Tandem in R.
-Version: 0.99.2
+Version: 0.99.3
 Date: 2011-06-26
 SystemRequirements: RTandem uses expat and pthread libraries. See the README file for details.
 Imports: XML
