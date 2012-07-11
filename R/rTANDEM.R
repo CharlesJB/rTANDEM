@@ -1,4 +1,4 @@
-RTandem <- function(input) {
+tandem <- function(input) {
   # Launch X!Tandem on the dataset described in 'input'
   # Args:
   #  input: either a parameter file in xml format appropriate to run X!Tandem
