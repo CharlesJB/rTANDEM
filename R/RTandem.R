@@ -23,7 +23,7 @@ RTandem <- function(input) {
         as.vector(RTsexp$peptide, mode="character"),
         as.vector(RTsexp$saps, mode="character"),
         as.vector(RTsexp$mods, mode="character"),
-        as.vector(RTsexp$spectrum, mode="character"), PACKAGE = "rTANDEM")
+        as.vector(RTsexp$spectrum, mode="character"), PACKAGE = "RTandem")
 }
 
 GetTaxoFromXML <- function(xml.file) {
