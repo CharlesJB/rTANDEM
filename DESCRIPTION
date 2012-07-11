@@ -1,7 +1,7 @@
 Package: RTandem
 Type: Package
 Title: Encapsulate X!Tandem in R.
-Version: 0.99.1
+Version: 0.99.2
 Date: 2011-06-26
 SystemRequirements: RTandem uses expat and pthread libraries. See the README file for details.
 Imports: XML
@@ -12,3 +12,5 @@ Maintainer: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>
 Description: This package encapsulate X!Tandem in R. In its most basic functionality, this package allows to call RTandem("path_to_input.xml") from R, just as tandem.exe /path/to/input.xml would be used to run X!Tandem from the command line. Classes are also provided for taxonomy and parameters objects and methods are provided to convert xml files to R objects and vice versa. This package is the first step in an attempt to provide a reliable worflow for proteomics analysis in R.
 biocViews: MassSpectrometry, Proteomics
 License: Artistic-1.0
+Depends: Rcpp (>= 0.9.10)
+LinkingTo: Rcpp
