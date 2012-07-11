@@ -1,2 +1,2 @@
-useDynLib(RTandem)
+useDynLib(rTANDEM)
 exportPattern("^[[:alpha:]]+")
