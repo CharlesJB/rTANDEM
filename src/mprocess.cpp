@@ -3489,16 +3489,16 @@ bool mprocess::spectra()
 	}
 	if(bContinue){
 		bool bState = m_specCondition.m_bCondition;
-		m_specCondition.use_condition(false);
-		loadgaml ldGaml(m_vSpectra, m_specCondition, *m_pScore);
-		string strV;
-		m_xmlValues.getpath(strV);
-		if(ldGaml.open(strV))	{
-			cout << " (gaml).";
-			ldGaml.get();
-			m_tSpectraTotal = m_vSpectra.size();
-			bContinue = false;
-		}
+//		m_specCondition.use_condition(false); // rTANDEM
+//		loadgaml ldGaml(m_vSpectra, m_specCondition, *m_pScore); // rTANDEM
+//		string strV; // rTANDEM
+//		m_xmlValues.getpath(strV); // rTANDEM
+//		if(ldGaml.open(strV))	{ // rTANDEM
+//			cout << " (gaml)."; // rTANDEM
+//			ldGaml.get(); // rTANDEM
+//			m_tSpectraTotal = m_vSpectra.size(); // rTANDEM
+//			bContinue = false; // rTANDEM
+//		} // rTANDEM
 		m_specCondition.use_condition(bState);
 	}
 /*
