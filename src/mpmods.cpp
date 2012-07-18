@@ -238,7 +238,7 @@ bool mpmods::refine()
  */
 	long lPMCount = 1;
 	char pValue[8];
-	sprintf(pValue," %i",lPMCount);
+	sprintf(pValue," %i",(int)lPMCount);
 	strKey = "refine, potential modification mass";
 	strKey += pValue;
 	string strMods;
@@ -276,7 +276,7 @@ bool mpmods::refine()
 			a++;
 		}
 		lPMCount++;
-		sprintf(pValue," %i",lPMCount);
+		sprintf(pValue," %i",(int)lPMCount);
 		strKey = "refine, potential modification mass";
 		strKey += pValue;
 		m_pProcess->m_xmlValues.get(strKey,strMods);
