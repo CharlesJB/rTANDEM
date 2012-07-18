@@ -218,16 +218,18 @@ The End
 // common includes for the standard template library
 	// this test was suggested by Steve Wiley to correct a problem
 	// associated with compiling using the 64-bit version of Redhat Linux
-#ifndef __APPLE__ // rTANDEM
-#ifdef __x86_64__ && __linux__ // rTANDEM
+// rTANDEM - 2 next lines
+#ifndef __APPLE__ 
+#if defined(__x86_64__) && defined(__linux__) 
 	#ifndef uint32_t
 		#define uint32_t unsigned int
 	#endif
 	#ifndef uint64_t
 		#define uint64_t unsigned long long
 	#endif
-#endif // rTANDEM
-#endif // rTANDEM
+#endif 
+#endif
+// rTANDEM - 2 last lines
 
 #include <cstdlib>
 #include <iostream>
