@@ -175,7 +175,7 @@ The End
 	3. The file "base64.cpp" tends to cause problems with this type of compatibility:
 	if you change the defines below, you may have to alter base64.cpp as well.
 */
-
+/* // rTANDEM
 #ifdef MSVC
 	#define __inline__ _inline
 	#define __int64_t _int64
@@ -187,6 +187,7 @@ The End
 	#define _CRT_SECURE_NO_DEPRECATE
 	#include <string>
 #endif
+*/
 
 #ifdef OSX
 	#define __inline__ inline
@@ -217,12 +218,16 @@ The End
 // common includes for the standard template library
 	// this test was suggested by Steve Wiley to correct a problem
 	// associated with compiling using the 64-bit version of Redhat Linux
+#ifndef __APPLE__ // rTANDEM
+#ifdef __x86_64__ && __linux__ // rTANDEM
 	#ifndef uint32_t
 		#define uint32_t unsigned int
 	#endif
 	#ifndef uint64_t
 		#define uint64_t unsigned long long
 	#endif
+#endif // rTANDEM
+#endif // rTANDEM
 
 #include <cstdlib>
 #include <iostream>
