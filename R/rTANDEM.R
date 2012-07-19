@@ -18,12 +18,13 @@ tandem <- function(input) {
   #  1) parameter names and parameter values, 2) paths to the peptide databases,
   #  3) paths to the SAPs databases, 4) paths to the mods databases,
   #  5) paths to the spectra databases
-  .Call("tandem",
+  pathName <- .Call("tandem",
         as.vector(RTsexp$param, mode="character"),
         as.vector(RTsexp$peptide, mode="character"),
         as.vector(RTsexp$saps, mode="character"),
         as.vector(RTsexp$mods, mode="character"),
         as.vector(RTsexp$spectrum, mode="character"), PACKAGE = "rTANDEM")
+  print(pathName)
 }
 
 GetTaxoFromXML <- function(xml.file) {
