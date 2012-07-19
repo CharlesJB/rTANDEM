@@ -226,7 +226,6 @@ public:
 class mprocesslog
 {
 public:
-	mprocesslog() { }
 	virtual ~mprocesslog() { }
 	bool open(string &_s)	{
 		m_ofLog.open(_s.c_str());
@@ -324,6 +323,7 @@ public:
 	bool m_bRefineCterm;  //true if processing 'refine, potential C-terminus modifications'. Set in mrefine::refine and 
 						//checked in score(), so the start position can be set to the length of the protein sequence
 						// minus the value for 'refine, potential N-terminus modification position limit' before performing cleavage
+	string getPathName() { return m_pathName; } // rTANDEM
 	vector<int> m_viQuality; // contains the data quality scoring vector
 	bool m_bReversedOnly;
 	bool m_bSaps;
@@ -437,6 +437,8 @@ protected:
 	bool spectra_force(string &_t,string &_v); // forces the spectrum loader to use a specified file type
 	bool subtract(void); // remove redundant mass spectra
 	virtual bool taxonomy(void); // loads the taxonomy setting into the m_svrSequences object
+private:
+	string m_pathName; // rTANDEM
 };
 
 #include "p3mprocess.h"
