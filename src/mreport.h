@@ -163,6 +163,7 @@ public:
 	bool start(XmlParameter &_x);
 	bool set_columns(const long _v);
 	bool set_compression(const bool _b);
+	string getPathName() { return m_pathName; } // rTANDEM
 private:
 	long m_lHistogramColumns;
 	set<size_t> m_setProteins;
@@ -173,5 +174,6 @@ private:
 	bool m_bCompress;
 	ofstream m_ofOut; // the output file stream
 	mscore& m_Score; // mscore used to generate scores in report
+	string m_pathName; // rTANDEM
 };
 #endif
