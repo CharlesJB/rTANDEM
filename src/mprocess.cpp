@@ -2167,6 +2167,7 @@ bool mprocess::report_all()
 	rptValue.set_compression(bCompress);
 	rptValue.set_columns(lHistogramColumns);
 	rptValue.start(m_xmlValues);
+	m_pathName = rptValue.getPathName(); // rTANDEM
 	size_t a = 0;	
 	size_t tLength = m_vSpectra.size();
 	size_t b = 0;
@@ -2267,6 +2268,7 @@ bool mprocess::report_valid(const double _d)
 	rptValue.set_compression(bCompress);
 	rptValue.set_columns(lHistogramColumns);
 	rptValue.start(m_xmlValues);
+	m_pathName = rptValue.getPathName(); // rTANDEM
 	size_t a = 0;	
 	size_t tLength = m_vSpectra.size();
 	size_t tActive = 0;
@@ -2426,6 +2428,7 @@ bool mprocess::report_stochastic(const double _d)
 	rptValue.set_compression(bCompress);
 	rptValue.set_columns(lHistogramColumns);
 	rptValue.start(m_xmlValues);
+	m_pathName = rptValue.getPathName(); // rTANDEM
 	size_t a = 0;	
 	size_t b = 0;
 	SEQMAP::iterator itValue;
