@@ -934,6 +934,7 @@ bool mreport::start(XmlParameter &_x)
 			strPath.insert(tStart,pLine);
 		}
 	}
+	m_pathName = strPath; // rTANDEM
 	m_ofOut.open(strPath.c_str());
 	if(m_ofOut.fail())	{
 		return false;
