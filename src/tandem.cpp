@@ -585,6 +585,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	cout << "Creating report:\n";
 	cout.flush();
 	pProcess[0]->report();
+	Rcpp::CharacterVector pathName(pProcess[0]->getPathName()); // rTANDEM
 	size_t tValid = pProcess[0]->get_valid();
 	size_t tUnique = pProcess[0]->get_unique();
 	double dE = pProcess[0]->get_error_estimate();
@@ -624,7 +625,8 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	delete pId;
 	delete pHandle;
 //	return 0; // rTANDEM
-	return R_NilValue; // rTANDEM
+//	return R_NilValue; // rTANDEM
+	return pathName;
 }
 /*
  * Process thread is used to create the worker threads for each mprocess object
