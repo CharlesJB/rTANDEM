@@ -2,37 +2,85 @@ tandem <- function(input) {
   # Launch X!Tandem on the dataset described in 'input'
   # Args:
   #  input: either a parameter file in xml format appropriate to run X!Tandem
-  #         or an R object of the class RTandemParam
+  #         or an R object of the class rTParam
   #
   # Returns:
   #   Creates output files in the directory specified in the parameter object.	    
 
-  # if input is not a R object of class RTandemParam, we consider it to be a
-  # path to an xml parameter file.
-  if (!input %in% ls() || class(input) != RTandemParam) {
+  
+  
+  if (class(input) != "rTParam") {
     input <- GetParamFromXML(input)
   }
-  RTsexp <- .sexpFromParam(input)
+  
+  if ( class(input$'list path, default parameters') == "rTParam") {
+    default_param <- input$'list path, default parameters'
+  }
+  else{
+    default_param <- GetParamFromXML(input$'list path, default parameters')
+  }
 
+  # MERGE: we merge the input and default param in a single rTParam object.
+  # The input parameters have precedence over default_parameters.
+  for (col in names(default_param)) {
+    if (col %in% names(input) && !is.na(eval(substitute(input$COL, list(COL=col))))) {
+       next
+    }
+    else{
+      eval(substitute(input$COL<-default_param$COL, list(COL=col)))
+    }
+  }
+
+  if ( class(input$'list path, taxonomy information') == "rTTaxo") {
+    taxonomy <- input$'list path, taxonomy information'
+  }
+  else{
+    taxonomy <- GetTaxoFromXML(input$'list path, taxonomy information')
+  }
+
+  # VECTORISATION: Create a simple vector alterning keys and values
+  # to pass to the C++ code. We remove the taxonomy and default_param slots
+  # because they will be passed to the C code in another way
+  param <- vector(mode="character")
+  for (col in names(input)) {
+    if( col == 'list path, default parameters' || col == 'list path, taxonomy information' ){
+      next
+    }
+    else{
+      val=eval(substitute(input$COL, list(COL=col)))
+      if(!is.na(val)) {
+        param[[length(param)+1]] <- col
+        param[[length(param)+1]] <- val
+      }
+    }
+  }
+
+  taxa <- strsplit(input$"protein, taxon", split=",[[:space:]]*")
+  peps <- taxonomy$peptide.path[taxonomy$peptide.taxon %in% taxa]
+  saps <- taxonomy$saps.path[taxonomy$sap.taxon %in% taxa]
+  mods <- taxonomy$mods.path[taxonomy$mod.taxon %in% taxa]
+  spectrum <- taxonomy$spectrum.path[taxonomy$spectrum.taxon %in% taxa]
+  
   # the C function tandem takes five character vector containing respectively: 
   #  1) parameter names and parameter values, 2) paths to the peptide databases,
   #  3) paths to the SAPs databases, 4) paths to the mods databases,
   #  5) paths to the spectra databases
   pathName <- .Call("tandem",
-        as.vector(RTsexp$param, mode="character"),
-        as.vector(RTsexp$peptide, mode="character"),
-        as.vector(RTsexp$saps, mode="character"),
-        as.vector(RTsexp$mods, mode="character"),
-        as.vector(RTsexp$spectrum, mode="character"), PACKAGE = "rTANDEM")
-  print(pathName)
+        as.vector(param, mode="character"),
+        as.vector(peps, mode="character"),
+        as.vector(saps, mode="character"),
+        as.vector(mods, mode="character"),
+        as.vector(spectrum, mode="character"), PACKAGE = "rTANDEM")
+
+  return(pathName)
 }
 
 GetTaxoFromXML <- function(xml.file) {
-  # Converts an XML file containing an X!Tandem taxonomy to a RTandemTaxo object
+  # Converts an XML file containing an X!Tandem taxonomy to a rTTaxo object
   # Args:
   #   taxo_file: the path to an XML file containing a X!Tandem taxonomy.
   # Returns
-  #   an object of class RTandemTaxo
+  #   an object of class rTTaxo
   
   if (file.access(xml.file, mode=4) == -1) {
     stop(as.character(xml.file), " cannot be read. Verify that the file exists and that you have the permissions necessary to read it.", call. = TRUE)
@@ -40,7 +88,7 @@ GetTaxoFromXML <- function(xml.file) {
     
   doc <- xmlTreeParse(xml.file, getDTD=F)   
   root <- xmlRoot(doc)
-  RTtaxo <- RTandemTaxo()
+  RTtaxo <- rTTaxo()
   for (taxon.node in xmlChildren(root)) {
     if (xmlName(taxon.node) == "taxon") {
       taxon<-xmlAttrs(taxon.node)['label']
@@ -60,17 +108,17 @@ GetTaxoFromXML <- function(xml.file) {
 }# end of GetTaxoFromXML
 
 GetParamFromXML<- function(xml.file) {
-  # Converts an X!Tandem xml parameter file to a RTandemParam object
+  # Converts an X!Tandem xml parameter file to a rTParam object
   # Args:
   #   xml.file: the path to an XML file containing X!Tandem parameters
   # Returns:
-  #   an object of class RTandemParam
+  #   an object of class rTParam
   
   if (file.access(xml.file, mode=4) == -1)
     stop(as.character(xml.file), " cannot be read. Verify that the file exists and that you have the permissions necessary to read it.", call. = TRUE)
   doc<-xmlTreeParse(xml.file, getDTD=F)   
   root<-xmlRoot(doc)
-  RTinput<- RTandemParam()
+  RTinput<- rTParam()
     
   for (x in xmlChildren(root) ) {
     if(xmlName(x)=="note" && "type" %in% names(xmlAttrs(x)) && xmlAttrs(x)['type']=="input") {
@@ -85,8 +133,8 @@ GetParamFromXML<- function(xml.file) {
         eval(substitute(RTinput$label<-value,
                         list(label=as.character(xmlAttrs(x)['label']),
                              value=as.character(xmlValue(x)))))
-        message("\"", as.character(xmlAttrs(x)['label']),
-                "\" is not a parameter described in X!Tandem API. It will still be passed to X!Tandem, but it would be wise to check whether a typo has not slipped in this parameter description (for example, \"spectrum,path\" instead of \"spectrum, path\").")
+ #       message("\"", as.character(xmlAttrs(x)['label']),
+ #               "\" is not a parameter described in X!Tandem API. It will still be passed to X!Tandem, but it would be wise to check whether a typo has not slipped in this parameter description (for example, \"spectrum,path\" instead of \"spectrum, path\").")
       }
     }
   } # for x in xmlChildren loop
@@ -94,9 +142,9 @@ GetParamFromXML<- function(xml.file) {
 } # .inputFromXML2 definition
 
 WriteParamToXML <- function(param, file) {
-  # Write an XML file in the X!Tandem param format from a RTandemParam object
+  # Write an XML file in the X!Tandem param format from a rTParam object
   # Args:
-  #    param: a RTandemParam object containing
+  #    param: a rTParam object containing
   #    file: a string giving the path and name of the output file.
   # Returns:
   #    No return, the function is called for its side effect of creating an xml file.
@@ -109,104 +157,23 @@ WriteParamToXML <- function(param, file) {
 #  saveXML(xmlD
 }
 
-.sexpFromParam <- function(param) {
-  # Helper function that creates a list of the five character vectors that will be passed
-  # to the C function "tandem"
-  # Args:
-  #   param: the RTandemParam object that contains the parameters to be passed to X!Tandem.
-  # Returns:
-  #   A named list of the five parameters (param, peptide, saps, mods and spectrum) that we
-  #   will pass to the C function "tandem"
+rTTaxo <- function() {
+  # Constructor method for rTTaxo
 
-  s.default.param <- param$"list path, default parameters"
-  # if the content of 'list path, default parameters' is not an R object of class RTandemParam,
-  # we consider it to be a path to an xml taxonomy file and we create the R object
-  if (s.default.param %in% ls() && class(eval(as.name(s.default.param))) == "RTandemParam") {
-    default_param <- eval(as.name(s.default.param))
-  }
-  else{
-    default_param <- GetParamFromXML(s.default.param)
-  }
-  # Merge params and default_param in a single object.
-  # In case of conflict, param (i.e. input.xml) will prevails.
-  merged.param <- .mergeParams(param,default_param) 
-  param.vec <- .makeVector(merged.param)
-  # If the content of 'list path, taxonomy information' is not an R object of class RTandemTaxo,
-  # we consider it to be a path to an xml parameter file and we create the R object.
-  s.taxonomy <- merged.param$"list path, taxonomy information"
-  if (s.taxonomy %in% ls() && class(eval(as.name(s.taxonomy))) == "RTandemTaxo") {
-      taxonomy <- eval(as.name(s.taxonomy))
-    }
-  else{
-      taxonomy <- GetTaxoFromXML(s.taxonomy)
-    }
-
-  # Create peptide path list (and saps path list, mod path list, spectrum path list, ...)
-  taxa <- strsplit(merged.param$"protein, taxon", split=",[[:space:]]*")
-  peps <- taxonomy$peptide.path[taxonomy$peptide.taxon %in% taxa]
-  saps <- taxonomy$saps.path[taxonomy$sap.taxon %in% taxa]
-  mods <- taxonomy$mods.path[taxonomy$mod.taxon %in% taxa]
-  spectrum <- taxonomy$spectrum.path[taxonomy$spectrum.taxon %in% taxa]
-    
-  RTsexp <- list(param=param.vec, peptide=peps, saps=saps, mods=mods, spectrum=spectrum)
-  return(RTsexp)
-  }
-
-.mergeParams <- function(param, default_param) {
-  # Helper function that takes two RTandemParam objects (the input and default_input from
-  # X!Tandem) and merges them as one.
-  # Args:
-  #   param: A RTandemParam object (correspond to X!Tandem input.xml file).
-  #   default_param: A RTandemParam object (correspond to X!Tandem default_input.xml file).
-  
-  for (col in names(default_param)) {
-    # If param already has an element, we do nothing: values from param ARE NOT OVERWRITTEN 
-    if (col %in% names(param) && !is.na(eval(substitute(param$COL, list(COL=col))))) {
-       next
-      }
-      else{
-        eval(substitute(param$COL<-default_param$COL, list(COL=col)))
-      }
-    }
-    return(param)
-  }
-
-.makeVector <- function(merged.param) {
-  # Helper function that takes a RTandemParam object and return a vector
-  # to pass to the C "tandem" function
-  # Args:
-  #   merged.param: a RTandemParam object
-  # Return:
-  #   A character vector alternating parameter names and their values.
-  
-  param.vec <- vector(mode="character")
-  for (col in names(merged.param)) {
-    val=eval(substitute(merged.param$COL, list(COL=col)))
-    if(!is.na(val)) {
-      param.vec[[length(param.vec)+1]] <- col
-      param.vec[[length(param.vec)+1]] <- val
-    }
-  }
-  return(param.vec)
-}                   
-
-RTandemTaxo <- function() {
-  # Constructor method for RTandemTaxo
-
-  RTandemTaxo<-data.frame(
+  rTTaxo<-data.frame(
                           "peptide"=data.frame("taxon"=NULL,"path"=NULL),
                           "mods"=data.frame("taxon"=NULL, "path"=NULL),
                           "spectrum"=data.frame("taxon"=NULL,"path"=NULL),
                           "saps"=data.frame("taxon"=NULL,"path"=NULL)
                           )
-  class(RTandemTaxo)<-"RTandemTaxo"
-  return(RTandemTaxo)
+  class(rTTaxo)<-"rTTaxo"
+  return(rTTaxo)
 }
 
-RTandemParam <- function() {
-  # Constructor method for RTandemParam
+rTParam <- function() {
+  # Constructor method for rTParam
   
-  RTandemParam<-data.frame(
+  rTParam<-data.frame(
                            "list path, default parameters" = NA,       
                            "list path, taxonomy information" = NA,     
                            "output, histogram column width" = NA, 
@@ -295,7 +262,7 @@ RTandemParam <- function() {
                            "spectrum, use contrast angle" = NA,
                            check.names=FALSE
                            )
-  class(RTandemParam)<-"RTandemParam"
-  return(RTandemParam)
+  class(rTParam)<-"rTParam"
+  return(rTParam)
 }
 
