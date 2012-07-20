@@ -3,13 +3,14 @@ Type: Package
 Title: Encapsulate X!Tandem in R.
 Version: 0.99.3
 Date: 2011-06-26
-SystemRequirements: RTandem uses expat and pthread libraries. See the README file for details.
+SystemRequirements: rTANDEM uses expat and pthread libraries. See the README file for details.
 Imports: XML
 Author@R: c(person("Frederic", "Fournier", email="frederic.fournier@crchuq.ulaval.ca"),
+	  person("Charles Joly-Beauparlant", email="charles.joly-b@crchul.ulaval.ca"),
 	  person("Arnaud", "Droit", email="arnaud.droit@crchuq.ulaval.ca"))
-Author: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>, Arnaud Droit <arnaud.droit@crchuq.ulaval.ca>
+Author: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>, Charles Joly-Beauparlant <charles.joly-b@crchul.ulaval.ca>, Arnaud Droit <arnaud.droit@crchuq.ulaval.ca>
 Maintainer: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>
-Description: This package encapsulate X!Tandem in R. In its most basic functionality, this package allows to call RTandem("path_to_input.xml") from R, just as tandem.exe /path/to/input.xml would be used to run X!Tandem from the command line. Classes are also provided for taxonomy and parameters objects and methods are provided to convert xml files to R objects and vice versa. This package is the first step in an attempt to provide a reliable worflow for proteomics analysis in R.
+Description: This package encapsulate X!Tandem in R. In its most basic functionality, this package allows to call tandem(input) from R, just as tandem.exe /path/to/input.xml would be used to run X!Tandem from the command line. Classes are also provided for taxonomy and parameters objects and methods are provided to convert xml files to R objects and vice versa. This package is the first step in an attempt to provide a reliable worflow for proteomics analysis in R.
 biocViews: MassSpectrometry, Proteomics
 License: Artistic-1.0
 Depends: Rcpp (>= 0.9.10), XML
