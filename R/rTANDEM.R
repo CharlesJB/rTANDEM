@@ -32,10 +32,10 @@ tandem <- function(input) {
   }
 
   if ( class(input$'list path, taxonomy information') == "rTTaxo") {
-    taxonomy <- input$'list path, taxonomy information'
+    taxo <- input$'list path, taxonomy information'
   }
   else{
-    taxonomy <- GetTaxoFromXML(input$'list path, taxonomy information')
+    taxo <- GetTaxoFromXML(input$'list path, taxonomy information')
   }
 
   # VECTORISATION: Create a simple vector alterning keys and values
@@ -56,10 +56,10 @@ tandem <- function(input) {
   }
 
   taxa <- strsplit(input$"protein, taxon", split=",[[:space:]]*")
-  peps <- taxonomy$peptide.path[taxonomy$peptide.taxon %in% taxa]
-  saps <- taxonomy$saps.path[taxonomy$sap.taxon %in% taxa]
-  mods <- taxonomy$mods.path[taxonomy$mod.taxon %in% taxa]
-  spectrum <- taxonomy$spectrum.path[taxonomy$spectrum.taxon %in% taxa]
+  peps <- taxo[taxo$taxon %in% taxa & taxo$format=="peptide", 3]
+  saps <- taxo[taxo$taxon %in% taxa & taxo$format=="saps", 3]
+  mods <- taxo[taxo$taxon %in% taxa & taxo$format=="mods", 3]
+  spectrum <- taxo[taxo$taxon %in% taxa & taxo$format=="spectrum", 3]
   
   # the C function tandem takes five character vector containing respectively: 
   #  1) parameter names and parameter values, 2) paths to the peptide databases,
@@ -85,26 +85,27 @@ GetTaxoFromXML <- function(xml.file) {
   if (file.access(xml.file, mode=4) == -1) {
     stop(as.character(xml.file), " cannot be read. Verify that the file exists and that you have the permissions necessary to read it.", call. = TRUE)
   }
-    
-  doc <- xmlTreeParse(xml.file, getDTD=F)   
-  root <- xmlRoot(doc)
-  RTtaxo <- rTTaxo()
-  for (taxon.node in xmlChildren(root)) {
+  
+  taxo.doc <- xmlTreeParse(xml.file, getDTD=FALSE, useInternalNodes=TRUE)   
+  length <- length(getNodeSet(taxo.doc, "//file"))
+  taxo.root <- xmlRoot(taxo.doc)
+  row.count = 1
+  taxonomy <- rTTaxo(length=length)
+
+  for (taxon.node in xmlChildren(taxo.root)) {
     if (xmlName(taxon.node) == "taxon") {
       taxon<-xmlAttrs(taxon.node)['label']
       for (path.node in xmlChildren(taxon.node)){
         if (xmlName(path.node) == "file") {
           format<-xmlAttrs(path.node)["format"]
-          path<-xmlAttrs(path.node)["URL"]
-          eval(parse(text=sprintf("RTtaxo$%s.path<-c(RTtaxo$%s.path, '%s')",
-                                  format, format, path)))
-          eval(parse(text=sprintf("RTtaxo$%s.taxon<-c(RTtaxo$%s.taxon,'%s')",
-                                  format, format, taxon)))
+          URL<-xmlAttrs(path.node)["URL"]
+          taxonomy[row.count,] <- c(taxon, format, URL)
+          row.count = row.count + 1
         }
       } # end of path loop
     }
   } # end of taxon loop
-  return(RTtaxo)
+  return(taxonomy)
 }# end of GetTaxoFromXML
 
 GetParamFromXML<- function(xml.file) {
@@ -141,33 +142,127 @@ GetParamFromXML<- function(xml.file) {
   return(RTinput)
 } # .inputFromXML2 definition
 
-WriteParamToXML <- function(param, file) {
+WriteParamToXML <- function(param, file, embeddedParam=c("write","skip","merge"), embeddedTaxo=c("write","skip")) {
   # Write an XML file in the X!Tandem param format from a rTParam object
   # Args:
   #    param: a rTParam object containing
   #    file: a string giving the path and name of the output file.
+  #    embeddedParam: if a the input object contains another rTParam object (in the 'list path, default parameter'
+  #      slot), the option "merge" will merge the two object together; the option "write" will call WriteParamToXML
+  #      on the embedded rTParam object and write it to the the given file name plus suffixe "_default_param" and
+  #      will replace the embedded object by its path in the container object, the option "skip" will just ignore
+  #      this slot.
+  #    embeddedTaxo: if the input object contains a rTTaxo object (in 'list path, taxonomy information'), the
+  #      option "write" will call WriteTaxoToXML on the object and write it to the input file name plus suffixe
+  #      "_taxonomy" and replace the rTTaxo object by its path in the container rTParam object; the option "skip"
+  #      will just ignore this slot of the container rTParam object. 
   # Returns:
   #    No return, the function is called for its side effect of creating an xml file.
 
-  if (file.access(file, mode=2) == -1) {
-    stop("You can't write to ", as.character(file), ". Check that you have writing permission to this directory.", call. = TRUE)
-  }
+#  if (file.access(file, mode=2) == -1) {
+#    stop("You can't write to ", as.character(file), ". Check that you have writing permission to this directory.", call. = TRUE)
+#  }
 
+  embeddedParam <- match.arg(embeddedParam)
+  embeddedTaxo <- match.arg(embeddedTaxo)
+
+  bioml.node <- xmlNode(name="bioml", attrs=NULL, value=NULL)
+
+  for(i in 1:length(param)) {
+    
+    # Embedded taxonomy file
+    if ("rTTaxo" %in% class(param[[i]])){
+      if (embeddedTaxo=="skip") {
+        next
+      }
+      if (embeddedTaxo=="write"){
+        taxo.file <- paste(file, "_taxonomy", sep="")
+        #WriteTaxoToXML(param[[i]], taxo.file)
+        param[[i]] <- taxo.file
+      }
+    }
+    
+    # Embedded parameter file
+    if ("rTParam" %in% class(param[[i]])) {
+      if (embeddedParam=="skip") {
+        next
+      }
+      if (embeddedParam=="write") {
+        param.file <- paste(file, "_default_param", sep="")
+        WriteParamToXML(param[[i]], param.file, embeddedParam="skip")
+        param[[i]] <- param.file
+      }
+      if (embeddedParam=="merge") {
+        embeddedParam <- param[[i]]
+        
+        next
+      }
+    }
+
+    # writing the parameters to file
+    if (!is.na(param[[i]])) {
+          bioml.node <- addChildren(bioml.node,
+                                xmlNode(name="note",
+                                        attrs=c(type="input", label=names(param)[[i]]),
+                                        value=param[[i]]))
+    }
+  }
+  saveXML(bioml.node, file=file, prefix='<?xml version="1.0"?>\n')
   
-#  saveXML(xmlD
 }
 
-rTTaxo <- function() {
-  # Constructor method for rTTaxo
+  
 
-  rTTaxo<-data.frame(
-                          "peptide"=data.frame("taxon"=NULL,"path"=NULL),
-                          "mods"=data.frame("taxon"=NULL, "path"=NULL),
-                          "spectrum"=data.frame("taxon"=NULL,"path"=NULL),
-                          "saps"=data.frame("taxon"=NULL,"path"=NULL)
-                          )
-  class(rTTaxo)<-"rTTaxo"
+WriteTaxoToXML <- function(taxo, file) {
+  # Write an XML file in the X!Tandem taxonomy format from a rTTaxo object.
+  # Args:
+  #    taxo: a rTTaxo object whose content will be written to an xml file.
+  #    file: a string giving the path and name of the file to be created.
+  # Returns:
+  #    No return, the function is calle for its side effect of creating an xml file.
+
+  bioml.node <- xmlNode(name="bioml", attrs=c(label="x! taxon-to-file matching list"), value=NULL)
+
+  for i in seq(from=1, to=length(taxo), by=2) {
+    for j in 1:length(taxo[[i]]) {
+      
+      
+    }
+  }
+pseudocode:
+  for i in pair of twos:
+    for j in length taxo[[i]]
+
+  
+}
+
+rTTaxo <- function(length=1) {
+  # Constructor method for rTTaxo
+  # Args:
+  #    length: the foreseen length of the data.frame, if known.
+  # Returns:
+  #    A rTTaxo object with a pre-assigned data.frame of the given length
+
+  length <- as.integer(length)
+  rTTaxo <- data.frame(
+                       taxon=rep(NA, length),
+                       format=rep(NA, length),
+                       URL=rep(NA, length)
+                       )
+  class(rTTaxo) <- c("rTTaxo", "data.frame")
   return(rTTaxo)
+}
+
+
+  # First attempt at a rT Taxonomy
+#  rTTaxo<-data.frame(
+#                          "peptide"=data.frame("taxon"=NULL,"path"=NULL),
+#                          "mods"=data.frame("taxon"=NULL, "path"=NULL),
+#                          "spectrum"=data.frame("taxon"=NULL,"path"=NULL),
+#                          "saps"=data.frame("taxon"=NULL,"path"=NULL)
+#                          )
+#  class(rTTaxo)<-"rTTaxo"
+#  return(rTTaxo)
 }
 
 rTParam <- function() {
