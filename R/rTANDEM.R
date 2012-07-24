@@ -6,8 +6,6 @@ tandem <- function(input) {
   #
   # Returns:
   #   Creates output files in the directory specified in the parameter object.	    
-
-  
   
   if (class(input) != "rTParam") {
     input <- GetParamFromXML(input)
@@ -78,7 +76,7 @@ tandem <- function(input) {
 GetTaxoFromXML <- function(xml.file) {
   # Converts an XML file containing an X!Tandem taxonomy to a rTTaxo object
   # Args:
-  #   taxo_file: the path to an XML file containing a X!Tandem taxonomy.
+  #   xml.file: the path to an XML file containing a X!Tandem taxonomy.
   # Returns
   #   an object of class rTTaxo
   
@@ -222,18 +220,18 @@ WriteTaxoToXML <- function(taxo, file) {
   #    No return, the function is calle for its side effect of creating an xml file.
 
   bioml.node <- xmlNode(name="bioml", attrs=c(label="x! taxon-to-file matching list"), value=NULL)
-
-  for i in seq(from=1, to=length(taxo), by=2) {
-    for j in 1:length(taxo[[i]]) {
-      
-      
+  taxa <- levels(as.factor(taxo$taxon))
+  for (taxon in taxa) {
+    taxon.node <- xmlNode(name="taxon", attrs=c(label=taxon))
+    for (i in 1:nrow(taxo)){
+      if( taxo[[i,1]] == taxon) {
+        taxon.node <- addChildren(taxon.node,
+                                  xmlNode(name="file", attrs=c(format=taxo[[i,2]], URL=taxo[[i,3]])))
+      }
     }
+    bioml.node <- addChildren(bioml.node, taxon.node)
   }
-pseudocode:
-  for i in pair of twos:
-    for j in length taxo[[i]]
-
-  
+  saveXML(bioml.node, file=file, prefix='<?xml version="1.0"?>\n')
 }
 
 rTTaxo <- function(length=1) {
