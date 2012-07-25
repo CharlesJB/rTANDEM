@@ -175,7 +175,7 @@ WriteParamToXML <- function(param, file, embeddedParam=c("write","skip","merge")
       }
       if (embeddedTaxo=="write"){
         taxo.file <- paste(file, "_taxonomy", sep="")
-        #WriteTaxoToXML(param[[i]], taxo.file)
+        WriteTaxoToXML(param[[i]], taxo.file)
         param[[i]] <- taxo.file
       }
     }
@@ -221,9 +221,11 @@ WriteTaxoToXML <- function(taxo, file) {
 
   bioml.node <- xmlNode(name="bioml", attrs=c(label="x! taxon-to-file matching list"), value=NULL)
   taxa <- levels(as.factor(taxo$taxon))
+  
   for (taxon in taxa) {
     taxon.node <- xmlNode(name="taxon", attrs=c(label=taxon))
     for (i in 1:nrow(taxo)){
+      print(taxo[[i,1]])
       if( taxo[[i,1]] == taxon) {
         taxon.node <- addChildren(taxon.node,
                                   xmlNode(name="file", attrs=c(format=taxo[[i,2]], URL=taxo[[i,3]])))
@@ -231,7 +233,8 @@ WriteTaxoToXML <- function(taxo, file) {
     }
     bioml.node <- addChildren(bioml.node, taxon.node)
   }
-  saveXML(bioml.node, file=file, prefix='<?xml version="1.0"?>\n')
+  print(bioml.node)
+  #saveXML(bioml.node, file=file, prefix='<?xml version="1.0"?>\n')
 }
 
 rTTaxo <- function(length=1) {
@@ -249,18 +252,6 @@ rTTaxo <- function(length=1) {
                        )
   class(rTTaxo) <- c("rTTaxo", "data.frame")
   return(rTTaxo)
-}
-
-
-  # First attempt at a rT Taxonomy
-#  rTTaxo<-data.frame(
-#                          "peptide"=data.frame("taxon"=NULL,"path"=NULL),
-#                          "mods"=data.frame("taxon"=NULL, "path"=NULL),
-#                          "spectrum"=data.frame("taxon"=NULL,"path"=NULL),
-#                          "saps"=data.frame("taxon"=NULL,"path"=NULL)
-#                          )
-#  class(rTTaxo)<-"rTTaxo"
-#  return(rTTaxo)
 }
 
 rTParam <- function() {
