@@ -1,3 +1,24 @@
+rtandem <- function (data.file, taxon, taxonomy, default.parameters) {
+  # Interface to tandem(input). This function createsCreates a basic input file
+  #   and launch tandem(input) on this input file.
+  # Args:
+  #    data.file: The raw data.file that needs to be processed (a mgf or dta file
+  #      for example). This correspond to the 'spectrum, path' in the parameter object.
+  #    taxon: the species to be searched (e.g. "homo sapiens"
+  #    taxonomy: the taxonomy xml or rTTaxo object linking taxon to fasta files.
+  #    default.parameters: A X!Tandem style xml parameter file, or an rTParam object
+  #      containing all the pertinents parameters
+  # Returns:
+  #    Creates an output file in the directory specified in the parameters and
+  #      returns its path.
+  input <- rTParam()
+  input$`spectrum, path` <- data.file
+  input$`protein, taxon` <- taxon
+  input$`list path, taxonomy information` <- taxonomy
+  input$`list path, default parameters` <- default.parameters
+  tandem(input)
+}
+
 tandem <- function(input) {
   # Launch X!Tandem on the dataset described in 'input'
   # Args:
@@ -5,7 +26,8 @@ tandem <- function(input) {
   #         or an R object of the class rTParam
   #
   # Returns:
-  #   Creates output files in the directory specified in the parameter object.	    
+  #   Creates an output file in the directory specified in the parameters and
+  #     returns its path.	    
   
   if (class(input) != "rTParam") {
     input <- GetParamFromXML(input)
