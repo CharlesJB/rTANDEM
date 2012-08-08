@@ -106,7 +106,7 @@ GetTaxoFromXML <- function(xml.file) {
     stop(as.character(xml.file), " cannot be read. Verify that the file exists and that you have the permissions necessary to read it.", call. = TRUE)
   }
   
-  taxo.doc <- xmlTreeParse(xml.file, getDTD=FALSE, useInternalNodes=TRUE)   
+  taxo.doc <- xmlTreeParse(xml.file, getDTD = FALSE, useInternalNodes = TRUE)   
   length <- length(getNodeSet(taxo.doc, "//file"))
   taxo.root <- xmlRoot(taxo.doc)
   row.count = 1
@@ -371,4 +371,111 @@ rTParam <- function() {
   class(rTParam)<-"rTParam"
   return(rTParam)
 }
+##' .. content for \description{} (no empty lines) ..
+##'
+##' .. content for \details{} ..
+##' @title 
+##' @param xml.file 
+##' @return 
+##' @author Frederic Fournier
+GetResultsFromXML <- function(xml.file) {
+  # Parse an X!Tandem result file and create a result object
+  # Args:
+  #    xml.file: the path to an X!Tandem xml output file.
+  # Returns:
+  #    an object of the class rTResult
 
+  if (file.access(xml.file, mode=4) == -1)
+    stop(as.character(xml.file), " cannot be read. Verify that the file exists and that you have the permissions necessary to read it.", call. = TRUE)
+
+  results <- new('rTResult')
+  results@result.file <- xml.file
+  result.doc <- xmlTreeParse(xml.file, getDTD = FALSE, useInternalNodes = TRUE)
+
+  # Get performance parameters
+  perform.params <- getNodeSet(result.doc,
+                               "//group[@type='parameters' and @label='performance parameters']")
+  if (length(perform.params) > 0) {
+    for (node in xmlChildren(perform.params[[1]])) {
+      label <- xmlAttrs(node)['label']
+      if( ! is.na(charmatch('list path, sequence source #', label))) {
+        label <- 'list path, sequence source'}
+      value <- xmlValue(node)
+      switch(label,
+             'list path, sequence source' = {
+               results@sequence.source.paths <-
+                 append(results@sequence.source.paths, value)},
+             'modelling, estimated false positives' = {
+               results@estimated.false.positive <- as.integer(value)},
+             'modelling, total peptides used' = {
+               results@total.peptides.used <- as.integer(value)},
+             'modelling, total proteins used' = {
+               results@total.proteins.used <- as.integer(value)},
+             'modelling, total spectra assigned' = {
+               results@total.spectra.assigned <- as.integer(value)},
+             'modelling, total spectra used' = {
+               results@total.spectra.used <- as.integer(value)},
+             'modelling, total unique assigned' = {
+               results@total.unique.assigned <- as.integer(value)},
+             'process, start time' = {
+               results@start.time <- value},
+             'process, version' = {
+               results@xtandem.version <- value},
+             'quality values' = {
+               results@quality.values <- lapply(strsplit(value, "\\s", perl=TRUE), as.integer)},
+             'refining, # input models' = {
+               results@nb.input.models <- as.integer(value)},
+             'refining, # input spectra' = {
+               results@nb.input.spectra <- as.integer(value)},
+             'refining, # partial cleavage' = {
+               results@nb.partial.cleavages <- as.integer(value)},
+             'refining, # point mutations' = {
+               results@nb.point.mutations <- as.integer(value)},
+             'refining, # potential C-terminii' = {
+               results@nb.potential.C.terminii <- as.integer(value)},
+             'refining, # potential N-terminii' = {
+               results@nb.potential.N.terminii <- as.integer(value)},
+             'refining, # unanticipated cleavage' = {
+               results@nb.unanticipated.cleavages <- as.integer(value)},
+             'timing, initial modelling total (sec)' = {
+               results@initial.modelling.time.total <- as.numeric(value)},
+             'timing, initial modelling/spectrum (sec)' = {
+               results@initial.modelling.time.per.spectrum <- as.numeric(value)},
+             'timing, load sequence models (sec)' = {
+               results@load.sequence.models.time <- as.numeric(value)},
+             'timing, refinement/spectrum (sec)' = {
+               results@refinement.per.spectrum.time <- as.numeric(value)}
+             )
+    }
+  }
+  
+  # Get used parameters
+  params <- rTParam()
+  used.params <- getNodeSet(result.doc,
+                            "//group[@type='parameters' and @label='input parameters']/note[@type='input']")
+  if (length(used.params) > 0) {
+    for (x in used.params) {
+      eval(substitute(params$label<-value,
+                      list(label=as.character(xmlAttrs(x)['label']),
+                           value=as.character(xmlValue(x)))))
+    }
+  }
+  results@used.parameters <- params
+  
+  # Get unused parameters
+  unused.params <- getNodeSet(result.doc,
+                              "//group[@type='parameters' and @label='unused input parameters']/note[@type='input']")
+  for (x in unused.params) {
+    label <- as.character(xmlAttrs(x)['label'])
+    value <- as.character(xmlValue(x))
+    string <- paste(label, value, sep=" = ")
+    results@unused.parameters <-
+      append(results@unused.parameters, string)
+  }
+
+  # 
+                                        #<note label="list path, sequence source #1">/home/frederic/Desktop/RSandbox/test_experiments/databases/UR12_5_SolanumTub_20120718.fasta</note>
+#  <note label="list path, sequence source description #1">no description</note>
+   #print(results)
+ return(results)
+}
