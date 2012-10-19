@@ -228,6 +228,12 @@ The End
 		#define uint64_t unsigned long long
 	#endif
 #endif 
+#ifdef WIN32
+	#define __inline__ inline
+	#define __int64_t long long
+	#define uint32_t unsigned long
+	#define uint64_t unsigned long long
+#endif
 #endif
 // rTANDEM - 2 last lines
 
