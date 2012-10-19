@@ -228,7 +228,7 @@ The End
 		#define uint64_t unsigned long long
 	#endif
 #endif 
-#ifdef WIN32
+#if defined(WIN32) || defined(_WIN32)
 	#define __inline__ inline
 	#define __int64_t long long
 	#define uint32_t unsigned long
