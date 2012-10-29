@@ -4,7 +4,7 @@ rtandem <- function (data.file, taxon, taxonomy, default.parameters) {
   # Args:
   #    data.file: The raw data.file that needs to be processed (a mgf or dta file
   #      for example). This correspond to the 'spectrum, path' in the parameter object.
-  #    taxon: the species to be searched (e.g. "homo sapiens"
+  #    taxon: the species to be searched (e.g. "homo sapiens")
   #    taxonomy: the taxonomy xml or rTTaxo object linking taxon to fasta files.
   #    default.parameters: A X!Tandem style xml parameter file, or an rTParam object
   #      containing all the pertinents parameters
@@ -15,7 +15,7 @@ rtandem <- function (data.file, taxon, taxonomy, default.parameters) {
   input$`spectrum, path` <- data.file
   input$`protein, taxon` <- taxon
   input$`list path, taxonomy information` <- taxonomy
-  input$`list path, default parameters` <- default.parameters
+  input$`list path, default parameters`   <- default.parameters
   tandem(input)
 }
 
@@ -29,35 +29,32 @@ tandem <- function(input) {
   #   Creates an output file in the directory specified in the parameters and
   #     returns its path.	    
   
-  if (class(input) != "rTParam") {
+  if ( ! "rTParam" %in% class(input) ) {
     input <- GetParamFromXML(input)
   }
   
-  if ( class(input$'list path, default parameters') == "rTParam") {
+  if ( 'rTParam' %in% class(input$'list path, default parameters') ) {
     default_param <- input$'list path, default parameters'
-  }
-  else{
+  } else{
     default_param <- GetParamFromXML(input$'list path, default parameters')
   }
-
+  
   # MERGE: we merge the input and default param in a single rTParam object.
   # The input parameters have precedence over default_parameters.
   for (col in names(default_param)) {
     if (col %in% names(input) && !is.na(eval(substitute(input$COL, list(COL=col))))) {
-       next
-    }
-    else{
+      next
+    } else{
       eval(substitute(input$COL<-default_param$COL, list(COL=col)))
     }
   }
 
-  if ( class(input$'list path, taxonomy information') == "rTTaxo") {
+  if ( 'rTTaxo' %in% class(input$'list path, taxonomy information') ) {
     taxo <- input$'list path, taxonomy information'
-  }
-  else{
+   } else{
     taxo <- GetTaxoFromXML(input$'list path, taxonomy information')
   }
-
+  
   # VECTORISATION: Create a simple vector alterning keys and values
   # to pass to the C++ code. We remove the taxonomy and default_param slots
   # because they will be passed to the C code in another way
@@ -65,8 +62,7 @@ tandem <- function(input) {
   for (col in names(input)) {
     if( col == 'list path, default parameters' || col == 'list path, taxonomy information' ){
       next
-    }
-    else{
+    } else{
       val=eval(substitute(input$COL, list(COL=col)))
       if(!is.na(val)) {
         param[[length(param)+1]] <- col
@@ -74,7 +70,7 @@ tandem <- function(input) {
       }
     }
   }
-
+  
   taxa <- strsplit(input$"protein, taxon", split=",[[:space:]]*")
   peps <- taxo[taxo$taxon %in% taxa & taxo$format=="peptide", 3]
   saps <- taxo[taxo$taxon %in% taxa & taxo$format=="saps", 3]
@@ -110,7 +106,7 @@ GetTaxoFromXML <- function(xml.file) {
   length <- length(getNodeSet(taxo.doc, "//file"))
   taxo.root <- xmlRoot(taxo.doc)
   row.count = 1
-  taxonomy <- rTTaxo(length=length)
+  taxonomy <- rTTaxo()
 
   for (taxon.node in xmlChildren(taxo.root)) {
     if (xmlName(taxon.node) == "taxon") {
@@ -149,8 +145,7 @@ GetParamFromXML<- function(xml.file) {
                           list(label=as.character(xmlAttrs(x)['label']),
                                value=as.character(xmlValue(x)))))
         }
-      }
-      else {
+      } else{
         eval(substitute(RTinput$label<-value,
                         list(label=as.character(xmlAttrs(x)['label']),
                              value=as.character(xmlValue(x)))))
@@ -259,20 +254,21 @@ WriteTaxoToXML <- function(taxo, file) {
   #saveXML(bioml.node, file=file, prefix='<?xml version="1.0"?>\n')
 }
 
-rTTaxo <- function(length=1) {
+rTTaxo <- function(taxon=NA, format=NA, URL=NA) {
   # Constructor method for rTTaxo
   # Args:
-  #    length: the foreseen length of the data.frame, if known.
+  #    taxon : A taxon for the taxonomy (eg. "yeast") or a vector of taxa.
+  #    format: The format of the database (eg. "peptides" or "spectrum") or a vector of formats.
+  #    URL   : The path to the database file or a vector of paths.
   # Returns:
   #    A rTTaxo object with a pre-assigned data.frame of the given length
-
-  length <- as.integer(length)
   rTTaxo <- data.frame(
-                       taxon=rep(NA, length),
-                       format=rep(NA, length),
-                       URL=rep(NA, length)
+                       row.names=NULL,
+                       taxon=taxon,
+                       format=format,
+                       URL=URL
                        )
-  class(rTTaxo) <- c("rTTaxo", "data.frame")
+  class(rTTaxo) <- c('rTTaxo', 'data.frame')
   return(rTTaxo)
 }
 
@@ -368,16 +364,10 @@ rTParam <- function() {
                            "spectrum, use contrast angle" = NA,
                            check.names=FALSE
                            )
-  class(rTParam)<-"rTParam"
+  class(rTParam)<-c("data.frame", "rTParam")
   return(rTParam)
 }
-##' .. content for \description{} (no empty lines) ..
-##'
-##' .. content for \details{} ..
-##' @title 
-##' @param xml.file 
-##' @return 
-##' @author Frederic Fournier
+
 GetResultsFromXML <- function(xml.file) {
   # Parse an X!Tandem result file and create a result object
   # Args:
@@ -388,94 +378,177 @@ GetResultsFromXML <- function(xml.file) {
   if (file.access(xml.file, mode=4) == -1)
     stop(as.character(xml.file), " cannot be read. Verify that the file exists and that you have the permissions necessary to read it.", call. = TRUE)
 
-  results <- new('rTResult')
-  results@result.file <- xml.file
-  result.doc <- xmlTreeParse(xml.file, getDTD = FALSE, useInternalNodes = TRUE)
+  env1                     <- new.env()
+  env1$results             <- new('rTResult')
+  env1$results@used.parameters <- rTParam()
+  env1$results@result.file <- xml.file
+  env1$group.attrs         <- NULL
+  env1$proteins            <- NULL
+  env1$perform.params      <- FALSE
+  env1$used.params         <- FALSE
+  env1$unused.params       <- FALSE
+  
+  
+  group <- function(name, attrs, ...){ ##handler function
+    env1$group.attrs <- attrs
+    if ("parameters" %in% env1$group.attrs) {
+      if ('performance parameters' %in% env1$group.attrs) {
+        env1$perform.params <- TRUE
+        env1$used.params    <- FALSE
+        env1$unused.params  <- FALSE
+      } else if ('unused input parameters' %in% env1$group.attrs) {
+        env1$perform.params <- FALSE
+        env1$used.params    <- FALSE
+        env1$unused.params  <- TRUE
+      } else if ('input parameters' %in% env1$group.attrs) {
+        env1$perform.params <- FALSE
+        env1$used.params    <- TRUE
+        env1$unused.params  <- FALSE
+    } else {
+      env1$perform.params <- FALSE
+      env1$used.params    <- FALSE
+      env1$unused.params  <- FALSE
+    }
+    }
+  }
+  environment(group) <- env1
 
-  # Get performance parameters
-  perform.params <- getNodeSet(result.doc,
-                               "//group[@type='parameters' and @label='performance parameters']")
-  if (length(perform.params) > 0) {
-    for (node in xmlChildren(perform.params[[1]])) {
-      label <- xmlAttrs(node)['label']
+  note <- function(x, ...) { #branche function
+    if (env1$perform.params) {
+      label <- xmlAttrs(x)['label']
       if( ! is.na(charmatch('list path, sequence source #', label))) {
         label <- 'list path, sequence source'}
-      value <- xmlValue(node)
+      value <- xmlValue(x)
       switch(label,
              'list path, sequence source' = {
-               results@sequence.source.paths <-
-                 append(results@sequence.source.paths, value)},
+               env1$results@sequence.source.paths <-
+                 append(env1$results@sequence.source.paths, value)},
              'modelling, estimated false positives' = {
-               results@estimated.false.positive <- as.integer(value)},
+               env1$results@estimated.false.positive <- as.integer(value)},
              'modelling, total peptides used' = {
-               results@total.peptides.used <- as.integer(value)},
+               env1$results@total.peptides.used <- as.integer(value)},
              'modelling, total proteins used' = {
-               results@total.proteins.used <- as.integer(value)},
+               env1$results@total.proteins.used <- as.integer(value)},
              'modelling, total spectra assigned' = {
-               results@total.spectra.assigned <- as.integer(value)},
+               env1$results@total.spectra.assigned <- as.integer(value)},
              'modelling, total spectra used' = {
-               results@total.spectra.used <- as.integer(value)},
+               env1$results@total.spectra.used <- as.integer(value)},
              'modelling, total unique assigned' = {
-               results@total.unique.assigned <- as.integer(value)},
+               env1$results@total.unique.assigned <- as.integer(value)},
              'process, start time' = {
-               results@start.time <- value},
+               env1$results@start.time <- value},
              'process, version' = {
-               results@xtandem.version <- value},
+               env1$results@xtandem.version <- value},
              'quality values' = {
-               results@quality.values <- lapply(strsplit(value, "\\s", perl=TRUE), as.integer)},
+               env1$results@quality.values <- lapply(strsplit(value, "\\s", perl=TRUE), as.integer)},
              'refining, # input models' = {
-               results@nb.input.models <- as.integer(value)},
+               env1$results@nb.input.models <- as.integer(value)},
              'refining, # input spectra' = {
-               results@nb.input.spectra <- as.integer(value)},
+               env1$results@nb.input.spectra <- as.integer(value)},
              'refining, # partial cleavage' = {
-               results@nb.partial.cleavages <- as.integer(value)},
+               env1$results@nb.partial.cleavages <- as.integer(value)},
              'refining, # point mutations' = {
-               results@nb.point.mutations <- as.integer(value)},
+               env1$results@nb.point.mutations <- as.integer(value)},
              'refining, # potential C-terminii' = {
-               results@nb.potential.C.terminii <- as.integer(value)},
+               env1$results@nb.potential.C.terminii <- as.integer(value)},
              'refining, # potential N-terminii' = {
-               results@nb.potential.N.terminii <- as.integer(value)},
+             env1$results@nb.potential.N.terminii <- as.integer(value)},
              'refining, # unanticipated cleavage' = {
-               results@nb.unanticipated.cleavages <- as.integer(value)},
+               env1$results@nb.unanticipated.cleavages <- as.integer(value)},
              'timing, initial modelling total (sec)' = {
-               results@initial.modelling.time.total <- as.numeric(value)},
+               env1$results@initial.modelling.time.total <- as.numeric(value)},
              'timing, initial modelling/spectrum (sec)' = {
-               results@initial.modelling.time.per.spectrum <- as.numeric(value)},
+               env1$results@initial.modelling.time.per.spectrum <- as.numeric(value)},
              'timing, load sequence models (sec)' = {
-               results@load.sequence.models.time <- as.numeric(value)},
+               env1$results@load.sequence.models.time <- as.numeric(value)},
              'timing, refinement/spectrum (sec)' = {
-               results@refinement.per.spectrum.time <- as.numeric(value)}
+               env1$results@refinement.per.spectrum.time <- as.numeric(value)}
              )
+    } else if (env1$used.params) {
+      attrs <- xmlAttrs(x)
+      if ('input' %in% attrs) {
+        eval(substitute(env1$results@used.parameters$label<-value,
+                        list(label=as.character(attrs['label']),
+                             value=as.character(xmlValue(x)))))
+        
+      }
+    } else if (env1$unused.params) {
+      label <- as.character(xmlAttrs(x)['label'])
+      value <- as.character(xmlValue(x))
+      string <- paste(label, value, sep=" = ")
+      env1$results@unused.parameters <-
+        append(env1$results@unused.parameters, string)
     }
   }
+  environment(note) <- env1
   
-  # Get used parameters
-  params <- rTParam()
-  used.params <- getNodeSet(result.doc,
-                            "//group[@type='parameters' and @label='input parameters']/note[@type='input']")
-  if (length(used.params) > 0) {
-    for (x in used.params) {
-      eval(substitute(params$label<-value,
-                      list(label=as.character(xmlAttrs(x)['label']),
-                           value=as.character(xmlValue(x)))))
+  protein <- function(x,...){ #branche function
+    spectrum <- c(
+                  "id"   = as.integer(env1$group.attrs['id']),
+                  "mh"   = as.numeric(env1$group.attrs['mh']),
+                  "sumI" = as.numeric(env1$group.attrs['sumI']),
+                  "maxI" = as.numeric(env1$group.attrs['maxI']),
+                  "fI"   = as.numeric(env1$group.attrs['fI'])
+                  )
+    protein.attrs <- xmlAttrs(x)
+    key <- as.character(protein.attrs['id'])
+    pep.node <- xmlElementsByTagName(x, name="peptide")[[1]]
+    protein <- list(
+                    "uid"          = as.numeric(protein.attrs['uid']),
+                    "expect.value" = as.numeric(protein.attrs['expect']),
+                    "label"        = protein.attrs['label'],
+                    "file"         = xmlAttrs(xmlElementsByTagName(x, name="file")[[1]])['URL'],
+                    "description"  = xmlValue(xmlElementsByTagName(x, name="note")[[1]]),
+                    "sequence"     = xmlValue(pep.node),
+                    "peptides"     = lapply(xmlElementsByTagName(pep.node,name="domain"), function(domain.node) {
+#                  "peptides" = xpathApply(pep.node, "./domain", function(domain.node) {
+                      domain.attrs <- xmlAttrs(domain.node)
+                      peptide <- list(
+                         "expect.value" = as.numeric(domain.attrs['expect']),
+                         "tandem.score" = as.numeric(domain.attrs['hyperscore']),
+                         "mh" = as.numeric(domain.attrs['mh']),
+                         "delta" = as.numeric(domain.attrs['delta']),
+                         "peak.count" = as.integer(domain.attrs['peak_count']),
+                         "missed.cleavage" = as.integer(domain.attrs['missed_cleavages']),
+                         "start.position" = as.integer(domain.attrs['start']),
+                         "end.position" = as.integer(domain.attrs['end']),
+                         "sequence" =  domain.attrs['seq'],
+                         "spectrum" = spectrum,
+                         "ptm"      = lapply(xmlElementsByTagName(domain.node, name="aa"), function(aa.node){
+#                         "ptm" = xpathApply(domain.node, "./aa", function(aa.node){
+#                          (xpathApply is 3 sec. slower than lapply(xmlElementsByTagName)
+                        #  but it preserves the names and structure of the 'ptm' elements
+                           ptm.attrs <- xmlAttrs(aa.node)
+                           ptm <- list(
+                                       "type" = ptm.attrs['type'],
+                                       "position" = as.integer(ptm.attrs['at']),
+                                       "mass.change" = as.numeric(ptm.attrs['modified'])
+                                       )
+                           return(ptm)
+                         })
+                                      ) # end of peptide <- list
+                      return(peptide)
+                    })
+                    ) # end of protein <- list
+    env1$proteins[[key]] <- protein
+  }
+  environment(protein) <- env1
+  
+  xmlEventParse(xml.file, handlers=list(group=group), branches=list(protein=protein, note=note))
+  
+  
+  protein.list <- as.list(env1$proteins)
+  uid.vector  <- lapply(protein.list, function(x) x$uid)
+  duplicated  <- duplicated(uid.vector)
+  first.match <- match(uid.vector, uid.vector)
+  
+  for (i in 1:length(uid.vector)) {
+    if (duplicated[i]) {
+      protein.list[[first.match[i]]]$peptides <-
+        append(protein.list[[first.match[i]]]$peptides, protein.list[[i]]$peptides)
     }
   }
-  results@used.parameters <- params
+  env1$ results@proteins <- protein.list[!duplicated]
   
-  # Get unused parameters
-  unused.params <- getNodeSet(result.doc,
-                              "//group[@type='parameters' and @label='unused input parameters']/note[@type='input']")
-  for (x in unused.params) {
-    label <- as.character(xmlAttrs(x)['label'])
-    value <- as.character(xmlValue(x))
-    string <- paste(label, value, sep=" = ")
-    results@unused.parameters <-
-      append(results@unused.parameters, string)
-  }
-
-  # 
-                                        #<note label="list path, sequence source #1">/home/frederic/Desktop/RSandbox/test_experiments/databases/UR12_5_SolanumTub_20120718.fasta</note>
-#  <note label="list path, sequence source description #1">no description</note>
-   #print(results)
- return(results)
+  return(env1$results)
 }
