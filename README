@@ -2,7 +2,7 @@ README
 
 SYSTEM REQUIREMENTS: 
 
-RTandem uses 'expat' and 'pthreads' libraries. Their avalability might vary according to operating system.
+rTANDEM uses 'expat' and 'pthreads' libraries. Their avalability might vary according to operating system.
 
 expat:
 The eXpat library should be available on OSX (since 10.4).
