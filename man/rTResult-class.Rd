@@ -17,7 +17,9 @@ Objects can be created by calls of the form \code{new("rTResult", ...)}.
 \section{Slots}{
   \describe{
     \item{\code{result.file}:}{Object of class \code{"character"} ~~ }
-    \item{\code{proteins}:}{Object of class \code{"list"} ~~ }
+    \item{\code{proteins}:}{Object of class \code{"data.table"} ~~ }
+    \item{\code{peptides}:}{Object of class \code{"data.table"} ~~ }
+    \item{\code{ptm}:}{Object of class \code{"data.table"} ~~ }
     \item{\code{used.parameters}:}{Object of class \code{"data.frame"} ~~ }
     \item{\code{unused.parameters}:}{Object of class \code{"vector"} ~~ }
     \item{\code{sequence.source.paths}:}{Object of class \code{"vector"} ~~ }
