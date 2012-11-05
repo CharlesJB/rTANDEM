@@ -200,13 +200,17 @@ bool p3mprocess::taxonomy()
  * return false if the load_file method fails
  */
 	if(lReturn == 2)	{
-		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
-		cout << "\" did not contain the value \"" << strValue.c_str() << "\".\nCheck your settings and try again.\n";
+//		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
+		Rprintf("\nThe taxonomy parameter file \"%s", strTaxonPath.c_str());
+//		cout << "\" did not contain the value \"" << strValue.c_str() << "\".\nCheck your settings and try again.\n";
+		Rprintf("\" did not contain the value \"%s\".\nCheck your settings and try again.\n", strValue.c_str());
 		return false;
 	}
 	if(lReturn == 1)	{
-		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
-		cout << "\" could not be found.\nCheck your settings and try again.\n";
+//		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
+		Rprintf("\nThe taxonomy parameter file \"%s" << strTaxonPath.c_str());
+//		cout << "\" could not be found.\nCheck your settings and try again.\n";
+		Rprintf("\" could not be found.\nCheck your settings and try again.\n");
 		return false;
 	}
 	return true;
@@ -369,13 +373,17 @@ bool p3mprocess::load_sequences()
  * return false if the load_file method fails
  */
 	if(lReturn == 2)	{
-		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
-		cout << "\" did not contain the value \"" << strValue.c_str() << "\".\nCheck your settings and try again.\n";
+//		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
+		Rprintf("\nThe taxonomy parameter file \"%s", strTaxonPath.c_str());
+//		cout << "\" did not contain the value \"" << strValue.c_str() << "\".\nCheck your settings and try again.\n";
+		Rprintf("\" did not contain the value \"%s\".\nCheck your settings and try again.\n", strValue.c_str());
 		return false;
 	}
 	if(lReturn == 1)	{
-		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
-		cout << "\" could not be found.\nCheck your settings and try again.\n";
+//		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
+		Rprintf("\nThe taxonomy parameter file \"%s", strTaxonPath.c_str());
+//		cout << "\" could not be found.\nCheck your settings and try again.\n";
+		Rprintf("\" could not be found.\nCheck your settings and try again.\n");
 		return false;
 	}
 	m_svrSequences.u_maps(m_mapDesc,vSeq);

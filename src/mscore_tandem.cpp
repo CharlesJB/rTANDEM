@@ -176,8 +176,9 @@ mscore_tandem::mscore_tandem(void)
 #ifdef MSVC
 	m_uiSimd = check_simd();
 	if(m_uiSimd == 1)	{
-		cout << "|";
-		cout.flush();
+//		cout << "|";
+		Rprintf("|");
+		//cout.flush();
 	}
 #endif
 }

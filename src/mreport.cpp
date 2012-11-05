@@ -280,8 +280,9 @@ bool mreport::get_short_label(const string &_s,char *_p,const unsigned long _l,c
 		a++;
 	}
 	if(a != lLength)	{
-		cout << _s.c_str() << "||";
-		cout.flush();
+//		cout << _s.c_str() << "||";
+		Rprintf("%s||", _s.c_str());
+		//cout.flush();
 		_p[a] = '.';
 		a++;
 		_p[a] = '.';

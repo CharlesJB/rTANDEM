@@ -616,7 +616,8 @@ bool msequenceServer::start(void)
 		m_strStatus = "\n*********\nWarning:\n  Sequence list path '";
 		m_strStatus += m_strPath;
 		m_strStatus += "'\n  could not be opened and was skipped.\n*********\n\n";
-		cout << m_strStatus.c_str();
+//		cout << m_strStatus.c_str();
+		Rprintf("%s", m_strStatus.c_str());
 		return m_bStarted;
 	}
 	size_t tS = 0;
@@ -641,7 +642,8 @@ bool msequenceServer::start(void)
 		m_strStatus = "\n*********\nWarning:\n  Sequence list path '";
 		m_strStatus += m_strPath;
 		m_strStatus += "'\n  was not in a recognized file format and was skipped.\n*********\n\n";
-		cout << m_strStatus.c_str();
+//		cout << m_strStatus.c_str();
+		Rprintf("%s", m_strStatus.c_str());
 		return m_bStarted;
 	}
 	m_vstrDesc.push_back(strDesc);

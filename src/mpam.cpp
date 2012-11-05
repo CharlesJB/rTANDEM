@@ -181,8 +181,9 @@ bool mpam::refine(){
 		m_dMaxExpect = atof(strValue.c_str());
 	}
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-		cout << "\tpoint mutations ";
-		cout.flush();
+//		cout << "\tpoint mutations ";
+		Rprintf("\tpoint mutations ");
+		//cout.flush();
 		m_pProcess->m_prcLog.log("point mutations");
 	}
 	m_pProcess->create_rollback(vspRollback);
@@ -202,9 +203,10 @@ bool mpam::refine(){
 		if(tPips == tTicMax)	{
 			if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
 				if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-					cout << ".";
+//					cout << ".";
+					Rprintf(".");
 				m_pProcess->m_prcLog.log(".");
-					cout.flush();
+					//cout.flush();
 				}
 			}
 			tPips = 0;
@@ -230,9 +232,10 @@ bool mpam::refine(){
 	m_pProcess->m_tActive = tActiveNow;
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
 		m_pProcess->m_prcLog.log("done");
-		cout << " done.\n";
+//		cout << " done.\n";
+		Rprintf(" done.\n");
 	}
-	cout.flush();
+	//cout.flush();
 	return true;
 }
 

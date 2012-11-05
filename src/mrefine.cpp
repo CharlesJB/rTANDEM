@@ -232,7 +232,8 @@ bool mrefine::initialize(){
  *		eg:
  			m_pNewClass = mnewclassmanager::create_mnewclass(m_pProcess->m_xmlValues);
 			if (m_pNewClass == NULL) {
-				cout << "Failed to create NewClass\n";
+//				cout << "Failed to create NewClass\n";
+				Rprintf("Failed to create NewClass\n");
 				return false;
 			}
 			m_pNewClass->set_mprocess(m_pProcess);
@@ -256,7 +257,8 @@ bool mrefine::refine()
  */
 	m_pPMods = mpmodsmanager::create_mpmods(m_pProcess->m_xmlValues);
 	if (m_pPMods == NULL) {
-		cout << "Failed to create mpmods\n";
+//		cout << "Failed to create mpmods\n";
+		Rprintf("Failed to create mpmods\n");
 		return false;
 	}
 	m_pPMods->set_mprocess(m_pProcess);
@@ -287,7 +289,8 @@ bool mrefine::refine()
 	if(strValue == "yes")	{
 		m_pXXCleavage = mxxcleavagemanager::create_mxxcleavage(m_pProcess->m_xmlValues);
 		if (m_pXXCleavage == NULL) {
-			cout << "Failed to create mxxcleavage\n";
+//			cout << "Failed to create mxxcleavage\n";
+			Rprintf("Failed to create mxxcleavage\n");
 			return false;
 		}
 		m_pXXCleavage->set_mprocess(m_pProcess);
@@ -316,7 +319,8 @@ bool mrefine::refine()
 	if(fabs(atof(strValue.c_str())) > 0.001)	{
 		m_pTermMods = mtermmodsmanager::create_mtermmods(m_pProcess->m_xmlValues);
 		if (m_pTermMods == NULL) {
-			cout << "Failed to create mtermmods\n";
+//			cout << "Failed to create mtermmods\n";
+			Rprintf("Failed to create mtermmods\n");
 			return false;
 		}
 		m_pTermMods->set_mprocess(m_pProcess);
@@ -339,7 +343,8 @@ bool mrefine::refine()
 		m_pProcess->m_bRefineCterm = true;
 		m_pTermMods = mtermmodsmanager::create_mtermmods(m_pProcess->m_xmlValues);
 		if (m_pTermMods == NULL) {
-			cout << "Failed to create mtermmods\n";
+//			cout << "Failed to create mtermmods\n";
+			Rprintf("Failed to create mtermmods\n");
 			return false;
 		}
 		m_pTermMods->set_mprocess(m_pProcess);
@@ -359,7 +364,8 @@ bool mrefine::refine()
 		m_pProcess->m_bSaps = false;
 		m_pPam = mpammanager::create_mpam(m_pProcess->m_xmlValues);
 		if (m_pPam == NULL) {
-			cout << "Failed to create mpam\n";
+//			cout << "Failed to create mpam\n";
+			Rprintf("Failed to create mpam\n");
 			return false;
 		}
 		m_pPam->set_mprocess(m_pProcess);
@@ -374,14 +380,16 @@ bool mrefine::refine()
  * finish up and return
  */
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-		cout << "\tfinishing refinement ... ";
-		cout.flush();
+//		cout << "\tfinishing refinement ... ";
+		Rprintf("\tfinishing refinement ... ");
+		//cout.flush();
 	}
 	m_pProcess->m_tRefineModels = m_pProcess->m_vseqBest.size();
 	m_pProcess->m_vseqBest.clear();
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-		cout << "done.\n";
-		cout.flush();
+//		cout << "done.\n";
+		Rprintf("done.\n");
+		//cout.flush();
 	}
 	return true;
 }

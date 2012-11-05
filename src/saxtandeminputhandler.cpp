@@ -180,7 +180,8 @@ bool SAXTandemInputHandler::load(){
  */
 	ifXml.open(m_strXmlPath.c_str());
 	if(ifXml.fail()){
-		cout << "\nFailed to open: \"" << m_strXmlPath.c_str() << "\"\n";
+//		cout << "\nFailed to open: \"" << m_strXmlPath.c_str() << "\"\n";
+		Rprintf("\nFailed to open: \"%s\"\n", m_strXmlPath.c_str());
 		return false;
 	}
 	setFileName( m_strXmlPath.data() );

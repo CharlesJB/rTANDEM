@@ -320,8 +320,9 @@ bool mprocess::add_spectra(vector<mspectrum> &_v)
 	while(a < _v.size())	{
 		m_vSpectra.push_back(_v[a]);
 		if(c == 1000)	{
-			cout << ".";
-			cout.flush();
+//			cout << ".";
+			Rprintf(".");
+			//cout.flush();
 			c = 0;
 		}
 		c++;
@@ -875,7 +876,8 @@ bool mprocess::load(SEXP param, SEXP taxonomy, SEXP saps, SEXP mods, SEXP spectr
 		m_xmlValues.get(strKey,strValue);
 		if(bReturn && strValue == "yes" && (m_lThread == 0 || m_lThread == 0xFFFFFFFF))	{
 			charge();
-			cout << "#";
+//			cout << "#";
+			Rprintf("#");
 		}
 	}
 	if(bReturn)	{
@@ -908,7 +910,8 @@ bool mprocess::load(const char *_f,mprocess *_p)
  */
 	bool bReturn = m_xmlValues.load(strFile);
 	if(!bReturn)	{
-		cout << "The input parameter file \"" << strFile.c_str() << "\" could not be located.\nCheck the file path name and try again.\n";
+//		cout << "The input parameter file \"" << strFile.c_str() << "\" could not be located.\nCheck the file path name and try again.\n";
+		Rprintf("The input parameter file \"%s\" could not be located.\nCheck the file path name and try again.\n", strFile.c_str());
 		return false;
 	}
 /*
@@ -959,7 +962,8 @@ bool mprocess::load(const char *_f,mprocess *_p)
 		m_xmlValues.get(strKey,strValue);
 		if(bReturn && strValue == "yes" && (m_lThread == 0 || m_lThread == 0xFFFFFFFF))	{
 			charge();
-			cout << "#";
+//			cout << "#";
+			Rprintf("#");
 		}
 	}
 	if(bReturn)	{
@@ -1118,8 +1122,9 @@ bool mprocess::mark_repeats()
 		dBestExpect = 1.0e32;
 		tTics++;
 		if(tTics >= tTicLength)	{
-			cout << ".";
-			cout.flush();
+//			cout << ".";
+			Rprintf(".");
+			//cout.flush();
 			tTics = 0;
 		}
 		if(!m_vSpectra[a].m_bRepeat && !m_vSpectra[a].m_vseqBest.empty())	{
@@ -1735,17 +1740,20 @@ bool mprocess::process(void)
 		if(m_lThread == 0 || m_lThread == 0xFFFFFFFF)	{
 			lTics++;
 			if(lTics == 50)	{
-				cout << " | " << (unsigned long)m_tProteinCount/1000 << " ks \n";
-				cout.flush();
+//				cout << " | " << (unsigned long)m_tProteinCount/1000 << " ks \n";
+				Rprintf(" | %l ks \n", (unsigned long)m_tProteinCount/1000l);
+				//cout.flush();
 				m_prcLog.log(".");
 				lTics = 0;
 			}
 			else	{
 				if(lTics == 1)	{
-					cout << "\t";
+//					cout << "\t";
+					Rprintf("\t");
 				}
-				cout << pOut[lOut];
-				cout.flush();
+//				cout << pOut[lOut];
+				Rprintf("%c", pOut[lOut]);
+				//cout.flush();
 				m_prcLog.log(".");
 				lOut++;
 				if(lOut >= lOutLimit)	{
@@ -1814,7 +1822,8 @@ bool mprocess::refine_model()
 {
 	m_pRefine = mrefinemanager::create_mrefine(m_xmlValues);
 	if (m_pRefine == NULL) {
-		cout << "Failed to create mrefine\n";
+//		cout << "Failed to create mrefine\n";
+		Rprintf("Failed to create mrefine\n");
 		return false;
 	}
 	m_pRefine->set_mprocess(this);
@@ -2083,8 +2092,9 @@ bool mprocess::report(void)
 	strKey = "output, results";
 	m_xmlValues.get(strKey,strValue);
 	string strResults = strValue;
-	cout << "\twriting results ";
-	cout.flush();
+//	cout << "\twriting results ";
+	Rprintf("\twriting results ");
+	//cout.flush();
 	m_prcLog.log("writing results");
 	restore();
 	
@@ -2102,8 +2112,9 @@ bool mprocess::report(void)
 	else if(strResults == "stochastic")	{
 		report_stochastic(dMaxExpect);
 	}
-	cout << "..... done.\n";
-	cout.flush();
+//	cout << "..... done.\n";
+	Rprintf("..... done.\n");
+	//cout.flush();
 	m_prcLog.log("report complete");
 	delete pLine;
 	return false;
@@ -2479,8 +2490,9 @@ bool mprocess::report_stochastic(const double _d)
  */
 bool mprocess::report_expect(const double _m)
 {
-	cout << "\tinitial calculations ";
-	cout.flush();
+//	cout << "\tinitial calculations ";
+	Rprintf("\tinitial calculations ");
+	//cout.flush();
 	size_t tLength = m_vSpectra.size();
 	unsigned long a = 0;
 	m_tValid = 0;
@@ -2516,8 +2528,9 @@ bool mprocess::report_expect(const double _m)
 		a++;
 	}
 	vector<mspectrum>::iterator itStart = m_vSpectra.begin();
-	cout << " ..... done.\n\tsorting ";
-	cout.flush();
+//	cout << " ..... done.\n\tsorting ";
+	Rprintf(" ..... done.\n\tsorting ");
+	//cout.flush();
 	string strKey = "output, results";
 	string strValue;
 	m_xmlValues.get(strKey,strValue);
@@ -2534,11 +2547,13 @@ bool mprocess::report_expect(const double _m)
 	m_xmlValues.get(strKey,strValue);
 	bool bSortScores = (strValue != "sequence");
 	unsigned long lSum = (unsigned long)(0.5+dSum/(double)tLength);
-	cout << " ..... done.\n\tfinding repeats ";
-	cout.flush();
+//	cout << " ..... done.\n\tfinding repeats ";
+	Rprintf(" ..... done.\n\tfinding repeats ");
+	//cout.flush();
 	mark_repeats();
-	cout << " done.\n\tevaluating results ";
-	cout.flush();
+//	cout << " done.\n\tevaluating results ";
+	Rprintf(" done.\n\tevaluating results ");
+	//cout.flush();
 	a = 0;
 	tLength = m_vSpectra.size();
 	size_t tUid;
@@ -2551,8 +2566,9 @@ bool mprocess::report_expect(const double _m)
 	while(a < tLength)	{
 		tTics++;
 		if(tTics >= tTicLength)	{
-			cout << ".";
-			cout.flush();
+//			cout << ".";
+			Rprintf(".");
+			//cout.flush();
 			tTics = 0;
 		}
 		dExpect = log10(m_vSpectra[a].m_dExpect);
@@ -2591,8 +2607,9 @@ bool mprocess::report_expect(const double _m)
 	double dBias = (double)m_tPeptideCount/(double)m_tProteinCount;
 	dBias /= (double)m_tTotalResidues/(double)m_tProteinCount;
 	SEQMAP::iterator itValue;
-	cout << " done.\n\tcalculating expectations ";
-	cout.flush();
+//	cout << " done.\n\tcalculating expectations ";
+	Rprintf(" done.\n\tcalculating expectations ");
+	//cout.flush();
 	tTics = 0;
 	map<size_t,double> mapExpect;
 	pair<size_t,double> pairExpect;
@@ -2601,8 +2618,9 @@ bool mprocess::report_expect(const double _m)
 		b = 0;
 		tTics++;
 		if(tTics >= tTicLength)	{
-			cout << ".";
-			cout.flush();
+//			cout << ".";
+			Rprintf(".");
+			//cout.flush();
 			tTics = 0;
 		}
 		itSeq = m_vSpectra[a].m_vseqBest.begin();
@@ -2688,8 +2706,9 @@ bool mprocess::report_expect(const double _m)
 		a++;
 	}
 	a = 0;
-	cout << " done.\n";
-	cout.flush();
+//	cout << " done.\n";
+	Rprintf(" done.\n");
+	//cout.flush();
 	delete plCount;
 	delete pdExpect;
 	return true;
@@ -3316,8 +3335,9 @@ bool mprocess::score_terminus_single(const string &_s)
 			tPips++;
 			if(tPips == tTicMax)	{
 				if(m_lThread == 0 || m_lThread == 0xFFFFFFFF)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					m_prcLog.log(".");
 				}
 				tPips = 0;
@@ -3327,8 +3347,9 @@ bool mprocess::score_terminus_single(const string &_s)
 		tStart = _s.find(',',tAt);
 		if(tStart == _s.npos)
 			break;
-		cout << ". ";
-		cout.flush();
+//		cout << ". ";
+		Rprintf(". ");
+		//cout.flush();
 		tStart++;
 		strValue = _s.substr(tStart,_s.size()-tStart);
 		dValue = atof(strValue.c_str());
@@ -3405,9 +3426,11 @@ bool mprocess::spectra()
 	if(pStream)	{
 		fclose(pStream);
 		if(pValue[0] == 1 && pValue[1] == -95 || (pValue[3] == 'F' && pValue[5] == 'i' && pValue[7] == 'n') )	{
-			cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
-			cout << "Most likely cause: using a Finnigan raw spectrum.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (1)\n\n";
-			cout.flush();
+//			cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
+			Rprintf("\nFailed to read spectrum file: %s\n", strValue.c_str());
+//			cout << "Most likely cause: using a Finnigan raw spectrum.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (1)\n\n";
+			Rprintf("Most likely cause: using a Finnigan raw spectrum.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (1)\n\n");
+			//cout.flush();
 			m_prcLog.log("error reading spectrum file 1");
 			delete pValue;
 			return false;
@@ -3419,9 +3442,11 @@ bool mprocess::spectra()
 			size_t d = 0;
 			while(d < tRead)	{
 				if(pValue[d] == '\0')	{
-					cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
-					cout << "Most likely cause: using a binary spectrum file.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (2)\n\n";
-					cout.flush();
+//					cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
+					Rprintf("\nFailed to read spectrum file: %s\n", strValue.c_str());
+//					cout << "Most likely cause: using a binary spectrum file.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (2)\n\n";
+					Rprintf("Most likely cause: using a binary spectrum file.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (2)\n\n");
+					//cout.flush();
 					m_prcLog.log("error reading spectrum file 2");
 					delete pValue;
 					return false;
@@ -3430,9 +3455,11 @@ bool mprocess::spectra()
 			}
 		}
 		if(strstr(pValue,"<HTML") != NULL || strstr(pValue,"<!DOCTYPE HTML") != NULL || strstr(pValue,"<html") != NULL)	{
-				cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
-				cout << "Most likely cause: using an HTML file.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (2)\n\n";
-				cout.flush();
+//				cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
+				Rprintf("\nFailed to read spectrum file: %s\n", strValue.c_str());
+//				cout << "Most likely cause: using an HTML file.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (2)\n\n";
+				Rprintf("Most likely cause: using an HTML file.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (2)\n\n");
+				//cout.flush();
 				m_prcLog.log("error reading spectrum file 3");
 				delete pValue;
 				return false;
@@ -3450,9 +3477,11 @@ bool mprocess::spectra()
 		ifTest.getline(pValue,1024,'\r');
 		ifTest.close();
 		if(strlen(pValue) == 1023 && !strchr(pValue,'<'))	{
-			cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
-			cout << "Most likely: an unsupported data file type:\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (3)\n\n";
-			cout.flush();
+//			cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
+			Rprintf("\nFailed to read spectrum file: %s\n", strValue.c_str());
+//			cout << "Most likely: an unsupported data file type:\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (3)\n\n";
+			Rprintf("Most likely: an unsupported data file type:\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (3)\n\n");
+			//cout.flush();
 			m_prcLog.log("error reading spectrum file 3");
 			delete pValue;
 			return false;
@@ -3469,13 +3498,15 @@ bool mprocess::spectra()
 	if(bCommon)	{
 		loadcmn ldCmn;
 		if(ldCmn.open(strValue))	{
-			cout << " (cmn).";
+//			cout << " (cmn).";
+			Rprintf(" (cmn).");
 			while(ldCmn.get(spCurrent))	{
 				m_tSpectraTotal++;
 				lLoaded++;
 				if(lLoaded == lLimit)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					lLoaded = 0;
 					m_prcLog.log(".\n");
 				}
@@ -3528,7 +3559,8 @@ bool mprocess::spectra()
 		m_specCondition.use_condition(false);
 		loadgaml ldGaml(m_vSpectra, m_specCondition, *m_pScore);
 		if(ldGaml.open(strValue))	{
-			cout << " (gaml).";
+//			cout << " (gaml).";
+			Rprintf(" (gaml).");
 			ldGaml.get();
 			m_tSpectraTotal = m_vSpectra.size();
 			bContinue = false;
@@ -3542,13 +3574,15 @@ bool mprocess::spectra()
 	if(bContinue)	{
 		loadmatrix ldMatrix;
 		if(ldMatrix.open(strValue))	{
-			cout << " (mgf).";
+//			cout << " (mgf).";
+			Rprintf(" (mgf).");
 			while(ldMatrix.get(spCurrent))	{
 				m_tSpectraTotal++;
 				lLoaded++;
 				if(lLoaded == lLimit)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					lLoaded = 0;
 					m_prcLog.log(".\n");
 				}
@@ -3569,13 +3603,15 @@ bool mprocess::spectra()
 	if(bContinue)	{
 		loadpkl ldPkl;
 		if(ldPkl.open(strValue))	{
-			cout << " (pkl).";
+//			cout << " (pkl).";
+			Rprintf(" (pkl).");
 			while(ldPkl.get(spCurrent))	{
 				m_tSpectraTotal++;
 				lLoaded++;
 				if(lLoaded == lLimit)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					lLoaded = 0;
 					m_prcLog.log(".\n");
 
@@ -3604,7 +3640,8 @@ bool mprocess::spectra()
     loadmzxml ldMzxml( m_vSpectra, m_specCondition, *m_pScore);
     if(ldMzxml.open(strValue))	{
       //Ce .get est different, il va chercher tous les spectres du fichier.
-			cout << " (mzXML).";
+//			cout << " (mzXML).";
+			Rprintf(" (mzXML).");
       ldMzxml.get();
 	  m_tSpectraTotal = m_vSpectra.size();
       bContinue = false;
@@ -3619,7 +3656,8 @@ bool mprocess::spectra()
    loadmzml ldMzml( m_vSpectra, m_specCondition, *m_pScore);
    if(ldMzml.open(strValue))  {
       //Ce .get est different, il va chercher tous les spectres du fichier.
- 			cout << " (mzML).";
+// 			cout << " (mzML).";
+ 			Rprintf(" (mzML).");
      ldMzml.get();
 	  m_tSpectraTotal = m_vSpectra.size();
       bContinue = false;
@@ -3629,7 +3667,8 @@ bool mprocess::spectra()
    loadmzdata ldMzdata( m_vSpectra, m_specCondition, *m_pScore);
     if(ldMzdata.open(strValue))  {
       //Ce .get est different, il va chercher tous les spectres du fichier.
- 			cout << " (mzData).";
+// 			cout << " (mzData).";
+ 			Rprintf(" (mzData).");
      ldMzdata.get();
 	  m_tSpectraTotal = m_vSpectra.size();
       bContinue = false;
@@ -3646,20 +3685,24 @@ bool mprocess::spectra()
 /*
  * report an error if no DTA information was found: there are no more default file types to check
  */
-			cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
-			cout << "Most likely: an unsupported data file type:\nUse dta, pkl, mgf, mzdata (v.1.05) or mxzml (v.2.0) files ONLY! (4)\n\n";
-			cout.flush();
+//			cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
+			Rprintf("\nFailed to read spectrum file: %s\n", strValue.c_str());
+//			cout << "Most likely: an unsupported data file type:\nUse dta, pkl, mgf, mzdata (v.1.05) or mxzml (v.2.0) files ONLY! (4)\n\n";
+			Rprintf("Most likely: an unsupported data file type:\nUse dta, pkl, mgf, mzdata (v.1.05) or mxzml (v.2.0) files ONLY! (4)\n\n");
+			//cout.flush();
 			m_prcLog.log("error loading spectrum file 4");
 			return false;
 		}
 		else	{
-			cout << " (dta).";
+//			cout << " (dta).";
+			Rprintf(" (dta).");
 			while(ldSpec.get(spCurrent))	{
 				m_tSpectraTotal++;
 				lLoaded++;
 				if(lLoaded == lLimit)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					lLoaded = 0;
 					m_prcLog.log(".\n");
 				}
@@ -3751,7 +3794,8 @@ bool mprocess::spectra_force(string &_t,string &_v)
 	mspectrum spCurrent;
 	long lLoaded = 0;
 	long lLimit = 2000;
-	cout << " (" << _t.c_str() << ").";
+//	cout << " (" << _t.c_str() << ").";
+	Rprintf(" (%s).", _t.c_str());
 	if(_t == "gaml")	{
 		bool bState = m_specCondition.m_bCondition;
 		m_specCondition.use_condition(false);
@@ -3769,8 +3813,9 @@ bool mprocess::spectra_force(string &_t,string &_v)
 				m_tSpectraTotal++;
 				lLoaded++;
 				if(lLoaded == lLimit)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					lLoaded = 0;
 					m_prcLog.log(".\n");
 				}
@@ -3794,8 +3839,9 @@ bool mprocess::spectra_force(string &_t,string &_v)
 				m_tSpectraTotal++;
 				lLoaded++;
 				if(lLoaded == lLimit)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					lLoaded = 0;
 					m_prcLog.log(".");
 				}
@@ -3819,8 +3865,9 @@ bool mprocess::spectra_force(string &_t,string &_v)
 				m_tSpectraTotal++;
 				lLoaded++;
 				if(lLoaded == lLimit)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					lLoaded = 0;
 					m_prcLog.log(".");
 				}
@@ -3869,8 +3916,9 @@ bool mprocess::spectra_force(string &_t,string &_v)
 				m_tSpectraTotal++;
 				lLoaded++;
 				if(lLoaded == lLimit)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					m_prcLog.log(".");
 					lLoaded = 0;
 				}
@@ -3885,9 +3933,11 @@ bool mprocess::spectra_force(string &_t,string &_v)
 		}
 	}
 	else	{
-			cout << "\n" << "The file type \"" << _t.c_str() << " is not supported.\n";
-			cout << "Supported values: pkl, dta, mgf, gaml, mzxml, mzdata\n";
-			cout.flush();
+//			cout << "\n" << "The file type \"" << _t.c_str() << " is not supported.\n";
+			Rprintf("\n" << "The file type \"%s\" is not supported.\n", _t.c_str());
+//			cout << "Supported values: pkl, dta, mgf, gaml, mzxml, mzdata\n";
+			Rprintf("Supported values: pkl, dta, mgf, gaml, mzxml, mzdata\n");
+			//cout.flush();
 			m_prcLog.log("error loading forced spectrum file 5");
 			return false;
 	}
@@ -3918,8 +3968,9 @@ bool mprocess::subtract(void)
 {
 	if(m_vSpectra.size() == 0)
 		return false;
-	cout << "+";
-	cout.flush();
+//	cout << "+";
+	Rprintf("+");
+	//cout.flush();
 	string strValue;
 	string strKey = "spectrum, fragment mass error";
 	m_xmlValues.get(strKey,strValue);
@@ -4037,8 +4088,9 @@ bool mprocess::subtract(void)
 		}
 		if(c > 1000)	{
 			if(m_lThread == 0 || m_lThread == 0xFFFFFFFF)	{
-				cout << "+";
-				cout.flush();
+//				cout << "+";
+				Rprintf("+");
+				//cout.flush();
 			}
 			c = 0;
 		}
@@ -4049,8 +4101,9 @@ bool mprocess::subtract(void)
 			a++;
 			itA++;
 			if(c > 1000)	{
-				cout << "+";
-				cout.flush();
+//				cout << "+";
+				Rprintf("+");
+				//cout.flush();
 				c = 0;
 			}
 			c++;
@@ -4094,18 +4147,24 @@ bool mprocess::taxonomy()
  * return false if the load_file method fails
  */
 	if(lReturn == 1)	{
-		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
-		cout << "\" could not be found.\nCheck your settings and try again.\n";
+//		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
+		Rprintf("\nThe taxonomy parameter file \"%s", strTaxonPath.c_str());
+//		cout << "\" could not be found.\nCheck your settings and try again.\n";
+		Rprintf("\" could not be found.\nCheck your settings and try again.\n");
 		return false;
 	}
 	else if(lReturn == 2)	{
-		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
-		cout << "\" did not contain the value \"" << strValue.c_str() << "\".\nCheck your settings and try again.\n";
+//		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
+		Rprintf("\nThe taxonomy parameter file \"%s", strTaxonPath.c_str());
+//		cout << "\" did not contain the value \"" << strValue.c_str() << "\".\nCheck your settings and try again.\n";
+		Rprintf("\" did not contain the value \"%s\".\nCheck your settings and try again.\n", strValue.c_str());
 		return false;
 	}
 	else if(lReturn == 3)	{
-		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
-		cout << "\" contained incorrect entries\nfor the protein sequence files associated with the name: \"" << strValue.c_str() << "\".\nCheck the file names in the taxonomy file and try again.\n";
+//		cout << "\nThe taxonomy parameter file \"" << strTaxonPath.c_str();
+		Rprintf("\nThe taxonomy parameter file \"%s", strTaxonPath.c_str());
+//		cout << "\" contained incorrect entries\nfor the protein sequence files associated with the name: \"" << strValue.c_str() << "\".\nCheck the file names in the taxonomy file and try again.\n";
+		Rprintf("\" contained incorrect entries\nfor the protein sequence files associated with the name: \"%s\".\nCheck the file names in the taxonomy file and try again.\n", strValue.c_str());
 		return false;
 	}
 	return true;
@@ -4173,8 +4232,9 @@ bool mprocess::load_saps(mprocess *_p)
 		a++;
 	}
 	if(!m_vstrSaps.empty())	{
-		cout << " loaded.\nLoading SAPs ";
-		cout.flush();
+//		cout << " loaded.\nLoading SAPs ";
+		Rprintf(" loaded.\nLoading SAPs ");
+		//cout.flush();
 	}
 	a = 0;
 	while(a < m_vstrSaps.size())	{
@@ -4198,8 +4258,9 @@ bool mprocess::load_saps(mprocess *_p)
 			}
 			itMap++;
 		}
-		cout << ".";
-		cout.flush();
+//		cout << ".";
+		Rprintf(".");
+		//cout.flush();
 		a++;
 	}
 	return true;
@@ -4253,8 +4314,9 @@ bool mprocess::load_annotation(mprocess *_p)
 		a++;
 	}
 	if(!m_vstrMods.empty())	{
-		cout << " loaded.\nLoading annotation ";
-		cout.flush();
+//		cout << " loaded.\nLoading annotation ";
+		Rprintf(" loaded.\nLoading annotation ");
+		//cout.flush();
 	}
 	a = 0;
 	while(a < m_vstrMods.size())	{
@@ -4267,8 +4329,9 @@ bool mprocess::load_annotation(mprocess *_p)
 			m_mapAnnotation[itMods->first] = itMods->second;
 			itMods++;
 		}
-		cout << ".";
-		cout.flush();
+//		cout << ".";
+		Rprintf(".");
+		//cout.flush();
 		a++;
 	}
 	return true;
@@ -4286,8 +4349,9 @@ bool mprocess::serialize(void)
 	}
 	FILE *pFile = fopen(strValue.c_str(),"wb");
 	if(!pFile)	{
-		cout << "Warning: serialization did not occur.\n";
-		cout.flush();
+//		cout << "Warning: serialization did not occur.\n";
+		Rprintf("Warning: serialization did not occur.\n");
+		//cout.flush();
 		return false;
 	}
 	vector<mspectrum>::iterator itS = m_vSpectra.begin();
@@ -4326,8 +4390,9 @@ bool mprocess::restore(void)
 	}
 	FILE *pFile = fopen(strValue.c_str(),"rb");
 	if(!pFile || feof(pFile))	{
-		cout << "Warning: could not find serialization file \"" << strValue.c_str() << "\", spectrum restoration not performed.\n";
-		cout.flush();
+//		cout << "Warning: could not find serialization file \"" << strValue.c_str() << "\", spectrum restoration not performed.\n";
+		Rprintf("Warning: could not find serialization file \"%s\", spectrum restoration not performed.\n", strValue.c_str());
+		//cout.flush();
 		return false;
 	}
 	vector<mspectrum>::iterator itS = m_vSpectra.begin();
@@ -4335,8 +4400,9 @@ bool mprocess::restore(void)
 	size_t tLength = 0;
 	fread((void *)&tLength,sizeof(size_t),1,pFile);
 	if(tLength == 0 || feof(pFile))	{
-		cout << "Warning: could not find serialization file \"" << strValue.c_str() << "\" appears to be corrupt.\n";
-		cout.flush();
+//		cout << "Warning: could not find serialization file \"" << strValue.c_str() << "\" appears to be corrupt.\n";
+		Rprintf("Warning: could not find serialization file \"%s\" appears to be corrupt.\n", strValue.c_str());
+		//cout.flush();
 		fclose(pFile);
 		return false;
 	}

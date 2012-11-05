@@ -210,7 +210,8 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	unsigned long lMaxThreads = 16;
 	mprocess **pProcess = new mprocess*[lMaxThreads];
 	if(pProcess == NULL)	{
-		cout << "An error was detected creating the processing objects.\nPlease contact a GPM administrator.\n";
+//		cout << "An error was detected creating the processing objects.\nPlease contact a GPM administrator.\n";
+		Rprintf("An error was detected creating the processing objects.\nPlease contact a GPM administrator.\n");
 //		return -2; // rTANDEM
 		return R_NilValue; // rTANDEM
 	}
@@ -234,8 +235,9 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		a++;
 	}
 	pProcess[0] = new mprocess;
-	cout << "Loading spectra";
-	cout.flush();
+//	cout << "Loading spectra";
+	Rprintf("Loading spectra\n");
+	//cout.flush();
 	/*
 	* Initialize the first mprocess object with the input file name.
 	*/
@@ -249,20 +251,24 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 //		delete pProcess; // rTANDEM
 //		return -4; // rTANDEM
 //	} // rTANDEM
-	cout << " loaded.\n";
+//	cout << " loaded.\n";
+	Rprintf(" loaded.\n");
 	if(pProcess[0]->m_vSpectra.size() == 0)	{
-		cout << "No input spectra met the acceptance criteria.\n";
-		cout.flush();
+//		cout << "No input spectra met the acceptance criteria.\n";
+		Rprintf("No input spectra met the acceptance criteria.\n");
+		//cout.flush();
 		delete pProcess[0];
 		delete pProcess;
 //		return 1; // rTANDEM
 		return R_NilValue; // rTANDEM
 	}
 	pProcess[0]->serialize();
-	cout << "Spectra matching criteria = " << (unsigned long)pProcess[0]->m_vSpectra.size() << "\n";
-	cout.flush();
+//	cout << "Spectra matching criteria = " << (unsigned long)pProcess[0]->m_vSpectra.size() << "\n";
+	Rprintf("Spectra matching criteria = %l\n", (unsigned long)pProcess[0]->m_vSpectra.size());
+	//cout.flush();
 #ifdef PLUGGABLE_SCORING
- 	cout << "Pluggable scoring enabled.\n";
+// 	cout << "Pluggable scoring enabled.\n";
+ 	Rprintf("Pluggable scoring enabled.\n");
 #endif
       /*
 
@@ -288,8 +294,9 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 #endif
 	long lSpectra =	lThreads + (long)pProcess[0]->m_vSpectra.size()/lThreads;
 	bool bSpectra =	true;
-	cout <<	"Starting threads .";
-	cout.flush();
+//	cout <<	"Starting threads .";
+	Rprintf("Starting threads .");
+	//cout.flush();
 	if(lThread != 0xFFFFFFFF)		{
 		while(dCount > 0)		{
 			pProcess[dCount] = new mprocess;
@@ -331,14 +338,16 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		dCount = lThreads - 1;
 		while(dCount > 0)		{
 			if(!pProcess[dCount]->load(pS,pProcess[0]))	{
-				cout <<	"error pProcess->LoadParameters	returned error (main)\r\n";
+//				cout <<	"error pProcess->LoadParameters	returned error (main)\r\n";
+				Rprintf("error pProcess->LoadParameters	returned error (main)\r\n");
 				delete pProcess;
 //				return -4; // rTANDEM
 				return R_NilValue; // rTANDEM
 			}
 			dCount--;
-			cout <<	".";
-			cout.flush();
+//			cout <<	".";
+			Rprintf(".");
+			//cout.flush();
 		}
 	}
 	delete pS;
@@ -363,10 +372,12 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 			dCount++;
 		}
 	}
-	cout << " started.\n";
-	cout.flush();
-	cout << "Computing models:\n";
-	cout.flush();
+//	cout << " started.\n";
+	Rprintf(" started.\n");
+	//cout.flush();
+//	cout << "Computing models:\n";
+	Rprintf("Computing models:\n");
+	//cout.flush();
 	/*
 	* wait until all of the mprocess objects return.
 	*/
@@ -380,20 +391,24 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		wait = WaitForSingleObject(pHandle[a],100);
 		if(a > 0 && wait == WAIT_TIMEOUT)	{
 			if(a == 1)	{
-				cout << "waiting for " << a+1;
+//				cout << "waiting for " << a+1;
+				Rprintf("waiting for %i", a+1);
 			}
 			else	{
-				cout << a+1;
+//				cout << a+1;
+				Rprintf("%i",a+1);
 			}
 			while(wait == WAIT_TIMEOUT)	{
 				wait = WaitForSingleObject(pHandle[a],dwTime);
 				if(wait == WAIT_TIMEOUT)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					iTics++;
 					if(iTics > 50)	{
-						cout << "|\n\t\t";
-						cout.flush();
+//						cout << "|\n\t\t";
+						Rprintf("|\n\t\t");
+						//cout.flush();
 						iTics = 0;
 					}
 				}
@@ -403,30 +418,36 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 			while(wait == WAIT_TIMEOUT)	{
 				wait = WaitForSingleObject(pHandle[a],dwTime);
 				if(wait == WAIT_TIMEOUT)	{
-					cout << ":";
-					cout.flush();
+//					cout << ":";
+					Rprintf(":");
+					//cout.flush();
 				}
 			}
 			if(a == 1)	{
-				cout << "waiting for " << a+1;
+//				cout << "waiting for " << a+1;
+				Rprintf("waiting for %i", a+1);
 			}
 			else if(a == 0)	{
-				cout << "\n\t";
-				cout.flush();
+//				cout << "\n\t";
+				Rprintf("\n\t");
+				//cout.flush();
 			}
 			else	{
-				cout << a+1;
+//				cout << a+1;
+				Rprintf("%i", a+1);
 			}
 		}
 		a++;
 	}
 	if(dCount > 1)	{
-			cout << " done.\n\n";
-			cout.flush();
+//			cout << " done.\n\n";
+			Rprintf(" done.\n\n");
+			//cout.flush();
 	}
 	else	{
-		cout << "\n";
-		cout.flush();
+//		cout << "\n";
+		Rprintf("\n");
+		//cout.flush();
 	}
 #else
 	//2003-03-01:note - the declaration below was changed from void **vp;	
@@ -438,8 +459,9 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		wait = pthread_join(pThreads[x],&vp);
 	}
 #endif
-	cout << "\tsequences modelled = "<< (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5) << " ks\n";
-	cout.flush();
+//	cout << "\tsequences modelled = "<< (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5) << " ks\n";
+	Rprintf("\tsequences modelled = %l ks\n", (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5));
+	//cout.flush();
 	pProcess[0]->merge_spectra();
 	a = 1;
 	/*
@@ -462,8 +484,9 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	* Report the contents of the mprocess objects into an XML file as described
 	* in the input file.
 	*/
-	cout << "Model refinement:\n";
-	cout.flush();
+//	cout << "Model refinement:\n";
+	Rprintf("Model refinement:\n");
+	//cout.flush();
 	dCount = 0;
 #ifdef MSVC
 	pHandle[dCount] = CreateThread(NULL,0,RefineThread,(void *)pProcess[dCount],0,&pId[dCount]);
@@ -496,21 +519,25 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		wait = WaitForSingleObject(pHandle[a],10000);
 		if(a > 0 && wait == WAIT_TIMEOUT)	{
 			if(a == 1)	{
-				cout << "waiting for " << a+1;
+//				cout << "waiting for " << a+1;
+				Rprintf("waiting for %i", a+1);
 			}
 			else	{
-				cout << a+1;
+//				cout << a+1;
+				Rprintf("%i", a+1);
 			}
-			cout.flush();
+			//cout.flush();
 			while(wait == WAIT_TIMEOUT)	{
 				wait = WaitForSingleObject(pHandle[a],dwTime);
 				if(wait == WAIT_TIMEOUT)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					iTics++;
 					if(iTics > 50)	{
-						cout << "|\n\t\t";
-						cout.flush();
+//						cout << "|\n\t\t";
+						Rprintf("|\n\t\t");
+						//cout.flush();
 						iTics = 0;
 					}
 				}
@@ -520,30 +547,36 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 			while(wait == WAIT_TIMEOUT)	{
 				wait = WaitForSingleObject(pHandle[a],dwTime);
 				if(wait == WAIT_TIMEOUT)	{
-					cout << ":";
-					cout.flush();
+//					cout << ":";
+					Rprintf(":");
+					//cout.flush();
 				}
 			}
 			if(a == 1)	{
-				cout << "waiting for " << a+1;
+//				cout << "waiting for " << a+1;
+				Rprintf("waiting for %i", a+1);
 			}
 			else if(a == 0)	{
-				cout << "\n\t";
-				cout.flush();
+//				cout << "\n\t";
+				Rprintf("\n\t");
+				//cout.flush();
 			}
 			else	{
-				cout << a+1;
+//				cout << a+1;
+				Rprintf("%i", a+1);
 			}
 		}
 		a++;
 	}
 	if(dCount > 1)	{
-		cout << " done.\n\n";
-		cout.flush();
+//		cout << " done.\n\n";
+		Rprintf(" done.\n\n");
+		//cout.flush();
 	}
 	else	{
-		cout << "\n";
-		cout.flush();
+//		cout << "\n";
+		Rprintf("\n");
+		//cout.flush();
 	}
 #else
 	//2003-03-01:note - the declaration below was changed from void **vp;	
@@ -558,19 +591,23 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	* merge the results into the first object
 	*/
 	if(dCount > 1)	{
-		cout << "Merging results:\n";
-		cout.flush();
+//		cout << "Merging results:\n";
+		Rprintf("Merging results:\n");
+		//cout.flush();
 	}
 	while(a < dCount)	{
 		if(a == 1)	{
-			cout << "\tfrom " << a+1;
+//			cout << "\tfrom " << a+1;
+			Rprintf("\tfrom %i", a+1);
 		}
 		else	{
-			cout << a+1;
+//			cout << a+1;
+			Rprintf("%i", a+1);
 		}
-		cout.flush();
+		//cout.flush();
 		if(!pProcess[0]->add_spectra(pProcess[a]->m_vSpectra))	{
-			cout << "adding spectra failed.\n";
+//			cout << "adding spectra failed.\n";
+			Rprintf("adding spectra failed.\n");
 		}
 		pProcess[0]->merge_statistics(pProcess[a]);
 		pProcess[a]->clear();
@@ -578,12 +615,14 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		a++;
 	}
 	if(dCount > 1)	{
-		cout << "\n\n";
-		cout.flush();
+//		cout << "\n\n";
+		Rprintf("\n\n");
+		//cout.flush();
 	}
-	cout.flush();
-	cout << "Creating report:\n";
-	cout.flush();
+	//cout.flush();
+//	cout << "Creating report:\n";
+	Rprintf("Creating report:\n");
+	//cout.flush();
 	pProcess[0]->report();
 	Rcpp::CharacterVector pathName(pProcess[0]->getPathName()); // rTANDEM
 	size_t tValid = pProcess[0]->get_valid();
@@ -597,17 +636,23 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	if(dE <= 0.0)	{
 		dE = 1.0;
 	}
-	cout << "\nValid models = " << (unsigned long)tValid << "\n";
+//	cout << "\nValid models = " << (unsigned long)tValid << "\n";
+	Rprintf("\nValid models = %l\n", (unsigned long)tValid);
 	if(tUnique > 0)	{
-		cout << "Unique models = " << (unsigned long)tUnique << "\n";
-		cout << "Estimated false positives = " << lE << " &#177; ";
-		cout << lEe << "\n";
+//		cout << "Unique models = " << (unsigned long)tUnique << "\n";
+		Rprintf("Unique models = %l\n", (unsigned long)tUnique);
+//		cout << "Estimated false positives = " << lE << " &#177; ";
+		Rprintf("Estimated false positives = %l &#177; ", lE);
+//		cout << lEe << "\n";
+		Rprintf("%l\n", lEe);
 	}
 	lE = pProcess[0]->get_reversed();
 	if(lE != -1)	{
-		cout << "False positive rate (reversed sequences) = " << lE << "\n";
+//		cout << "False positive rate (reversed sequences) = " << lE << "\n";
+		Rprintf("False positive rate (reversed sequences) = %l\n", lE);
 	}
-	cout << "\n\n";
+//	cout << "\n\n";
+	Rprintf("\n\n");
 	/*
 	* Delete the mprocess objects and exit
 	*/

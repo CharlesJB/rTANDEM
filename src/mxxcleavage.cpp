@@ -197,8 +197,9 @@ bool mxxcleavage::refine(){
 		m_pProcess->m_semiState.activate(true);
 	}
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-		cout << "\tunanticipated cleavage ";
-		cout.flush();
+//		cout << "\tunanticipated cleavage ";
+		Rprintf("\tunanticipated cleavage ");
+		//cout.flush();
 		m_pProcess->m_prcLog.log("unanticipated cleavage");
 	}
 	m_pProcess->create_rollback(vspRollback);
@@ -211,8 +212,9 @@ bool mxxcleavage::refine(){
 		tPips++;
 		if(tPips == tTicMax)	{
 			if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-				cout << ".";
-				cout.flush();
+//				cout << ".";
+				Rprintf(".");
+				//cout.flush();
 				m_pProcess->m_prcLog.log(".");
 			}
 			tPips = 0;
@@ -239,10 +241,11 @@ bool mxxcleavage::refine(){
 	m_pProcess->m_tMissedCleaves = tMissedCleaves;
 	m_pProcess->m_semiState.activate(bSemi);
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-		cout << " done.\n";
+//		cout << " done.\n";
+		Rprintf(" done.\n");
 		m_pProcess->m_prcLog.log("done");
 	}
-	cout.flush();
+	//cout.flush();
 	return true;
 }
 

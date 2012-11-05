@@ -177,10 +177,12 @@ bool mtermmods::refine(){
 	m_pProcess->m_xmlValues.get(strKey,strValue);
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
 		if(m_pProcess->m_bRefineCterm)
-			cout << "\tmodified C-terminus ";
+//			cout << "\tmodified C-terminus ";
+			Rprintf("\tmodified C-terminus ");
 		else
-			cout << "\tmodified N-terminus ";
-		cout.flush();
+//			cout << "\tmodified N-terminus ";
+			Rprintf("\tmodified N-terminus ");
+		//cout.flush();
 		m_pProcess->m_prcLog.log("modified terminus");
 	}
 	m_pProcess->create_rollback(vspRollback);
@@ -209,10 +211,11 @@ bool mtermmods::refine(){
 	m_pProcess->rollback(vspRollback,m_dMaxExpect,0.1);
 	m_pProcess->m_tActive = tActiveNow;
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-		cout << " done.\n";
+//		cout << " done.\n";
+		Rprintf(" done.\n");
 		m_pProcess->m_prcLog.log("done");
 	}
-	cout.flush();
+	//cout.flush();
 
 	return true;
 }

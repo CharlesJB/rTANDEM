@@ -204,8 +204,9 @@ bool mpmods::refine()
 		m_pProcess->m_semiState.activate(false);
 	}
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-		cout << "\tpartial cleavage ";
-		cout.flush();
+//		cout << "\tpartial cleavage ";
+		Rprintf("\tpartial cleavage ");
+		//cout.flush();
 	}
 
 	strKey = "refine, potential modification mass";
@@ -224,8 +225,9 @@ bool mpmods::refine()
 		tPips++;
 		if(tPips == tTicMax)	{
 			if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-				cout << ".";
-				cout.flush();
+//				cout << ".";
+				Rprintf(".");
+				//cout.flush();
 				m_pProcess->m_prcLog.log(".");
 			}
 			tPips = 0;
@@ -250,10 +252,12 @@ bool mpmods::refine()
 	m_pProcess->m_strLastMods.clear();
 	while(strMods.find('@') != strMods.npos || strMotifs.find('@') != strMotifs.npos)	{
 		if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-			cout << " done.\n";
+//			cout << " done.\n";
+			Rprintf(" done.\n");
 			m_pProcess->m_prcLog.log("done");
-			cout << "\tpartial cleavage " << lPMCount << " ";
-			cout.flush();
+//			cout << "\tpartial cleavage " << lPMCount << " ";
+			Rprintf("\tpartial cleavage %l ", lPMCount);
+			//cout.flush();
 		}
 		m_pProcess->m_pScore->m_seqUtil.modify_maybe(strMods);
 		m_pProcess->m_pScore->m_seqUtil.modify_motif(strMotifs);
@@ -267,9 +271,10 @@ bool mpmods::refine()
 			tPips++;
 			if(tPips == tTicMax)	{
 				if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-					cout << ".";
+//					cout << ".";
+					Rprintf(".");
 					m_pProcess->m_prcLog.log(".");
-					cout.flush();
+					//cout.flush();
 				}
 				tPips = 0;
 			}
@@ -315,8 +320,9 @@ bool mpmods::refine()
 	}
 
 	if(m_pProcess->m_lThread == 0 || m_pProcess->m_lThread == 0xFFFFFFFF)	{
-		cout << " done.\n";
-		cout.flush();
+//		cout << " done.\n";
+		Rprintf(" done.\n");
+		//cout.flush();
 	}
 	m_pProcess->m_bAnnotation = false;
 	m_pProcess->m_strLastMods.clear();

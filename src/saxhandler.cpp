@@ -368,9 +368,12 @@ void SAXSpectraHandler::decode32(bool bM /*= true*/, bool bI /*= true*/)
 		// an additional check of the data file integrity can be performed
 		int length = b64_decode_mio( (char*) pDecoded , (char*) pData, stringSize );
 		if(length != size) {
-			cout << " decoded size " << length << " and required size " << (unsigned long)size << " dont match:\n";
-			cout << " Cause: possible corrupted file.\n";
-			exit(EXIT_FAILURE);
+//			cout << " decoded size " << length << " and required size " << (unsigned long)size << " dont match:\n";
+			Rprintf(" decoded size %i and required size %l dont match:\n", length, (unsigned long)size);
+//			cout << " Cause: possible corrupted file.\n";
+			Rprintf(" Cause: possible corrupted file.\n");
+			//exit(EXIT_FAILURE);
+			return;
 		}
 	}
 		// And byte order correction
@@ -418,9 +421,12 @@ void SAXSpectraHandler::decode64(bool bM /*= true*/, bool bI /*= true*/)
 		// an additional check of the data file integrity can be performed
 		int length = b64_decode_mio( (char*) pDecoded , (char*) pData, stringSize );
 		if(length != size) {
-			cout << " decoded size " << length << " and required size " << (unsigned long)size << " dont match:\n";
-			cout << " Cause: possible corrupted file.\n";
-			exit(EXIT_FAILURE);
+//			cout << " decoded size " << length << " and required size " << (unsigned long)size << " dont match:\n";
+			Rprintf(" decoded size %i and required size dont match:\n", length, (unsigned long)size);
+//			cout << " Cause: possible corrupted file.\n";
+			Rprintf(" Cause: possible corrupted file.\n");
+			//exit(EXIT_FAILURE);
+			return;
 		}
 	}
 		// And byte order correction
@@ -542,8 +548,9 @@ void SAXSpectraHandler::pushSpectrum(int charge)
 		m_pvSpec->push_back(m_specCurrent);
 		m_lLoaded++;
 		if(m_lLoaded == lLimit)	{
-			cout << ".";
-			cout.flush();
+//			cout << ".";
+			Rprintf(".");
+			//cout.flush();
 			m_lLoaded = 0;
 		}
 	}

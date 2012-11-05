@@ -84,12 +84,12 @@ void SAXMzmlHandler::startElement(const XML_Char *el, const XML_Char **attr)
 		const char* groupName = getAttrValue("id", attr);
 		m_ccurrentRefGroupName = string(groupName);
 		m_bInRefGroup = true;
-		cout.flush();
+		//cout.flush();
 	}
 	else if (isElement("cvParam", el))
 	{
 		const char* name = getAttrValue("name", attr);
-		cout.flush();
+		//cout.flush();
 		const char* accession = getAttrValue("accession", attr);
 		const char* value = getAttrValue("value", attr);
 		if (m_bInRefGroup)
@@ -188,8 +188,10 @@ void SAXMzmlHandler::processCVParam(const char* name, const char* accession, con
 		m_bInmzArrayBinary = false;
 	}
 	else if(!strcmp(name, "zlib compression") || !strcmp(accession,"MS:1000574"))	{
-		cout << "<br>Fatal error: non-standard CODEC used for mzML peak data (CODEC type=" << name << ").<br>File cannot be interpreted.<br>\n";
-		exit(-10);
+//		cout << "<br>Fatal error: non-standard CODEC used for mzML peak data (CODEC type=" << name << ").<br>File cannot be interpreted.<br>\n";
+		Rprintf("<br>Fatal error: non-standard CODEC used for mzML peak data (CODEC type=%s).<br>File cannot be interpreted.<br>\n", name);
+		//exit(-10);
+		return;
 	}
 }
 

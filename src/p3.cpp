@@ -178,32 +178,35 @@ bool lessThanSpec(const mspectrum &_l,const mspectrum &_r)
 
 int main(int argc, char* argv[])
 {
+/* rTandem comments - Begin */
 	/*
 	* Check the argv array for at least one parameter.
 	* mprocess checks the validity of the file.
 	*/
-	if(argc < 2 || argc > 1 && strstr(argv[1],"-L") == argv[1] || argc > 1 && strstr(argv[1],"-h") == argv[1])	{
-		cout << "\n\nUSAGE: p3 filename\n\nwhere filename is any valid path to an XML input file.\n\n+-+-+-+-+-+-+\n";
- 		cout << "\nX! P3 " << VERSION << "\n";
-		cout << "\nCopyright (C) 2003-2011 Ronald C Beavis, all rights reserved\n";
- 		cout << "This software is a component of the GPM  project.\n";
-		cout << "Use of this software governed by the Artistic license.\n";
-		cout << "If you do not have this license, you can get a copy at\n";
-		cout << "http://www.perl.com/pub/a/language/misc/Artistic.html\n";
-		cout << "\n+-+-+-+-+-+-+\n\npress <Enter> to continue ...";
-		char *pValue = new char[128];
-		cin.getline(pValue,127);
-		delete pValue;
-		return -1;
-	}
-	cout << "\nX! P3 " << VERSION << "\n\n";
+//	if(argc < 2 || argc > 1 && strstr(argv[1],"-L") == argv[1] || argc > 1 && strstr(argv[1],"-h") == argv[1])	{
+//		cout << "\n\nUSAGE: p3 filename\n\nwhere filename is any valid path to an XML input file.\n\n+-+-+-+-+-+-+\n";
+// 		cout << "\nX! P3 " << VERSION << "\n";
+//		cout << "\nCopyright (C) 2003-2011 Ronald C Beavis, all rights reserved\n";
+// 		cout << "This software is a component of the GPM  project.\n";
+//		cout << "Use of this software governed by the Artistic license.\n";
+//		cout << "If you do not have this license, you can get a copy at\n";
+//		cout << "http://www.perl.com/pub/a/language/misc/Artistic.html\n";
+//		cout << "\n+-+-+-+-+-+-+\n\npress <Enter> to continue ...";
+//		char *pValue = new char[128];
+//		cin.getline(pValue,127);
+//		delete pValue;
+//		return -1;
+//	}
+//	cout << "\nX! P3 " << VERSION << "\n\n";
+/* rTandem comments - End */
 	/*
 	* Create an mprocess object array
 	*/
 	unsigned long lMaxThreads = 16;
 	p3mprocess **pProcess = new p3mprocess*[lMaxThreads];
 	if(pProcess == NULL)	{
-		cout << "An error was detected creating the processing objects.\nPlease contact a GPM administrator.\n";
+//		cout << "An error was detected creating the processing objects.\nPlease contact a GPM administrator.\n";
+		Rprintf("An error was detected creating the processing objects.\nPlease contact a GPM administrator.\n");
 		return -2;
 	}
 	unsigned long a = 0;
@@ -221,30 +224,36 @@ int main(int argc, char* argv[])
 
 #endif
 	pProcess[0] = new p3mprocess;
-	cout << "Loading spectra";
-	cout.flush();
+//	cout << "Loading spectra";
+	Rprintf("Loading spectra");
+	//cout.flush();
 	/*
 	* Initialize the first mprocess object with the input file name.
 	*/
 	if(!pProcess[0]->load(argv[1]))	{
-		cout << "\n\nAn error was detected while loading the input parameters.\nPlease follow the advice above or contact a GPM administrator to help you.";
+//		cout << "\n\nAn error was detected while loading the input parameters.\nPlease follow the advice above or contact a GPM administrator to help you.";
+		Rprintf("\n\nAn error was detected while loading the input parameters.\nPlease follow the advice above or contact a GPM administrator to help you.");
 		delete pProcess[0];
 		delete pProcess;
 		return -4;
 	}
-	cout << " loaded.\n";
+//	cout << " loaded.\n";
+	Rprintf(" loaded.\n");
 	if(pProcess[0]->m_vSpectra.size() == 0)	{
-		cout << "No input spectra met the acceptance criteria.\n";
-		cout.flush();
+//		cout << "No input spectra met the acceptance criteria.\n";
+		Rprintf("No input spectra met the acceptance criteria.\n");
+		//cout.flush();
 		delete pProcess[0];
 		delete pProcess;
 		return 1;
 	}
 	pProcess[0]->serialize();
-	cout << "Spectra matching criteria = " << (unsigned long)pProcess[0]->m_vSpectra.size() << "\n";
-	cout.flush();
+//	cout << "Spectra matching criteria = " << (unsigned long)pProcess[0]->m_vSpectra.size() << "\n";
+	Rprintf("Spectra matching criteria = %l, \n", (unsigned long)pProcess[0]->m_vSpectra.size());
+	//cout.flush();
 #ifdef PLUGGABLE_SCORING
- 	cout << "Pluggable scoring enabled.\n";
+// 	cout << "Pluggable scoring enabled.\n";
+ 	Rprintf("Pluggable scoring enabled.\n");
 #endif
       /*
 
@@ -270,8 +279,9 @@ int main(int argc, char* argv[])
 #endif
 	long lSpectra =	lThreads + (long)pProcess[0]->m_vSpectra.size()/lThreads;
 	bool bSpectra =	true;
-	cout <<	"Starting threads .";
-	cout.flush();
+//	cout <<	"Starting threads .";
+	Rprintf("Starting threads .");
+	//cout.flush();
 	if(lThread != 0xFFFFFFFF)		{
 		while(dCount > 0)		{
 			pProcess[dCount] = new p3mprocess;
@@ -312,13 +322,15 @@ int main(int argc, char* argv[])
 		dCount = lThreads - 1;
 		while(dCount > 0)		{
 			if(!pProcess[dCount]->load(argv[1],pProcess[0]))	{
-				cout <<	"error pProcess->LoadParameters	returned error (main)\r\n";
+//				cout <<	"error pProcess->LoadParameters	returned error (main)\r\n";
+				Rprintf("error pProcess->LoadParameters	returned error (main)\r\n");
 				delete pProcess;
 				return -4;
 			}
 			dCount--;
-			cout <<	".";
-			cout.flush();
+//			cout <<	".";
+			Rprintf(".");
+			//cout.flush();
 		}
 	}
 	dCount = 0;
@@ -342,10 +354,12 @@ int main(int argc, char* argv[])
 			dCount++;
 		}
 	}
-	cout << " started.\n";
-	cout.flush();
-	cout << "Computing models:\n";
-	cout.flush();
+//	cout << " started.\n";
+	Rprintf(" started.\n");
+	//cout.flush();
+//	cout << "Computing models:\n";
+	Rprintf("Computing models:\n");
+	//cout.flush();
 	/*
 	* wait until all of the mprocess objects return.
 	*/
@@ -359,20 +373,24 @@ int main(int argc, char* argv[])
 		wait = WaitForSingleObject(pHandle[a],100);
 		if(a > 0 && wait == WAIT_TIMEOUT)	{
 			if(a == 1)	{
-				cout << "waiting for " << a+1;
+//				cout << "waiting for " << a+1;
+				Rprintf("waiting for %i", a+1);
 			}
 			else	{
-				cout << a+1;
+//				cout << a+1;
+				Rprintf("%i", a+1);
 			}
 			while(wait == WAIT_TIMEOUT)	{
 				wait = WaitForSingleObject(pHandle[a],dwTime);
 				if(wait == WAIT_TIMEOUT)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 					iTics++;
 					if(iTics > 50)	{
-						cout << "|\n\t\t";
-						cout.flush();
+//						cout << "|\n\t\t";
+						Rprintf("|\n\t\t");
+						//cout.flush();
 						iTics = 0;
 					}
 				}
@@ -382,30 +400,36 @@ int main(int argc, char* argv[])
 			while(wait == WAIT_TIMEOUT)	{
 				wait = WaitForSingleObject(pHandle[a],dwTime);
 				if(wait == WAIT_TIMEOUT)	{
-					cout << ":";
-					cout.flush();
+//					cout << ":";
+					Rprintf(":");
+					//cout.flush();
 				}
 			}
 			if(a == 1)	{
-				cout << "waiting for " << a+1;
+//				cout << "waiting for " << a+1;
+				Rprintf("waiting for %i", a+1);
 			}
 			else if(a == 0)	{
-				cout << "\n\t";
-				cout.flush();
+//				cout << "\n\t";
+				Rprintf("\n\t");
+				//cout.flush();
 			}
 			else	{
-				cout << a+1;
+//				cout << a+1;
+				Rprintf("%i", a+1);
 			}
 		}
 		a++;
 	}
 	if(dCount > 1)	{
-			cout << " done.\n\n";
-			cout.flush();
+//			cout << " done.\n\n";
+			Rprintf(" done.\n\n");
+			//cout.flush();
 	}
 	else	{
-		cout << "\n";
-		cout.flush();
+//		cout << "\n";
+		Rprintf("\n");
+		//cout.flush();
 	}
 #else
 	//2003-03-01:note - the declaration below was changed from void **vp;	
@@ -417,8 +441,9 @@ int main(int argc, char* argv[])
 		wait = pthread_join(pThreads[x],&vp);
 	}
 #endif
-	cout << "\tsequences modelled = "<< (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5) << " ks\n";
-	cout.flush();
+//	cout << "\tsequences modelled = "<< (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5) << " ks\n";
+	Rprintf("\tsequences modelled = %l ks\n", (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5));
+	//cout.flush();
 	pProcess[0]->merge_spectra();
 	a = 1;
 	/*
@@ -441,8 +466,9 @@ int main(int argc, char* argv[])
 	* Report the contents of the mprocess objects into an XML file as described
 	* in the input file.
 	*/
-	cout << "Model refinement:\n";
-	cout.flush();
+//	cout << "Model refinement:\n";
+	Rprintf("Model refinement:\n");
+	//cout.flush();
 	dCount = 0;
 #ifdef MSVC
 	pHandle[dCount] = CreateThread(NULL,0,RefineThread,(void *)pProcess[dCount],0,&pId[dCount]);
@@ -475,22 +501,26 @@ int main(int argc, char* argv[])
 		wait = WaitForSingleObject(pHandle[a],10000);
 		if(a > 0 && wait == WAIT_TIMEOUT)	{
 			if(a == 1)	{
-				cout << "waiting for " << a+1;
+//				cout << "waiting for " << a+1;
+				Rprintf("waiting for %i", a+1);
 			}
 			else	{
-				cout << a+1;
+//				cout << a+1;
+				Rprintf("%i", a+1);
 			}
-			cout.flush();
+			//cout.flush();
 			while(wait == WAIT_TIMEOUT)	{
 				wait = WaitForSingleObject(pHandle[a],dwTime);
 				if(wait == WAIT_TIMEOUT)	{
-					cout << ".";
-					cout.flush();
+//					cout << ".";
+					Rprintf(".");
+					//cout.flush();
 				}
 				iTics++;
 				if(iTics > 50)	{
-					cout << "|\n\t\t";
-					cout.flush();
+//					cout << "|\n\t\t";
+					Rprintf("|\n\t\t");
+					//cout.flush();
 					iTics = 0;
 				}
 			}
@@ -499,30 +529,36 @@ int main(int argc, char* argv[])
 			while(wait == WAIT_TIMEOUT)	{
 				wait = WaitForSingleObject(pHandle[a],dwTime);
 				if(wait == WAIT_TIMEOUT)	{
-					cout << ":";
-					cout.flush();
+//					cout << ":";
+					Rprintf(":");
+					//cout.flush();
 				}
 			}
 			if(a == 1)	{
-				cout << "waiting for " << a+1;
+//				cout << "waiting for " << a+1;
+				Rprintf("waiting for %i", a+1);
 			}
 			else if(a == 0)	{
-				cout << "\n\t";
-				cout.flush();
+//				cout << "\n\t";
+				Rprintf("\n\t");
+				//cout.flush();
 			}
 			else	{
-				cout << a+1;
+//				cout << a+1;
+				Rprintf("%i", a+1);
 			}
 		}
 		a++;
 	}
 	if(dCount > 1)	{
-		cout << " done.\n\n";
-		cout.flush();
+//		cout << " done.\n\n";
+		Rprintf(" done.\n\n");
+		//cout.flush();
 	}
 	else	{
-		cout << "\n";
-		cout.flush();
+//		cout << "\n";
+		Rprintf("\n");
+		//cout.flush();
 	}
 #else
 	//2003-03-01:note - the declaration below was changed from void **vp;	
@@ -537,19 +573,23 @@ int main(int argc, char* argv[])
 	* merge the results into the first object
 	*/
 	if(dCount > 1)	{
-		cout << "Merging results:\n";
-		cout.flush();
+//		cout << "Merging results:\n";
+		Rprintf("Merging results:\n");
+		//cout.flush();
 	}
 	while(a < dCount)	{
 		if(a == 1)	{
-			cout << "\tfrom " << a+1;
+//			cout << "\tfrom " << a+1;
+			Rprintf("\tfrom %i", a+1);
 		}
 		else	{
-			cout << a+1;
+//			cout << a+1;
+			Rprintf("%i", a+1);
 		}
-		cout.flush();
+		//cout.flush();
 		if(!pProcess[0]->add_spectra(pProcess[a]->m_vSpectra))	{
-			cout << "adding spectra failed.\n";
+//			cout << "adding spectra failed.\n";
+			Rprintf("adding spectra failed.\n");
 		}
 		pProcess[0]->merge_statistics(pProcess[a]);
 		pProcess[a]->clear();
@@ -557,12 +597,14 @@ int main(int argc, char* argv[])
 		a++;
 	}
 	if(dCount > 1)	{
-		cout << "\n\n";
-		cout.flush();
+//		cout << "\n\n";
+		Rprintf("\n\n");
+		//cout.flush();
 	}
-	cout.flush();
-	cout << "Creating report:\n";
-	cout.flush();
+	//cout.flush();
+//	cout << "Creating report:\n";
+	Rprintf("Creating report:\n");
+	//cout.flush();
 	pProcess[0]->report();
 	size_t tValid = pProcess[0]->get_valid();
 	size_t tUnique = pProcess[0]->get_unique();
@@ -575,17 +617,23 @@ int main(int argc, char* argv[])
 	if(dE <= 0.0)	{
 		dE = 1.0;
 	}
-	cout << "\nValid models = " << (unsigned long)tValid << "\n";
+//	cout << "\nValid models = " << (unsigned long)tValid << "\n";
+	Rprintf("\nValid models = %l\n", (unsigned long)tValid);
 	if(tUnique > 0)	{
-		cout << "Unique models = " << (unsigned long)tUnique << "\n";
-		cout << "Estimated false positives = " << lE << " &#177; ";
-		cout << lEe << "\n";
+//		cout << "Unique models = " << (unsigned long)tUnique << "\n";
+		Rprintf("Unique models = %l\n", (unsigned long)tUnique);
+//		cout << "Estimated false positives = " << lE << " &#177; ";
+		Rprintf("Estimated false positives = %l &#177; ", lE);
+//		cout << lEe << "\n";
+		Rprintf("%l\n", lEe);
 	}
 	lE = pProcess[0]->get_reversed();
 	if(lE != -1)	{
-		cout << "False positive rate (reversed sequences) = " << lE << "\n";
+//		cout << "False positive rate (reversed sequences) = " << lE << "\n";
+		Rprintf("False positive rate (reversed sequences) = %l\n", lE);
 	}
-	cout << "\n\n";
+//	cout << "\n\n";
+	Rprintf("\n\n");
 	/*
 	* Delete the mprocess objects and exit
 	*/

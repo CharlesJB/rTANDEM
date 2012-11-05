@@ -160,7 +160,8 @@ mplugin* mpluginmanager::create_plugin(const char* _type, const char* _spec)
 	map<string, mpluginfactory*>::iterator it = m_mapFactories.find(key);
 	if (it == m_mapFactories.end())
 	{
-		cout << "Error: The plug-in '" << key << "' is not registered.";
+//		cout << "Error: The plug-in '" << key << "' is not registered.";
+		Rprintf("Error: The plug-in '%s' is not registered.", key.c_str());
 		return NULL;
 	}
 

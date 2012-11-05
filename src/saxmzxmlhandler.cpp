@@ -59,8 +59,10 @@ void SAXMzxmlHandler::startElement(const XML_Char *el, const XML_Char **attr)
 		m_bLowPrecision = (strcmp("64", getAttrValue("precision", attr)) != 0);
 		const char *pcompressionType = getAttrValue("compressionType", attr);
 		if(strlen(pcompressionType) != 0 && !strstr(pcompressionType,"none"))	{
-			cout << "Non-standard CODEC used for mzXML peak data (CODEC type=" << pcompressionType << "): file cannot be interpreted.\n";
-			exit(-10);
+//			cout << "Non-standard CODEC used for mzXML peak data (CODEC type=" << pcompressionType << "): file cannot be interpreted.\n";
+			Rprintf("Non-standard CODEC used for mzXML peak data (CODEC type=%s): file cannot be interpreted.\n", pcompressionType);
+			//exit(-10);
+			return;
 		}
 	}
 	else if(isElement("precursorMz", el))
