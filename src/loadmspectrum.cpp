@@ -422,8 +422,6 @@ bool loadmatrix::get(mspectrum &_m)
 {
 	char *pLine = new char[m_tSize];
 	char *pValue;
-	bool bFirst = true;
-	long lId = 0;
 	string strTemp;
 	mspectrum specCurrent;
 	specCurrent.m_strDescription.erase(specCurrent.m_strDescription.begin(),specCurrent.m_strDescription.end());
@@ -437,7 +435,6 @@ bool loadmatrix::get(mspectrum &_m)
 			break;
 	}
 	mi miCurrent;
-	bool bNext = true;
 /*
  * create a temporary mspectrum object
  */
@@ -604,7 +601,6 @@ bool loadpkl::get(mspectrum &_m)
 	char *pLine = new char[m_tSize];
 	char *pValue;
 	bool bFirst = true;
-	long lId = 0;
 	mi miCurrent;
 	bool bNext = true;
 /*
@@ -825,7 +821,6 @@ bool loaddta::get(mspectrum &_m)
 	char *pLine = new char[m_tSize];
 	char *pValue;
 	bool bFirst = true;
-	long lId = 0;
 	mi miCurrent;
 	bool bNext = true;
 /*
@@ -1019,9 +1014,7 @@ bool loadcmn::get(mspectrum &_m)
 	}
 	char *pLine = new char[256];
 	size_t tLength = 255;
-	long lId = 0;
 	mi miCurrent;
-	bool bNext = true;
 /*
  * create a temporary mspectrum object 
  */
@@ -1032,16 +1025,22 @@ bool loadcmn::get(mspectrum &_m)
 	unsigned int iValue = 0;
 	float fValue = 0.0;
 	double dValue = 0.0;
-	size_t tS = 0;
-	tS = fread((void *)&iValue,sizeof(unsigned int),1,m_pFile);
+
+	size_t tS = fread((void *)&iValue,sizeof(unsigned int),1,m_pFile);
+	tS++;
+
 	m_tId = iValue;
 	tS = fread((void *)&dValue,sizeof(double),1,m_pFile);
+
 	specCurrent.m_dMH = dValue;
+
 	tS = fread((void *)&cValue,1,1,m_pFile);
+
 	specCurrent.m_fZ = (float)cValue;
 	if(m_iVersion == 2)	{
 		unsigned int iValue = 0;
 		tS = fread((void *)&iValue,4,1,m_pFile);
+
 		if(iValue > tLength)	{
 			tLength = iValue + 255;
 			delete pLine;
@@ -1063,7 +1062,9 @@ bool loadcmn::get(mspectrum &_m)
 		specCurrent.m_uiType = I_B|I_Y;
 	}
 	fValue = 0.0;
+
 	tS = fread((void *)&fValue,sizeof(float),1,m_pFile);
+
 	float fIntensity = fValue;
 	cValue = 0;
 	tS = fread((void *)&cValue,1,1,m_pFile);
@@ -1136,6 +1137,8 @@ bool loadcmn::open(string &_s)
  */
 	char *pLine = new char[m_tSize];
 	size_t tS = fread((void *)pLine,1,256,m_pFile);
+	tS++;
+
 	pLine[255] = '\0';
 	string strTemp = pLine;
 	if(strTemp.find("CMN ") != 0)	{

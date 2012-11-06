@@ -283,9 +283,6 @@ bool mspectrumcondition::condition(mspectrum &_s, mscore &_score)
 			}
 		}
 	}
-	size_t tSize = _s.m_vMI.size();
-	size_t a = 0;
-	float fMaxI = 0;
 /*
  * this method doesn't really remove isotopes: it cleans up multiple intensities within one Dalton
  * of each other.

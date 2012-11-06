@@ -407,7 +407,8 @@ bool mscore::add_B(const unsigned long _t,const long _c)
 		lValue = mconvert(dValue, dZ);
 #endif
 		m_plSeq[lCount] = lValue;
-		m_pfSeq[lCount] = pfScore[tC]*pfScorePlus[m_pSeq[a+1]];
+		int index = m_pSeq[a+1];
+		m_pfSeq[lCount] = pfScore[tC]*pfScorePlus[index];
 		if(a == 1)	{
 			if(m_pSeq[1] == 'P')	{
 				m_pfSeq[lCount] *= 10;
@@ -484,7 +485,8 @@ bool mscore::add_C(const unsigned long _t,const long _c)
 		lValue = mconvert(dValue, dZ);
 #endif
 		m_plSeq[lCount] = lValue;
-		m_pfSeq[lCount] = pfScore[tC]*pfScorePlus[m_pSeq[a+1]];
+		int index = m_pSeq[a+1];
+		m_pfSeq[lCount] = pfScore[tC]*pfScorePlus[index];
 		lCount++;
 		a++;
 	}
@@ -524,7 +526,6 @@ bool mscore::add_X(const unsigned long _t,const long _c)
  */
 	size_t tC = 0;
 	unsigned long lCount = 0;
-	float fSub = 0.0;
 	float *pfScore = m_pSeqUtilFrag->m_pfXScore;
 /*
  * from C- to N-terminus, calcuate fragment ion m/z values and store the results
@@ -585,14 +586,12 @@ bool mscore::add_Y(const unsigned long _t,const long _c)
 	}
 	dValue += m_pSeqUtilFrag->m_pdAaFullMod[']'];
 /*
-/*
  * deal with protein C-teminus
  */
 	if(m_bIsC)	{
 		dValue +=  m_pSeqUtilFrag->m_fCT;		
 	}
 	unsigned long lCount = 0;
-	float fSub = 0.0;
 	float *pfScore = m_pSeqUtilFrag->m_pfYScore;
 	float *pfScoreMinus = m_pSeqUtilFrag->m_pfBScore;
 /*
@@ -629,13 +628,15 @@ bool mscore::add_Y(const unsigned long _t,const long _c)
 		if(bZero)	{
 			if(a < 5)	{
 				m_plSeq[lCount] = lValue;
-				m_pfSeq[lCount] = pfScore[tC]*pfScoreMinus[m_pSeq[a-1]];
+				int index = m_pSeq[a-1];
+				m_pfSeq[lCount] = pfScore[tC]*pfScoreMinus[index];
 				lCount++;
 			}
 		}
 		else	{
 			m_plSeq[lCount] = lValue;
-			m_pfSeq[lCount] = pfScore[tC]*pfScoreMinus[m_pSeq[a-1]];
+			int index = m_pSeq[a-1];
+			m_pfSeq[lCount] = pfScore[tC]*pfScoreMinus[index];
 			if(a == 2)	{
 				if(m_pSeq[1] == 'P')	{
 					m_pfSeq[lCount] *= 10;
@@ -677,7 +678,6 @@ bool mscore::add_Z(const unsigned long _t,const long _c)
 	}
 	dValue += m_pSeqUtilFrag->m_pdAaFullMod[']'];
 /*
-/*
  * deal with protein C-teminus
  */
 	if(m_bIsC)	{
@@ -685,7 +685,6 @@ bool mscore::add_Z(const unsigned long _t,const long _c)
 	}
 	size_t tC = 0;
 	unsigned long lCount = 0;
-	float fSub = 0.0;
 	float *pfScore = m_pSeqUtilFrag->m_pfYScore;
 	float *pfScoreMinus = m_pSeqUtilFrag->m_pfBScore;
 /*
@@ -715,10 +714,11 @@ bool mscore::add_Z(const unsigned long _t,const long _c)
 		lValue = mconvert(dValue, dZ);
 #endif
 		m_plSeq[lCount] = lValue;
-		m_pfSeq[lCount] = pfScore[tC]*pfScoreMinus[m_pSeq[a-1]];
+		int index = m_pSeq[a-1];
+		m_pfSeq[lCount] = pfScore[tC]*pfScoreMinus[index];
 		lCount++;
 		m_plSeq[lCount] = mconvert(dValue+m_pSeqUtilFrag->m_dHydrogen, dZ);
-		m_pfSeq[lCount] = pfScore[tC]*pfScoreMinus[m_pSeq[a-1]];
+		m_pfSeq[lCount] = pfScore[tC]*pfScoreMinus[index];
 		lCount++;
 		a--;
 	}
@@ -794,7 +794,6 @@ bool mscore::add_details(mspectrum &_s)
  * using lessThanMI (see top of this file). the sort results in m_vMI having the most
  * intense peaks first in the vector. then, simply erase all but the top m_lMaxPeaks values
  * from that vector and continue.
-/*
  * the fragment ion error cannot be zero
  */
 	if(m_fErr == 0.0)
@@ -880,7 +879,8 @@ unsigned long mscore::add_seq(const char *_s,const bool _n,const bool _c,const u
 		m_seqUtil.clear_motifs(false);
 	}
 	while(a < m_lSeqLength)	{
-		m_dSeqMH += m_seqUtil.m_pdAaMass[m_pSeq[a]] + m_seqUtil.m_pdAaMod[m_pSeq[a]] + m_seqUtil.m_pdAaFullMod[m_pSeq[a]];
+		int index = m_pSeq[a];
+		m_dSeqMH += m_seqUtil.m_pdAaMass[index] + m_seqUtil.m_pdAaMod[index] + m_seqUtil.m_pdAaFullMod[index];
 		if(m_seqUtil.m_bSequenceMods)	{
 			itSeq = m_seqUtil.m_mapMods.find((unsigned long)(m_tSeqPos+a));
 			if(itSeq != itSeqEnd)	{
@@ -1060,14 +1060,16 @@ bool mscore::get_aa(vector<maa> &_m,const size_t _a,double &_d)
 					cRes += 32;
 				}
 				dDelta += aaValue.m_dMod;
-				aaValue.m_dPrompt = (float)m_seqUtil.m_pdAaPrompt[cRes];
+				int index = cRes;
+				aaValue.m_dPrompt = (float)m_seqUtil.m_pdAaPrompt[index];
 				_m.push_back(aaValue);
 			}
 			itValue++;
 		}
 	}
 	if(m_Term.m_lN)	{
-		aaValue.m_dMod = (float)m_seqUtil.m_pdAaMod['['];
+		int index = '[';
+		aaValue.m_dMod = (float)m_seqUtil.m_pdAaMod[index];
 		aaValue.m_dPrompt = 0.0;
 		aaValue.m_lPos = (unsigned int)_a;
 		aaValue.m_cRes = m_pSeq[0];
@@ -1075,7 +1077,8 @@ bool mscore::get_aa(vector<maa> &_m,const size_t _a,double &_d)
 		_m.push_back(aaValue);
 	}
 	if(m_Term.m_lC)	{
-		aaValue.m_dMod = (float)m_seqUtil.m_pdAaMod[']'];
+		int index = ']';
+		aaValue.m_dMod = (float)m_seqUtil.m_pdAaMod[index];
 		aaValue.m_dPrompt = 0.0;
 		aaValue.m_lPos = (unsigned int)(_a+ m_lSeqLength - 1);
 		aaValue.m_cRes = m_pSeq[m_lSeqLength - 1];
@@ -1083,8 +1086,10 @@ bool mscore::get_aa(vector<maa> &_m,const size_t _a,double &_d)
 		_m.push_back(aaValue);
 	}
 	if(m_Pam.m_tCount > 0)	{
-		aaValue.m_dMod = (float)(m_seqUtil.m_pdAaMass[m_pSeq[m_Pam.m_tPos]] - m_seqUtil.m_pdAaMass[m_Pam.m_pSeqTrue[m_Pam.m_tPos]]);
-		aaValue.m_dPrompt = (float)(m_seqUtil.m_pdAaPrompt[m_pSeq[m_Pam.m_tPos]] - m_seqUtil.m_pdAaPrompt[m_Pam.m_pSeqTrue[m_Pam.m_tPos]]);
+		aaValue.m_dMod = (float)(m_seqUtil.m_pdAaMass[(int)m_pSeq[m_Pam.m_tPos]] 	
+			- m_seqUtil.m_pdAaMass[(int)m_Pam.m_pSeqTrue[m_Pam.m_tPos]]);
+		aaValue.m_dPrompt = (float)(m_seqUtil.m_pdAaPrompt[(int)m_pSeq[m_Pam.m_tPos]] 
+			- m_seqUtil.m_pdAaPrompt[(int)m_Pam.m_pSeqTrue[m_Pam.m_tPos]]);
 		aaValue.m_lPos = (unsigned int)(_a+ m_Pam.m_tPos);
 		aaValue.m_cRes = m_Pam.m_pSeqTrue[m_Pam.m_tPos];
 		aaValue.m_cMut = m_pSeq[m_Pam.m_tPos];
@@ -1094,8 +1099,10 @@ bool mscore::get_aa(vector<maa> &_m,const size_t _a,double &_d)
 		_m.push_back(aaValue);
 	}
 	if(m_Sap.m_tCount > 0)	{
-		aaValue.m_dMod = (float)(m_seqUtil.m_pdAaMass[m_pSeq[m_Sap.m_tPos]] - m_seqUtil.m_pdAaMass[m_Sap.m_pSeqTrue[m_Sap.m_tPos]]);
-		aaValue.m_dPrompt = (float)(m_seqUtil.m_pdAaPrompt[m_pSeq[m_Sap.m_tPos]] - m_seqUtil.m_pdAaPrompt[m_Sap.m_pSeqTrue[m_Sap.m_tPos]]);
+		aaValue.m_dMod = (float)(m_seqUtil.m_pdAaMass[(int)m_pSeq[m_Sap.m_tPos]] 
+			- m_seqUtil.m_pdAaMass[(int)m_Sap.m_pSeqTrue[m_Sap.m_tPos]]);
+		aaValue.m_dPrompt = (float)(m_seqUtil.m_pdAaPrompt[(int)m_pSeq[m_Sap.m_tPos]] 
+			- m_seqUtil.m_pdAaPrompt[(int)m_Sap.m_pSeqTrue[m_Sap.m_tPos]]);
 		aaValue.m_lPos = (unsigned int)(_a+ m_Sap.m_tPos);
 		aaValue.m_cRes = m_Sap.m_pSeqTrue[m_Sap.m_tPos];
 		aaValue.m_cMut = m_pSeq[m_Sap.m_tPos];
@@ -1364,10 +1371,10 @@ bool mscore::load_next_pam(void)
 	else	{
 		strcpy(m_pSeq,m_Pam.m_pSeqTrue);
 		m_dSeqMH = m_Pam.m_fSeqTrue;
-		m_dSeqMH += m_pSeqUtilFrag->m_pdAaMass[m_Pam.m_pAa[m_Pam.m_tAa]];
-		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaMass[m_Pam.m_pSeqTrue[m_Pam.m_tPos]];
-		m_dSeqMH += m_pSeqUtilFrag->m_pdAaFullMod[m_Pam.m_pAa[m_Pam.m_tAa]];
-		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaFullMod[m_Pam.m_pSeqTrue[m_Pam.m_tPos]];
+		m_dSeqMH += m_pSeqUtilFrag->m_pdAaMass[(int)m_Pam.m_pAa[m_Pam.m_tAa]];
+		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaMass[(int)m_Pam.m_pSeqTrue[m_Pam.m_tPos]];
+		m_dSeqMH += m_pSeqUtilFrag->m_pdAaFullMod[(int)m_Pam.m_pAa[m_Pam.m_tAa]];
+		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaFullMod[(int)m_Pam.m_pSeqTrue[m_Pam.m_tPos]];
 		m_pSeq[m_Pam.m_tPos] = m_Pam.m_pAa[m_Pam.m_tAa];
 		m_State.initialize(m_pSeq,m_lSeqLength);
 		m_State.m_dSeqMHS = m_dSeqMH;
@@ -1387,8 +1394,8 @@ __inline__ bool mscore::check_pam_mass()
 {
 	const char cTrue = m_Pam.m_pSeqTrue[m_Pam.m_tPos];
 	const char cNew = m_Pam.m_pAa[m_Pam.m_tAa];
-	const float fTrue = m_pSeqUtilFrag->m_pfAaMass[cTrue] + (float)m_pSeqUtilFrag->m_pdAaFullMod[cTrue];
-	const float fNew = m_pSeqUtilFrag->m_pfAaMass[cNew] + (float)m_pSeqUtilFrag->m_pdAaFullMod[cNew];
+	const float fTrue = m_pSeqUtilFrag->m_pfAaMass[(int)cTrue] + (float)m_pSeqUtilFrag->m_pdAaFullMod[(int)cTrue];
+	const float fNew = m_pSeqUtilFrag->m_pfAaMass[(int)cNew] + (float)m_pSeqUtilFrag->m_pdAaFullMod[(int)cNew];
 	if(fabs(fTrue - fNew) < m_fHomoError)	{
 		return true;
 	}
@@ -1432,10 +1439,10 @@ bool mscore::load_next_sap(void)
 	else	{
 		memcpy(m_pSeq,m_Sap.m_pSeqTrue,m_lSeqLength);
 		m_dSeqMH = m_Sap.m_fSeqTrue;
-		m_dSeqMH += m_pSeqUtilFrag->m_pdAaMass[m_Sap.m_cCurrent];
-		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaMass[m_Sap.m_pSeqTrue[m_Sap.m_tPos]];
-		m_dSeqMH += m_pSeqUtilFrag->m_pdAaFullMod[m_Sap.m_cCurrent];
-		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaFullMod[m_Sap.m_pSeqTrue[m_Sap.m_tPos]];
+		m_dSeqMH += m_pSeqUtilFrag->m_pdAaMass[(int)m_Sap.m_cCurrent];
+		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaMass[(int)m_Sap.m_pSeqTrue[m_Sap.m_tPos]];
+		m_dSeqMH += m_pSeqUtilFrag->m_pdAaFullMod[(int)m_Sap.m_cCurrent];
+		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaFullMod[(int)m_Sap.m_pSeqTrue[m_Sap.m_tPos]];
 		m_pSeq[m_Sap.m_tPos] = m_Sap.m_cCurrent;
 		m_State.initialize(m_pSeq,m_lSeqLength);
 		m_State.m_dSeqMHS = m_dSeqMH;
@@ -1918,7 +1925,7 @@ unsigned long mscore::set_seq(const char *_s,const bool _n,const bool _c,const u
  */
 	m_iCharge = 1;
 	while(a < m_lSeqLength)	{
-		m_dSeqMH += m_seqUtil.m_pdAaMass[m_pSeq[a]] + m_seqUtil.m_pdAaMod[m_pSeq[a]] + m_seqUtil.m_pdAaFullMod[m_pSeq[a]];
+		m_dSeqMH += m_seqUtil.m_pdAaMass[(int)m_pSeq[a]] + m_seqUtil.m_pdAaMod[(int)m_pSeq[a]] + m_seqUtil.m_pdAaFullMod[(int)m_pSeq[a]];
 		if(m_seqUtil.m_bSequenceMods)	{
 			itSeq = m_seqUtil.m_mapMods.find((unsigned long)(m_tSeqPos+a));
 			if(itSeq != itSeqEnd)	{

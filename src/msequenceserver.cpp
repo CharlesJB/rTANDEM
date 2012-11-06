@@ -298,7 +298,7 @@ unsigned long msequenceServer::next(const bool _f)
  * strip whitespace characters from the sequence line
  */
 		pValue = m_pLine;
-		fgets(pValue,m_lSize,m_pInput);
+		char*returnValue = fgets(pValue,m_lSize,m_pInput);
 /*
  * clear the sequence in a temporary msequence object	
  */
@@ -317,7 +317,8 @@ unsigned long msequenceServer::next(const bool _f)
 					*pValue = '\0';
 				}
 			}
-			fgets(pValue,m_lSize,m_pInput);
+			returnValue = fgets(pValue,m_lSize,m_pInput);
+			returnValue++; /* fool the compiler */
 		}
 		cValue = *pValue;
 		*pValue = '\0';
@@ -416,9 +417,6 @@ unsigned long msequenceServer::next_pro(const bool _f)
 	double dStart = clock();
 	unsigned long iLength = 0;
 	msequence seqTemp;
-	register char cValue = '\0';
-	char *pValue = NULL;
-	char *pEol = NULL;
 	m_pCol->clear();
 	unsigned long lLength = 0;
 	seqTemp.m_strDes = " ";
@@ -446,6 +444,9 @@ unsigned long msequenceServer::next_pro(const bool _f)
 		lLength = mac_rev(lLength);
 #endif
 		tS = fread(m_pLine,lLength,1,m_pInput);
+
+		tS++; /* fool the compiler */
+
 		if(feof(m_pInput))	{
 			break;
 		}
@@ -527,16 +528,13 @@ unsigned long msequenceServer::next_l(void)
 	unsigned long iLength = 0;
 	msequence seqTemp;
 	long lSize = (10*4096)-1;
-	register char cValue = '\0';
-	char *pValue = NULL;
 	char *pEol = NULL;
 	char *pLine = new char[lSize+1];
-	size_t a = 0;
 	while(!feof(m_pInput) && iLength < m_pCol->m_tMax)	{
 /*
  * store the description in a temporary msequence object, obtained in the previous read	
  */
-		fgets(pLine,lSize,m_pInput);
+		char*returnValue = fgets(pLine,lSize,m_pInput);
 /*
  * clear the sequence in a temporary msequence object	
  */
@@ -544,7 +542,9 @@ unsigned long msequenceServer::next_l(void)
 /*
  * store initial sequence line, and repeat until the next description line is encountered	
  */
-			fgets(pLine,lSize,m_pInput);
+			returnValue = fgets(pLine,lSize,m_pInput);
+		
+			returnValue++; /* fool the compiler */
 		}
 /*
  *	store the next description line
@@ -623,6 +623,8 @@ bool msequenceServer::start(void)
 	size_t tS = 0;
 	char *pS = NULL;
 	tS = fread(m_pLine,256,1,m_pInput);
+	tS++; /* fool the compiler */
+
 	string strDesc = "no description";
 	if(strstr(m_pLine,"xbang-pro-fasta-format") != NULL)	{
 		m_lFileType = XBANG;
@@ -660,6 +662,9 @@ bool msequenceServer::start(void)
 	while(m_pLine[0] != '>' && !feof(m_pInput))	{
 		pS = fgets(m_pLine,m_lSize,m_pInput);
 	}
+
+	pS++; /* fool the compiler */
+
 	if(m_pLine[0] == '>')	{
 		char *pEol = NULL;
 		if(strchr(m_pLine,0x01))	{

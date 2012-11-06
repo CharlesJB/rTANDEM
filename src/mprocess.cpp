@@ -306,7 +306,6 @@ mprocess::~mprocess(void)
 		m_prcLog.log("X! Tandem exiting");
 		m_prcLog.close();
 	}
-	long a = 0;
 }
 /*
 * add spectra is used to load spectra into the m_vSpectra vector
@@ -1106,7 +1105,6 @@ bool mprocess::mark_repeats()
 	size_t b = 0;
 	string strValue;
 	string strCurrent;
-	float fMH = 0.0;
 	size_t tStart = 0;
 	size_t tEnd = 0;
 	size_t tUid = 0;
@@ -1666,7 +1664,6 @@ bool mprocess::process(void)
 			m_xmlValues.set(strKey,strValue);
 		}
 	}
-	size_t tLength = 0;
 	size_t a = 0;
 	m_tProteinCount = 0;
 	m_tPeptideCount = 0;
@@ -1693,11 +1690,6 @@ bool mprocess::process(void)
 	}
 	removeMI();
 	a = 0;
-	long b = 0;
-	bool bForward = true;
-	char pLine[32];
-	pLine[0] = '\0';
-	char cBs = 0x08;
 /*
  * estimate the smallest number of residues that could possibily correspond to the
  * smallest parent ion in the m_vSpectra vector
@@ -1708,9 +1700,6 @@ bool mprocess::process(void)
  */
 	m_dSearchTime = clock();
 	unsigned long lServerCount = 0;
-	unsigned long lWaste = 0;
-	long lReadTime = 0;
-	long lTempTime = 0;
 	char *pOut = new char[256];
 	sprintf(pOut,"Spectrum-to-sequence matching process in progress");
 	strKey = "output, message";
@@ -2299,7 +2288,6 @@ bool mprocess::report_valid(const double _d)
 	double dProtein = 0.0;
 	while(a < tLength)	{
 		dValue = 3.0;
-		long c = 0;
 		if(m_vSpectra[a].m_fScore > 0.0 && !m_vSpectra[a].m_vseqBest.empty() && !m_vSpectra[a].m_vseqBest[0].m_vDomains.empty())	{
 			dValue = m_vSpectra[a].m_hHyper.expect(m_pScore->hconvert(m_vSpectra[a].m_vseqBest[0].m_vDomains[0].m_fHyper));
 			dProtein = m_vSpectra[a].m_dProteinExpect;
@@ -2919,8 +2907,6 @@ bool mprocess::score_single(const msequence &_s)
 		}
 	}
 	long lEnd = 0;
-	bool bBreak = false;
-	const long lSpectra = (long) m_tSpectra;
 	bool bIsFirst = true;
 	bool bNg = false;
 	long lMissedCleaves = 0;
@@ -2955,7 +2941,6 @@ bool mprocess::score_single(const msequence &_s)
  * the end of the sequence
  */
 	while(lStart < lLength && lStart < m_lStartMax)	{
-		bBreak = false;
 		while(m_pSeq[lStart] == cAster && lStart < m_lStartMax)	{
 			lStart++;
 		}
@@ -3068,7 +3053,15 @@ bool mprocess::score_single(const msequence &_s)
 						m_bPermute = false;
 						m_bPermuteHigh = false;
 						create_score(_s,lStart,lEnd,lMissedCleaves - 1,true);
-						if(m_bPermute && m_bCrcCheck || m_bPermuteHigh)	{
+/*
+ * Perform the permutation if the 
+ * 1. permutation must be done and the check is fine.
+ *  
+ * or 
+ *
+ * 2. we are in a high permutation zone.
+ */
+						if((m_bPermute && m_bCrcCheck) || m_bPermuteHigh)	{
 							m_pScore->reset_permute();
 							while(m_pScore->permute())	{
 								create_score(_s,lStart,lEnd,lMissedCleaves - 1,false);
@@ -3326,8 +3319,9 @@ bool mprocess::score_terminus_single(const string &_s)
 		tAt++;
 		m_pScore->m_seqUtil.m_bPotential = true;
 		m_pScore->m_seqUtilAvg.m_bPotential = true;
-		m_pScore->m_seqUtil.m_pdAaMod[_s[tAt]] = dValue;
-		m_pScore->m_seqUtilAvg.m_pdAaMod[_s[tAt]] = dValue;
+		int index = _s[tAt];
+		m_pScore->m_seqUtil.m_pdAaMod[index] = dValue;
+		m_pScore->m_seqUtilAvg.m_pdAaMod[index] = dValue;
 		a = 0;
 		tPips = 0;
 		while(a < m_vseqBest.size())	{
@@ -3425,12 +3419,12 @@ bool mprocess::spectra()
 	}
 	if(pStream)	{
 		fclose(pStream);
-		if(pValue[0] == 1 && pValue[1] == -95 || (pValue[3] == 'F' && pValue[5] == 'i' && pValue[7] == 'n') )	{
-//			cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
+
+		if((pValue[0] == 1 && pValue[1] == -95)  // TODO: not sure about these parentheses.
+			|| (pValue[3] == 'F' && pValue[5] == 'i' && pValue[7] == 'n') )	{
+
 			Rprintf("\nFailed to read spectrum file: %s\n", strValue.c_str());
-//			cout << "Most likely cause: using a Finnigan raw spectrum.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (1)\n\n";
 			Rprintf("Most likely cause: using a Finnigan raw spectrum.\nUse dta, pkl, mgf, mzdata (v.1.05) or mzxml (v.2.0) files ONLY! (1)\n\n");
-			//cout.flush();
 			m_prcLog.log("error reading spectrum file 1");
 			delete pValue;
 			return false;
@@ -4012,7 +4006,6 @@ bool mprocess::subtract(void)
 	double dValue = 0.0;
 	long lCount = 0;
 	double dDot1 = 0.0;
-	double dDot2 = 0.0;
 	vector<double> vdDot1;
 	// calculate the length of all of the spectrum vectors
 	vector<mi>::iterator itM = m_vSpectra[b].m_vMI.begin();
@@ -4030,7 +4023,6 @@ bool mprocess::subtract(void)
 	}
 	a  = 0;
 	long c = 0;
-	double dTotal = 0.;
 	long lMax = 0;
 	set<size_t> vDelete;
 	double dMax = 0.0;
@@ -4359,17 +4351,19 @@ bool mprocess::serialize(void)
 	vector<mi>::iterator itMI;
 	vector<mi>::iterator itMIE;
 	size_t tLength = m_vSpectra.size();
-	fwrite((const void*)&tLength,sizeof(size_t),1,pFile);
-	float fV = 0.0;
+	size_t elements = fwrite((const void*)&tLength,sizeof(size_t),1,pFile);
 	while(itS != itE)	{
 		tLength = itS->m_vMI.size();
-		fwrite((const void*)&(itS->m_tId),sizeof(size_t),1,pFile);
-		fwrite((const void*)&tLength,sizeof(size_t),1,pFile);
+		elements = fwrite((const void*)&(itS->m_tId),sizeof(size_t),1,pFile);
+		elements = fwrite((const void*)&tLength,sizeof(size_t),1,pFile);
 		itMI = itS->m_vMI.begin();
 		itMIE = itS->m_vMI.end();
 		while(itMI != itMIE)	{
-			fwrite((const void*)&(itMI->m_fM),sizeof(float),1,pFile);
-			fwrite((const void*)&(itMI->m_fI),sizeof(float),1,pFile);
+			elements = fwrite((const void*)&(itMI->m_fM),sizeof(float),1,pFile);
+			elements = fwrite((const void*)&(itMI->m_fI),sizeof(float),1,pFile);
+
+			elements++; /* fool the compiler */
+
 			itMI++;
 		}
 		itS++;
@@ -4390,19 +4384,16 @@ bool mprocess::restore(void)
 	}
 	FILE *pFile = fopen(strValue.c_str(),"rb");
 	if(!pFile || feof(pFile))	{
-//		cout << "Warning: could not find serialization file \"" << strValue.c_str() << "\", spectrum restoration not performed.\n";
 		Rprintf("Warning: could not find serialization file \"%s\", spectrum restoration not performed.\n", strValue.c_str());
-		//cout.flush();
 		return false;
 	}
 	vector<mspectrum>::iterator itS = m_vSpectra.begin();
 	vector<mspectrum>::iterator itE = m_vSpectra.end();
 	size_t tLength = 0;
-	fread((void *)&tLength,sizeof(size_t),1,pFile);
+	size_t elements = fread((void *)&tLength,sizeof(size_t),1,pFile);
+
 	if(tLength == 0 || feof(pFile))	{
-//		cout << "Warning: could not find serialization file \"" << strValue.c_str() << "\" appears to be corrupt.\n";
 		Rprintf("Warning: could not find serialization file \"%s\" appears to be corrupt.\n", strValue.c_str());
-		//cout.flush();
 		fclose(pFile);
 		return false;
 	}
@@ -4425,13 +4416,17 @@ bool mprocess::restore(void)
 	a = 0;
 	while(a < tLength && !feof(pFile))	{
 		vMI.clear();
-		fread((void *)&tId,sizeof(size_t),1,pFile);
-		fread((void *)&tL,sizeof(size_t),1,pFile);
+		elements = fread((void *)&tId,sizeof(size_t),1,pFile);
+		elements = fread((void *)&tL,sizeof(size_t),1,pFile);
+
 		b = 0;
 		while(b < tL && !feof(pFile))	{
-			fread((void *)&fV,sizeof(float),1,pFile);
+			elements = fread((void *)&fV,sizeof(float),1,pFile);
 			miV.m_fM = fV;
-			fread((void *)&fV,sizeof(float),1,pFile);
+			elements = fread((void *)&fV,sizeof(float),1,pFile);
+
+			elements++; /* use it */
+
 			miV.m_fI = fV;
 			vMI.push_back(miV);
 			b++;

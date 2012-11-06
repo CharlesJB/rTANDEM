@@ -8,7 +8,6 @@
 
 inline int getPosition( char buf );
 
-static const unsigned char *b64_tbl = (const unsigned char*) "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const unsigned char b64_pad = '=';
 
 /* base64 encode a group of between 1 and 3 input chars into a group of  4 output chars */

@@ -246,8 +246,7 @@ bool mrefine::refine()
 {
 	string strKey;
 	string strValue;
-	size_t a = 0;
-	size_t tActiveNow = 0;
+
 	int iRound = 2;
 	initialize();
 	m_pProcess->set_round(iRound); // round 2

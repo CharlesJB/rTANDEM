@@ -74,11 +74,13 @@ void SAXMzmlHandler::startElement(const XML_Char *el, const XML_Char **attr)
 		}
 		m_peaksCount = atoi(getAttrValue("defaultArrayLength", attr));
 	}
+#if 0
 	else if (isElement("softwareParam", el))	{
 		const char* name = getAttrValue("name", attr);
 		const char* accession = getAttrValue("accession", attr);
 		const char* version = getAttrValue("version", attr);
 	}
+#endif
 	else if (isElement("referenceableParamGroup", el))	
 	{
 		const char* groupName = getAttrValue("id", attr);

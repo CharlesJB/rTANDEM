@@ -349,11 +349,12 @@ bool msequtilities::modify_all(string &_s)
 			break;
 		tAt++;
 		if(isalpha(_s[tAt]))	{
-			m_pdAaFullMod[_s[tAt]] = fValue;
-			m_pdAaFullMod[_s[tAt]+32] = fValue;
+			int index = _s[tAt];
+			m_pdAaFullMod[index] = fValue;
+			m_pdAaFullMod[index+32] = fValue;
 		}
 		else	{
-			m_pdAaFullMod[_s[tAt]] = fValue;
+			m_pdAaFullMod[(int)_s[tAt]] = fValue;
 		}
 		tStart = _s.find(',',tAt);
 		if(tStart == _s.npos)
@@ -411,8 +412,8 @@ bool msequtilities::modify_maybe(string &_s)
 		if(cRes >= 'A' && cRes <= 'Z')	{
 			cRes += 32;
 		}
-		m_pdAaMod[cRes] = fValue;
-		m_pdAaPrompt[cRes] = fPrompt;
+		m_pdAaMod[(int)cRes] = fValue;
+		m_pdAaPrompt[(int)cRes] = fPrompt;
 		fSum += fPrompt;
 		tStart = _s.find(',',tAt);
 		if(tStart == _s.npos)
@@ -474,8 +475,8 @@ bool msequtilities::modify_annotation(string &_s)
 		if(cRes >= 'A' && cRes <= 'Z')	{
 			cRes += 32;
 		}
-		m_pdAaMod[cRes] = fValue;
-		m_pdAaPrompt[cRes] = fPrompt;
+		m_pdAaMod[(int)cRes] = fValue;
+		m_pdAaPrompt[(int)cRes] = fPrompt;
 		tStart = strValue.find(',',tAt);
 		if(tStart == strValue.npos)
 			break;
@@ -517,7 +518,6 @@ bool msequtilities::motif_set(const msequence &_s)
 	strcpy(pString,_s.m_strSeq.c_str());
 	char *pValue = pString;
 	size_t a = 0;
-	size_t b = 0;
 	size_t tPos;
 	const size_t tMotifs = m_vMotifs.size();
 	while(*pValue != '\0')	{
@@ -785,9 +785,10 @@ bool msequtilities::set_aa()
  */
 bool msequtilities::set_a(const char _c,const float _f)
 {
-	m_pfAScore[_c] = _f;
-	m_pfA18Score[_c] = _f;
-	m_pfA17Score[_c] = _f;
+	int index=_c;
+	m_pfAScore[index] = _f;
+	m_pfA18Score[index] = _f;
+	m_pfA17Score[index] = _f;
 	return true;
 }
 /*
@@ -795,9 +796,10 @@ bool msequtilities::set_a(const char _c,const float _f)
  */
 bool msequtilities::set_b(const char _c,const float _f)
 {
-	m_pfBScore[_c] = _f;
-	m_pfB18Score[_c] = _f;
-	m_pfB17Score[_c] = _f;
+	int index = _c;
+	m_pfBScore[index] = _f;
+	m_pfB18Score[index] = _f;
+	m_pfB17Score[index] = _f;
 	return true;
 }
 /*
@@ -805,9 +807,10 @@ bool msequtilities::set_b(const char _c,const float _f)
  */
 bool msequtilities::set_x(const char _c,const float _f)
 {
-	m_pfXScore[_c] = _f;
-	m_pfX18Score[_c] = _f;
-	m_pfX17Score[_c] = _f;
+	int index = _c;
+	m_pfXScore[index] = _f;
+	m_pfX18Score[index] = _f;
+	m_pfX17Score[index] = _f;
 	return true;
 }
 /*
@@ -815,9 +818,10 @@ bool msequtilities::set_x(const char _c,const float _f)
  */
 bool msequtilities::set_y(const char _c,const float _f)
 {
-	m_pfYScore[_c] = _f;
-	m_pfY18Score[_c] = _f;
-	m_pfY17Score[_c] = _f;
+	int index = _c;
+	m_pfYScore[index] = _f;
+	m_pfY18Score[index] = _f;
+	m_pfY17Score[index] = _f;
 	return true;
 }
 
@@ -870,8 +874,8 @@ bool msequtilities::set_aa_file(string &_p)
 				}
 				if(isalpha(cAa))	{
 					m_bIsModified = true;
-					m_pdAaMass[cAa+32] = m_pdAaMass[cAa] = dMass;
-					m_pfAaMass[cAa+32] = m_pfAaMass[cAa] = (float)dMass;
+					m_pdAaMass[(int)(cAa+32)] = m_pdAaMass[(int)cAa] = dMass;
+					m_pfAaMass[(int)(cAa+32)] = m_pfAaMass[(int)cAa] = (float)dMass;
 				}
 			}
 		}

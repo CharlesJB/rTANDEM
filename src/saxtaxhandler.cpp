@@ -217,7 +217,6 @@ bool SAXTaxHandler::load(const string &_y)
 
 void SAXTaxHandler::startElement(const XML_Char *el, const XML_Char **attr)
 {
-	int i=1;
 	const char* label = getAttrValue("label", attr);
 	if(isElement("taxon", el) && m_setTax.find(label) != m_setTax.end()){
 		m_bTax = true;
@@ -236,7 +235,6 @@ void SAXTaxHandler::startElement(const XML_Char *el, const XML_Char **attr)
 
 void SAXTaxHandler::endElement(const XML_Char *el)
 {
-	size_t a=0;
 	if(isElement("taxon",el) && m_bTax){
 		m_bTax=false;
 	}

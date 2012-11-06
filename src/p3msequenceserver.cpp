@@ -190,9 +190,6 @@ unsigned long p3msequenceServer::u_maps(DESMAP &_desc,vector<msequence> &_v)
 	unsigned long lCount = 1;
 	unsigned long iLength = 0;
 	msequence seqTemp;
-	register char cValue = '\0';
-	char *pValue = NULL;
-	char *pEol = NULL;
 	unsigned long lLength = 0;
 	seqTemp.m_strDes = " ";
 	seqTemp.m_strSeq = " ";
@@ -223,6 +220,9 @@ unsigned long p3msequenceServer::u_maps(DESMAP &_desc,vector<msequence> &_v)
 				lLength = mac_rev(lLength);
 #endif
 				sT = fread(m_pLine,lLength,1,m_pInput);
+
+				sT++; /* fool the compiler */
+
 				seqTemp.m_strSeq = m_pLine;
 				seqTemp.m_siPath = (short int)(m_vstrPaths.size()-1);
 				seqTemp.m_mapMods.clear();

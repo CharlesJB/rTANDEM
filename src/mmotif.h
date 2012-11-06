@@ -183,7 +183,6 @@ public:
 		char *pValue = new char[strlen(_p)+1];
 		strcpy(pValue,_p);
 		char *pStart = pValue;
-		char *pEnd = pStart;
 		size_t a = 0;
 		if(strchr(pValue,'[') != NULL)	{
 			pStart = strchr(pValue,'[');

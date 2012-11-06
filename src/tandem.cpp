@@ -309,7 +309,6 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 			pProcess[dCount]->m_vSpectra.reserve(lSpectra);
 			dCount--;
 		}
-		size_t tCount = pProcess[0]->m_vSpectra.size();
 		sort(pProcess[0]->m_vSpectra.begin(),pProcess[0]->m_vSpectra.end(),lessThanSpec);
 
 		size_t tProcesses = lThreads;
@@ -457,6 +456,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	for(x=0;x<dCount;x++){
 		//2003-03-01:note - the 2nd parameter in the call to pthread_join() was changed from vp
 		wait = pthread_join(pThreads[x],&vp);
+		wait++; /* fool the compiler, instead, there should be a check wait == 0 */
 	}
 #endif
 //	cout << "\tsequences modelled = "<< (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5) << " ks\n";
@@ -647,12 +647,6 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		Rprintf("%l\n", lEe);
 	}
 //	lE = pProcess[0]->get_reversed();
-	long checkGetReversed = pProcess[0]->get_reversed();
-	if(lE != -1)	{
-		lE = (unsigned long)(pProcess[0]->get_reversed());
-//		cout << "False positive rate (reversed sequences) = " << lE << "\n";
-		Rprintf("False positive rate (reversed sequences) = %l\n", lE);
-	}
 //	cout << "\n\n";
 	Rprintf("\n\n");
 	/*

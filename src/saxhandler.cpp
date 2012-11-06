@@ -272,7 +272,6 @@ SAXSpectraHandler::~SAXSpectraHandler()
 
 void SAXSpectraHandler::pushSpectrum()
 {
-	int i=0;
 	if(m_precursorCharge > 0)	// Known charge
 	{
 		pushSpectrum(m_precursorCharge);

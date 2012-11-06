@@ -351,11 +351,9 @@ bool mscore_tandem::clear()
 double mscore_tandem::dot(unsigned long *_v)
 {
 	float fScore = 0.0;
-	float fValue0 = 0.0;
 	unsigned long a = 0;
 	unsigned long lCount = 0;
 	long lType = 0;
-	size_t b = 0;
 	vector<MIType>::iterator itType = m_vmiType[m_lId].begin();
 	// tType and tTypeSize were added in 2006.09.01 to correct a problem
 	// created by VC++ 2005. This new version uses a strict bounds checking
@@ -574,10 +572,6 @@ double mscore_tandem::dot(unsigned long *_v)
 */
 float mscore_tandem::ion_check(const unsigned long _v,const size_t _s)
 {
-	unsigned long a = 0;
-	unsigned long lCount = 0;
-	long lType = 0;
-	size_t b = 0;
 	vector<MIType>::iterator itType = m_vmiType[_s].begin();
 	vector<MIType>::const_iterator itStart = m_vmiType[_s].begin();
 	vector<MIType>::const_iterator itEnd = m_vmiType[_s].end();
