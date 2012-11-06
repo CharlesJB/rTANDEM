@@ -136,6 +136,7 @@ The End
 #include <vector>
 #include "mspectrum.h"
 #include <string.h>  // rTANDEM
+#include <Rcpp.h>
 
 /**
 * eXpat SAX parser wrapper.

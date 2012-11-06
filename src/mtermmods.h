@@ -135,6 +135,7 @@ The End
 
 
 #include "mrefine.h"
+#include <Rcpp.h>
 
 class mpeptide;
 class msequence;

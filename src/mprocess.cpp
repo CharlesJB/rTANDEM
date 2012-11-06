@@ -3934,7 +3934,7 @@ bool mprocess::spectra_force(string &_t,string &_v)
 	}
 	else	{
 //			cout << "\n" << "The file type \"" << _t.c_str() << " is not supported.\n";
-			Rprintf("\n" << "The file type \"%s\" is not supported.\n", _t.c_str());
+			Rprintf("\nThe file type \"%s\" is not supported.\n", _t.c_str());
 //			cout << "Supported values: pkl, dta, mgf, gaml, mzxml, mzdata\n";
 			Rprintf("Supported values: pkl, dta, mgf, gaml, mzxml, mzdata\n");
 			//cout.flush();

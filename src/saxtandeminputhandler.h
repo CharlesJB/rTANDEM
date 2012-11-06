@@ -138,6 +138,7 @@ The End
 #define SAXTANDEMINPUTHANDLER_H
 
 #include "saxhandler.h"
+#include <Rcpp.h>
 
 /**
 * Uses eXpat SAX parser to parse Tandem Input data.

@@ -130,6 +130,7 @@ The End
 
 #ifndef MPLUGIN_H
 #define MPLUGIN_H
+#include <Rcpp.h>
 
 // File version: 2005-02-06
 

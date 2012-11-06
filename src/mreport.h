@@ -141,6 +141,7 @@ The End
  */
 #include <map>
 #include <set>
+#include <Rcpp.h>
 
 class mscore;
 class msequtilities;

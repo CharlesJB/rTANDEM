@@ -3,6 +3,7 @@
 
 #include "saxhandler.h"
 #include <set>
+#include <Rcpp.h>
 /**
 * Uses eXpat SAX parser to parse mzData XML.
 */

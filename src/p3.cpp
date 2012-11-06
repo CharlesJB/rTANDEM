@@ -150,6 +150,7 @@ The End
 #include "xmlparameter.h"
 #include "mscore.h"
 #include "mprocess.h"
+#include <Rcpp.h>
 
 #ifdef X_P3
 

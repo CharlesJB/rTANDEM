@@ -130,6 +130,7 @@ The End
 
 #ifndef P3MPROCESS_H
 #define P3MPROCESS_H
+#include <Rcpp.h>
 
 class p3mprocess : public mprocess
 {

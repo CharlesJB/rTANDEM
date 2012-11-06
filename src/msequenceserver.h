@@ -131,6 +131,7 @@ The End
 #ifndef MSEQUENCESERVER_H
 #define MSEQUENCESERVER_H
 #include <string.h> // rTANDEM
+#include <Rcpp.h>
 
 // File version: 2003-07-01
 

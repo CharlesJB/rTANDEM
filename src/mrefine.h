@@ -134,6 +134,7 @@ The End
 // File version: 2005-09-01
 
 #include "mplugin.h"
+#include <Rcpp.h>
 
 class mprocess;
 class XmlParameter;
