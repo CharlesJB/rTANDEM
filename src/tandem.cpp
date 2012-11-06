@@ -363,7 +363,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	* threaded operation.
 	*/
 	if(lThread != 0xFFFFFFFF && bSpectra)	{
-		while(dCount < lThreads)	{
+		while((unsigned long)(dCount) < lThreads)	{
 #ifdef MSVC
 			pHandle[dCount] = CreateThread(NULL,0,ProcessThread,(void *)pProcess[dCount],0,&pId[dCount]);
 #else
@@ -387,7 +387,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	DWORD dwTime = 100000;
 	DWORD wait = WAIT_TIMEOUT;
 	int iTics = 0;
-	while(a < dCount)	{
+	while(a < (unsigned long)(dCount))	{
 		wait = WaitForSingleObject(pHandle[a],100);
 		if(a > 0 && wait == WAIT_TIMEOUT)	{
 			if(a == 1)	{
@@ -467,14 +467,14 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	/*
 	* merge the results into the first object
 	*/
-	while(a < dCount)	{
+	while(a < (unsigned long)(dCount))	{
 		pProcess[0]->merge_map(pProcess[a]->m_mapSequences);
 		pProcess[0]->merge_spectra(pProcess[a]->m_vSpectra);
 		a++;
 	}
 	a = 1;
 	pProcess[0]->load_sequences();
-	while(a < dCount)	{
+	while(a < (unsigned long)(dCount))	{
 		pProcess[a]->merge_map(pProcess[0]->m_mapSequences);
 		pProcess[a]->m_vseqBest = pProcess[0]->m_vseqBest;
 		a++;
@@ -499,7 +499,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	* threaded operation.
 	*/
 	if(lThread != 0xFFFFFFFF)	{
-		while(dCount < lThreads)	{
+		while((unsigned long)(dCount) < lThreads)	{
 #ifdef MSVC
 			pHandle[dCount] = CreateThread(NULL,0,RefineThread,(void *)pProcess[dCount],0,&pId[dCount]);
 #else
@@ -515,7 +515,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 //	wait = WaitForMultipleObjects(dCount,pHandle,true,INFINITE);
 	a = 0;
 	iTics = 0;
-	while(a < dCount)	{
+	while(a < (unsigned long)(dCount))	{
 		wait = WaitForSingleObject(pHandle[a],10000);
 		if(a > 0 && wait == WAIT_TIMEOUT)	{
 			if(a == 1)	{
@@ -595,7 +595,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		Rprintf("Merging results:\n");
 		//cout.flush();
 	}
-	while(a < dCount)	{
+	while(a < (unsigned long)(dCount))	{
 		if(a == 1)	{
 //			cout << "\tfrom " << a+1;
 			Rprintf("\tfrom %i", a+1);
@@ -646,8 +646,10 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 //		cout << lEe << "\n";
 		Rprintf("%l\n", lEe);
 	}
-	lE = pProcess[0]->get_reversed();
+//	lE = pProcess[0]->get_reversed();
+	long checkGetReversed = pProcess[0]->get_reversed();
 	if(lE != -1)	{
+		lE = (unsigned long)(pProcess[0]->get_reversed());
 //		cout << "False positive rate (reversed sequences) = " << lE << "\n";
 		Rprintf("False positive rate (reversed sequences) = %l\n", lE);
 	}

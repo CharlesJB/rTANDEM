@@ -170,7 +170,7 @@ msequtilities::msequtilities(masscalc::massType _t)
 	m_pfB17Score = new float[lValue];
 	m_pfY17Score = new float[lValue];
 	m_pfX17Score = new float[lValue];
-	long a = 0;
+	unsigned long a = 0;
 	while(a < lValue)	{
 		m_pdAaMod[a] = 0.0;
 		m_pdAaPrompt[a] = 0.0;

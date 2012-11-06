@@ -281,7 +281,7 @@ __inline__ bool mscore_tandem::blur(vector<mi> &_s)
 					a = -1*w;
 			}
 			while(a <= w)	{
-				if(uType.m_lM == lValue + a)	{
+				if((long)(uType.m_lM) == lValue + a)	{
 					if(uType.m_fI < _s[tCount].m_fI)	{
 						vType.back().m_fI = _s[tCount].m_fI;
 					}
