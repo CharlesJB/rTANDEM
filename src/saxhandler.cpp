@@ -199,7 +199,7 @@ bool SAXHandler::parse()
 	FILE* pfIn = fopen(m_strFileName.data(), "r");
 	if (pfIn == NULL)
 	{
-		cerr << "Failed to open input file '" << m_strFileName << "'.\n";
+//		cerr << "Failed to open input file '" << m_strFileName << "'.\n";
 		return false;
 	}
 	char buffer[8192];
@@ -217,25 +217,25 @@ bool SAXHandler::parse()
 	{
 		XML_Error error = XML_GetErrorCode(m_parser);
 
-		cerr << m_strFileName
-			<< "(" << XML_GetCurrentLineNumber(m_parser) << ")"
-			<< " : error " << (int) error << ": ";
+//		cerr << m_strFileName
+//			<< "(" << XML_GetCurrentLineNumber(m_parser) << ")"
+//			<< " : error " << (int) error << ": ";
 
 		switch (error)
 		{
 			case XML_ERROR_SYNTAX:
 			case XML_ERROR_INVALID_TOKEN:
 			case XML_ERROR_UNCLOSED_TOKEN:
-				cerr << "Syntax error parsing XML.";
+//				cerr << "Syntax error parsing XML.";
 				break;
 
 			// TODO: Add more descriptive text for interesting errors.
 
 			default:
-				cerr << "XML Parsing error.";
+//				cerr << "XML Parsing error.";
 				break;
 		}
-		cerr << "\n";
+//		cerr << "\n";
 		return false;
 	}
 	return true;

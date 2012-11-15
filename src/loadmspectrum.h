@@ -158,7 +158,7 @@ public:
 	int load_test(const char *_p)	{
 		m_ifIn.open(m_strPath.c_str());
 		if(m_ifIn.fail())	{
-			cout << "<br>Fatal error: input file could not be opened.<BR>"; // rTANDEM
+//			cout << "<br>Fatal error: input file could not be opened.<BR>"; // rTANDEM
 			return 0;
 		}
 		/*
@@ -184,7 +184,7 @@ public:
 		}
 		delete pLine;
 		m_ifIn.close();
-		cout.flush();
+//		cout.flush();
 		return 1;
 	}
 	enum	{
