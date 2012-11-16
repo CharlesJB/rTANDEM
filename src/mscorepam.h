@@ -254,7 +254,7 @@ public:
 		m_bEnd = true;
 		m_iStart = 0;
 		m_iEnd = 0;
-		cout.flush();
+//		cout.flush();
 		return m_bOk;
 	}
 	bool allowed(string &_s)
