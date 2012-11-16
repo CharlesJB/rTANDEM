@@ -25,7 +25,7 @@ License: \tab Artistic License 1.0\cr
 }
 }
 \author{
-Authors: Arnaud Droit, Frederic Fournier, Charles Joly-Beauparlant
+Authors: Arnaud Droit, Frederic Fournier, Charles Joly Beauparlant
 Maintainer: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>
 }
 \references{
