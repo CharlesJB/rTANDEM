@@ -168,6 +168,10 @@ GetResultsFromXML <- function(xml.file) {
   # Returns:
   #    an object of the class rTResult
 
+  ## Dummy declaration to prevent "no visible binding" when using data.table subset:
+  uid=prot.uid=at=pep.id=NULL
+  rm(uid, prot.uid, at, pep.id)
+  
 if (file.access(xml.file, mode=4) == -1)
   stop(as.character(xml.file), " cannot be read. Verify that the file exists and that you have the permissions necessary to read it.", call. = TRUE)
 
@@ -179,11 +183,34 @@ env1$results@used.parameters <- rTParam()
 env1$results@result.file     <- xml.file
 
 # Temporary information holders
-env1$prot.dt <- data.table("uid"=rep(0L,1000), "expect.value"=rep(0,1000), "label"=rep("",1000), "sequence"=rep("",1000), "file"=rep("",1000), "description"=rep("",1000), "num.peptides"=rep(0L,1000) )
+env1$prot.dt <- data.table("uid"=rep(0L,1000),
+                           "expect.value"=rep(0,1000),
+                           "label"=rep("",1000),
+                           "sequence"=rep("",1000),
+                           "file"=rep("",1000),
+                           "description"=rep("",1000),
+                           "num.peptides"=rep(0L,1000) )
 
-env1$pep.dt  <- data.table("prot.uid"=rep(0L,1000), "pep.id"=rep("",1000), "spectrum.id"=rep(0L,1000), "spectrum.mh"=rep(0,1000), "spectrum.sumI"=rep(0,1000), "spectrum.maxI"=rep(0,1000), "spectrum.fI"=rep(0,1000), "expect.value"=rep(0,1000), "tandem.score"=rep(0,1000), "mh"=rep(0,1000), "delta"=rep(0,1000), "peak.count"=rep(0L,1000), "missed.cleavages"=rep(0L,1000), "start.position"=rep(0L,1000), "end.position"=rep(0L,1000), "sequence"=rep("",1000) )
+env1$pep.dt  <- data.table("prot.uid"=rep(0L,1000),
+                           "pep.id"=rep("",1000),
+                           "spectrum.id"=rep(0L,1000),
+                           "spectrum.mh"=rep(0,1000),
+                           "spectrum.sumI"=rep(0,1000),
+                           "spectrum.maxI"=rep(0,1000),
+                           "spectrum.fI"=rep(0,1000),
+                           "expect.value"=rep(0,1000),
+                           "tandem.score"=rep(0,1000),
+                           "mh"=rep(0,1000), "delta"=rep(0,1000),
+                           "peak.count"=rep(0L,1000),
+                           "missed.cleavages"=rep(0L,1000),
+                           "start.position"=rep(0L,1000),
+                           "end.position"=rep(0L,1000),
+                           "sequence"=rep("",1000) )
 
-env1$ptm.dt  <- data.table("pep.id"=rep("",1000), "type"=rep("",1000), "at"=rep(0L,1000), "modified"=rep(0,1000) )
+env1$ptm.dt  <- data.table("pep.id"=rep("",1000),
+                           "type"=rep("",1000),
+                           "at"=rep(0L,1000),
+                           "modified"=rep(0,1000) )
 
 # Booleans and counters for tree navigation
 env1$perform.params  <- FALSE
