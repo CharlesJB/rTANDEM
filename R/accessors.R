@@ -51,5 +51,5 @@ GetDegeneracy <- function(peptide.id, results){
   
   target.seq <- results@peptides[pep.id==peptide.id]$sequence
   prots <- subset(results@peptides, sequence==target.seq, select=prot.uid)
-  return(subset(results@proteins, uid %in% prots))
+  return(subset(results@proteins, uid %in% prots[[1]]))
 }
