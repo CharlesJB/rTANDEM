@@ -2,16 +2,17 @@ README
 
 SYSTEM REQUIREMENTS: 
 
-rTANDEM uses 'expat' and 'pthreads' libraries. Their avalability might vary according to operating system.
+rTANDEM uses 'expat' and 'pthread' libraries. Their avalability might vary according to operating system.
 
 expat:
-The eXpat library should be available on OSX (since 10.4).
+The eXpat library should be available on OSX since 10.4.
 The eXpat library for linux can be downloaded at http://sourceforge.net/projects/expat/files. 
-The eXpat library for Windows can be downloaded at http://sourceforge.net/projects/expat/files . 
+The eXpat library for Windows can be downloaded at http://sourceforge.net/projects/expat/files. 
 
-pthreads:
-The pthreads library should be available on OSX since 10.3.
-The pthreads library is available on most linux plateforms.
-A version of pthread is available for win-32 and can be downloaded at http://sourceware.org/pthreads-win32. (Unfortunately, this prevents the use of pthreads on x64 windows for now.)
+pthread:
+The pthread library should be available on OSX since 10.3.
+The pthread library is available on most linux plateforms.
+A version of pthread is available for win-32 and can be downloaded at http://sourceware.org/pthreads-win32.
 
+For rTANDEM to be able to access the expat library on Windows systems, you will need to set the environment variables for the expat 32 and 64 libraries. Set the paths to the corresponding libexpat.dll and libexpat.a in LIB_EXPAT_32 and LIB_EXPAT_64.
 
