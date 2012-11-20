@@ -49,8 +49,9 @@ mass spectra, Bioinformatics, 2004, 20 1466-7.
 http://www.thegpm.org/tandem/ 
 }
 \author{
-Authors: Frederic Fournier, Charles Joly Beauparlant, Arnaud Droit
-Maintainer: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>
+Authors: Frederic Fournier, Charles Joly Beauparlant, Rene Paradis, Arnaud Droit
+Maintainer: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>,
+  Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
 }
 
 \examples{

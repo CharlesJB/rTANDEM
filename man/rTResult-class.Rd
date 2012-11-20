@@ -51,8 +51,10 @@ No methods defined with class "rTResult" in the signature.
 }
 
 \author{
-Authors: Arnaud Droit, Frederic Fournier, Charles Joly Beauparlant
-Maintainer: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>
+Authors: Frederic Fournier, Charles Joly Beauparlant, Rene Paradis,
+Arnaud Droit
+Maintainer: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>,
+Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
 }
 
 \examples{
