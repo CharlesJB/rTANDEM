@@ -22,7 +22,7 @@ GetDegeneracy(peptide.id, results)
   \item{log.expect}{
     X!Tandem provides a score of protein identification that is
     presented in terms of the log of the expect value of the
-    identification. This score can be used as a threshold to cut off low
+    identification. This score can be used as a threshold to discard low
     confidence identifications from the protein list.
   }
   \item{expect}{
@@ -36,14 +36,14 @@ GetDegeneracy(peptide.id, results)
     discard identifications based on too few peptides from the protein list.
   }
   \item{protein.uid}{
-    The tandem identifier of the protein.
+    The tandem identifier of the protein (a numeric).
   }
   \item{peptide.id}{
-    The tandem identifier of the peptide.
+    The tandem identifier of the peptide (a character).
   }
   \item{score}{
     The tandem score of the peptide identification. This score can be
-    used as a threshold to discard low confidence identification from
+    used as a threshold to discard low confidence identifications from
     the peptide list. 
   }
 }

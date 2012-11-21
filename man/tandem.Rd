@@ -7,8 +7,8 @@
 }
 \description{
   The function \code{tandem(input)} takes a rTParam object or the path of
-  a parameter file as argument and calls X!Tandem on it. The function
-  \code{rtandem(data.file, taxon, taxonomy, default.parameters)} is a
+  a parameter file as argument and calls X!Tandem on it.
+  The function \code{rtandem(data.file, taxon, taxonomy, default.parameters)} is a
   wrapper that can be used to circumvent the need for a rTParam input
   object (or of an xml input file).
 }
@@ -50,15 +50,15 @@ http://www.thegpm.org/tandem/
 }
 \author{
 Authors: Frederic Fournier, Charles Joly Beauparlant, Rene Paradis, Arnaud Droit
-Maintainer: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>,
-  Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
+
+Maintainer: Frederic Fournier <frederic.fournier@crchuq.ulaval.ca>, Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
 }
 
 \examples{
 # X!Tandem call style: we call tandem(input) on a single
 # rTParam object.
 
-# We create rTParam and from X!Tandem style xml file
+# We create rTParam from an X!Tandem xml file
 # located in the installation folder: 
 param <- GetParamFromXML(system.file("extdata/input.xml", package="rTANDEM"))
 
