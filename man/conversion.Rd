@@ -38,22 +38,22 @@ WriteTaxoToXML(taxo, file)
     A rTTaxo object whose content will be written to an xml file.
   }
   \item{embeddedParam}{
-    The behaviour to addopt if a rTParam object contains and embedded
+    The behaviour to adopt if a rTParam object contains an embedded
     rTParam object in the "list path, default parameters" slot. The
-    option "merge" will merge the two object together; the option
-    "write" will call WriteParamToXML on the embedded rTParam object and
-    write it to the the given file name plus suffixe "_default_param"
-    and will replace the embedded object by its path in the original
-    object, the option "skip" will just ignore this slot.
+    option "merge" will merge the two object together. The option
+    "write" will call WriteParamToXML on the embedded rTParam object
+    and write it to the the given file name plus suffixe
+    "_default_param". It will then replace the embedded object by its
+    path in the original object. The option "skip" will just ignore
+    this slot.
   }
   \item{embeddedTaxo}{
-    The behaviour to adopt if the rTParam object contains and embedded
+    The behaviour to adopt if the rTParam object contains an embedded
     rTTaxo object in the "list path, taxonomy information" slot. The
     option "write" will call WriteTaxoToXML on the object and write it
-    to the input file name plus suffixe "_taxonomy" and replace the
-    rTTaxo object by its path in the container rTParam object; the
-    option "skip" will just ignore this slot of the container rTParam
-    object. 
+    to the input file name plus suffixe "_taxonomy". It will then
+    replace the rTTaxo object by its path in the container rTParam
+    object. The option "skip" will just ignore this slot.
   }
 }
 \value{

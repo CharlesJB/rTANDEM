@@ -34,28 +34,28 @@ This package and the underlying X!Tandem code are distributed under the Artistic
 
 \section{Introduction}
 
-X!Tandem is an open source software for protein identification from tandem mass spectrometry experiments, and rTANDEM is an R encapsulation of this software. As of now, rTANDEM provides a very basic encapsulation of X!Tandem: it has a function that takes as an argument the path to an X!Tandem style parameter file and return the path to an X!tandem style output file. The package also presents some functions to transform parameters or results files into R objects and vice versa. We are planning to add functions for visualisation, data manipulation and conversion in a near future.
+X!Tandem is an open source software for protein identification by tandem mass spectrometry, and rTANDEM encapsulates this software in R. As of now, rTANDEM provides rather basic encapsulation of X!Tandem: it has a function that takes as an argument the path to an X!Tandem style parameter file and return the path to an X!tandem style output file. The package also presents some functions to transform parameters or results files into R objects and vice versa. Furthermore, some functions are available toexamine the results within R.
 
 \section{Manifesto}
 
-Most analytic pipelines for protein identification using tandem mass spectrometry experiments are proprietary. Those pipelines often have the advantage of being user-friendly (to a certain extent), but reliance on proprietary pipelines has many downfalls. Proprietary pipelines hinder collaboration between labs by making it more difficult to analyze data that have been obtained in a different pipeline. It prevents the development of new types of analyzes or of new scientific questions by preventing the researchers from modifying the algorithms or inner settings of the analytic tools. It creates a 'black box' phenomenon where the results given by the analytic tools are to be trusted even though the process by which they have been obtained cannot be fully examined, tested or modified. 
+Most analytic pipelines for protein identification using tandem mass spectrometry experiments are proprietary. Those pipelines often have the advantage of being user-friendly (to a certain extent), but reliance on proprietary pipelines has many downfalls. Proprietary pipelines hinder collaboration between labs by making it more difficult to analyze data that have been obtained in a different pipeline. It prevents the development of new types of analyses or of new scientific questions by preventing the researchers from modifying the algorithms or inner settings of the analytic tools. It creates a 'black box' phenomenon where the results given by the analytic tools are to be trusted even though the process by which they have been obtained cannot be fully examined, tested or modified. 
 
-The encapsulation of X!Tandem in R is a fisrt steps towards building a viable analytic pipeline for protein identification in R. The goal is to make R an interesting and powerful framework for ms/ms data analysis just like it is for NGS analysis.
+The encapsulation of X!Tandem in R is a fisrt step towards building a viable analytic pipeline for protein identification in R. The goal is to make R an interesting and powerful framework for ms/ms data analysis just like it is for NGS analysis.
 
 \section{rTANDEM input/output overview}
 
-The input of a standard X!Tandem analysis is composed of several files: three .xml files setting the parameters (usually named input.xml, default-input.xml and taxonomy.xml), one or more database files, and one or more files containing the spectra to be analysed. Detailed information is available on the \href{www.thegpm.org/TANDEM/index.html}{X!Tandem website}. rTANDEM can use the xml files just like X!Tandem, or R objects can be used in lieu of the .xml files. rTANDEM provides functions to create parameters or taxonomy objects from xml files, or to create the xml files from the R parameters or taxonomy objects.
-The output of a standard X!Tandem analysis is composed of a standard xml file. Since this output can be quite large, rTANDEM follows X!Tandem behaviour and writes the result of the analysis to an xml file. But the package provides a function to create an R object from the xml files and some functions to examine the results within R. 
+The input of a standard X!Tandem analysis is composed of several files: three .xml files setting the parameters (usually named input.xml, default-input.xml and taxonomy.xml), one or more database files, and one or more files containing the spectra to be analyzed. Detailed information is available on the \href{www.thegpm.org/TANDEM/index.html}{X!Tandem website}. rTANDEM can use the xml files just like X!Tandem, or R objects can be used in lieu of the .xml files. rTANDEM provides functions to create parameters or taxonomy objects from xml files, or to create the xml files from the R parameters or taxonomy objects.
+The output of a standard X!Tandem analysis is composed of a standard xml file. Since this output can be quite large, rTANDEM follows X!Tandem behaviour and writes the result of the analysis to an xml file. But the package provides a function to parse this file an create an R object from it. 
 
 \subsection{The input file}
 
 The main input file is used to fix the major parameters of the search, namely
 \begin{enumerate}
-\item The path to the output file (the file that will be used to store the results).
-\item The path to the spectra file (the file that contains the data to be analysed).
+\item The path of the output file (the file that will be used to store the results).
+\item The path of the spectra file (the file that contains the data to be analysed).
 \item The taxon used for the search. 
-\item The path to a taxonomy file (a file that provides information on the databases to be used).
-\item The path to a default-input file (a file that sets parameters that are common to many experiments).
+\item The path of the taxonomy file (the file that provides information on the databases to be used).
+\item The path of a default-input file (a file that sets parameters that are common to many experiments).
 \end{enumerate}
 
 \subsection{The output file}
@@ -77,7 +77,7 @@ The database files contain the information that will be used to analyse the spec
 \subsection{The default-parameter file}
 
 The default-parameter file is used to set fine-grained parameters. For example it is used to set the mass error tolerated, or to set which types of ions will be used for calculation. This file is not usually modified for every experiment, rather, a default-parameter can be created for every instrument used (the fine-grained parameters are often instrument-specific).  
-The default-parameter file also provides link to formatting files (css and xsl) that are useful for consulting the output file in a web browser. 
+The default-parameter file also provides links to formatting files (css and xsl) that are useful for consulting the output in a web browser. 
 
 \section{rTANDEM typical usage}
 
@@ -85,7 +85,7 @@ First of all, we must load rTANDEM into the session:
 <<Loading Rtandem>>=
 library(rTANDEM)
 @
-To use rTANDEM and launch an analysis, we will need a couple of objects and files, including a taxonomy and a parameter set. The taxonomy is used to link taxa to fasta files. The rTANDEM package contains a partial fasta.pro file from the yeast proteome, so we can build a taxonomy object using it. (Note that we could have use a normal fasta file just as well):
+To use rTANDEM and launch an analysis, we will need a couple of objects and files, including a taxonomy and a parameter set. The taxonomy is used to link taxa to fasta files. The rTANDEM package contains a partial fasta.pro file from the yeast proteome, so we can build a taxonomy object using it. (Note that we could have used a normal fasta file just as well):
 <<Building rTTaxo>>=
 taxonomy <- rTTaxo(
   taxon="yeast",
@@ -146,7 +146,7 @@ proteins.of.the.peptide[,label]
 # Careful! This peptide belongs to 2 different proteins! It should not be 
 # used for quantification, for MRM or as a biomarker.
 @ 
-With our results being in R, we can harness the power of other R and bioconductor packages to analyse our data. For example, we can use biomaRt to get annotation information and cross-references. The reduced database that we used features ensembl peptide-id, but has no real description for the proteins. Let's use biomaRt to find a description of protein YFR053C, and while we are there, let's also get a cross-reference for this protein in uniprot, as well as the GO terms associated with the protein:
+With our results being in R, we can harness the power of other R and bioconductor packages to further analyze our data. For example, we can use biomaRt to get annotation information and cross-references. The reduced database that we used features ensembl peptide-id, but has no real description for the proteins. Let's use biomaRt to find a description of protein YFR053C, and while we are there, let's also get a cross-reference for this protein in uniprot, as well as the GO terms associated with the protein:
 <<Change display, echo=FALSE>>=
 options("width"=70)
 @ 
