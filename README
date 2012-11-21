@@ -5,14 +5,13 @@ SYSTEM REQUIREMENTS:
 rTANDEM uses 'expat' and 'pthread' libraries. Their avalability might vary according to operating system.
 
 expat:
-The eXpat library should be available on OSX since 10.4.
-The eXpat library for linux can be downloaded at http://sourceforge.net/projects/expat/files. 
-The eXpat library for Windows can be downloaded at http://sourceforge.net/projects/expat/files. 
+The expat library should be available on OSX since 10.4.
+The expat library for linux can be downloaded at http://sourceforge.net/projects/expat/files. 
+The expat library for Windows can be downloaded at http://sourceforge.net/projects/expat/files. 
 
 pthread:
 The pthread library should be available on OSX since 10.3.
 The pthread library is available on most linux plateforms.
 A version of pthread is available for win-32 and can be downloaded at http://sourceware.org/pthreads-win32.
 
-For rTANDEM to be able to access the expat library on Windows systems, you will need to set the environment variables for the expat 32 and 64 libraries. Set the paths to the corresponding libexpat.dll and libexpat.a in LIB_EXPAT_32 and LIB_EXPAT_64.
-
+To build rTANDEM from sources on Windows systems, you will need the required libraries. And you will need to set two environment variables: LIB_EXPAT_32 and LIB_EXPAT_64 to the paths corresponding to the 32 and x64 expat libraries.
