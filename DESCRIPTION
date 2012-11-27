@@ -14,6 +14,6 @@ Description: This package encapsulate X!Tandem in R. In its most basic functiona
 biocViews: MassSpectrometry, Proteomics
 License: Artistic-1.0
 Imports: methods
-Depends: XML, Rcpp, data.table
+Depends: XML, Rcpp, data.table (>= 1.8.6)
 Suggests: biomaRt
 LinkingTo: Rcpp
