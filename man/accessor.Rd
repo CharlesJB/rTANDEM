@@ -55,3 +55,30 @@ GetDegeneracy(peptide.id, results)
   hence, if peptides has two ptm, it will occupy to rows in
   the resulting data.table.
 }
+\examples{
+# To show how to use the accessor functions, we need an rTANDEM result.
+# We can produce one by running the example from the rTANDEM function,
+# and reading it to R with GetResultsFromXML:
+# output.file.path <- example(rTANDEM)
+\dontshow{
+output.file.path <- example(rTANDEM);
+}
+results <- GetResultsFromXML(output.file.path[[1]])
+
+# To get a data.table of the proteins identified by at least 2 peptides
+# and with an expect value of 0.05 or better:
+proteins <- GetProteins(results, log.expect=-1.3, min.peptides=2)
+proteins[, -c(4,5), with=FALSE] # Colums are removed for better display
+
+# To get a list of the peptides used to identify the first protein
+# (YCR012W, uid=576): 
+peptides <- GetPeptides(protein.uid="576", results)
+peptides
+
+# To get the list of proteins to which proteins a peptide belongs:
+# (If a peptide belongs to more than one protein, it should not be
+# used for quantification, as a biomarker or a MRM target.)
+proteins.of.the.peptide <- GetDegeneracy(peptide.id="169.1.1",
+results)
+proteins.of.the.peptide[,label]
+}
