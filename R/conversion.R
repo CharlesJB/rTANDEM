@@ -158,7 +158,7 @@ WriteTaxoToXML <- function(taxo, file) {
     bioml.node <- addChildren(bioml.node, taxon.node)
   }
   print(bioml.node)
-  #saveXML(bioml.node, file=file, prefix='<?xml version="1.0"?>\n')
+  saveXML(bioml.node, file=file, prefix='<?xml version="1.0"?>\n')
 }
 
 GetResultsFromXML <- function(xml.file) {
