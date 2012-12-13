@@ -1,8 +1,8 @@
 Package: rTANDEM
 Type: Package
 Title: Encapsulate X!Tandem in R.
-Version: 0.99.0
-Date: 2012-11-22
+Version: 0.99.2
+Date: 2012-12-13
 SystemRequirements: rTANDEM uses expat and pthread libraries. See the README file for details.
 Author@R: c(person("Frederic", "Fournier", email="frederic.fournier@crchuq.ulaval.ca"),
 	  person("Charles", "Joly Beauparlant", email="charles.joly-b@crchul.ulaval.ca"),
