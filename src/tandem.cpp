@@ -140,12 +140,22 @@ The End
 
 #include "tandem.h"
 
+// For defining R_CStackLimit
+#ifndef _WIN32
+#define CSTACK_DEFNS 1
+#include <Rinterface.h>
+#endif
+
+
+
 //int main(int argc, char* argv[]) // rTANDEM
 // .Call("tandem",RTsexp['param'], RTsexp['peptide'], RTsexp['saps'], RTsexp['mods'], RTsexp['spectrum'])
 SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rTANDEM
 {
     // Disable R c-stack
-    R_CStackLimit = (uintptr_t) -1;
+#ifndef _WIN32
+  R_CStackLimit = (uintptr_t) -1;
+#endif
 
 	/*
 	* Check the argv array for at least one parameter.
