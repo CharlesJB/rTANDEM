@@ -144,44 +144,8 @@ The End
 // .Call("tandem",RTsexp['param'], RTsexp['peptide'], RTsexp['saps'], RTsexp['mods'], RTsexp['spectrum'])
 SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rTANDEM
 {
-	// rTANDEM
-	// To make sure the SEXP are ok
-//	Rcpp::CharacterVector v_param(param); // rTANDEM
-//	Rcpp::CharacterVector v_peptide(peptide); // rTANDEM
-//	Rcpp::CharacterVector v_saps(saps); // rTANDEM
-//	Rcpp::CharacterVector v_mods(mods); // rTANDEM
-//	Rcpp::CharacterVector v_spectrum(spectrum); // rTANDEM
-	
-//	cout << "param: " << endl; // rTANDEM
-//	for (size_t i = 0; i < v_param.size(); i++) { // rTANDEM
-//		string toPrint(v_param[i]); // rTANDEM
-//		cout << toPrint << endl; // rTANDEM
-//	} // rTANDEM
-	
-//	cout << "peptide: " << endl; // rTANDEM
-//	for (size_t i = 0; i < v_peptide.size(); i++) { // rTANDEM
-//		string toPrint(v_peptide[i]); // rTANDEM
-//		cout << toPrint << endl; // rTANDEM
-//	} // rTANDEM
-	
-//	cout << "saps: " << endl; // rTANDEM
-//	for (size_t i = 0; i < v_saps.size(); i++) { // rTANDEM
-//		string toPrint(v_saps[i]); // rTANDEM
-//		cout << toPrint << endl; // rTANDEM
-//	} // rTANDEM
-	
-//	cout << "mods: " << endl; // rTANDEM
-//	for (size_t i = 0; i < v_mods.size(); i++) { // rTANDEM
-//		string toPrint(v_mods[i]); // rTANDEM
-//		cout << toPrint << endl; // rTANDEM
-//	} // rTANDEM
-	
-//	cout << "spectrum: " << endl; // rTANDEM
-//	for (size_t i = 0; i < v_spectrum.size(); i++) { // rTANDEM
-//		string toPrint(v_spectrum[i]); // rTANDEM
-//		cout << toPrint << endl; // rTANDEM
-//	} // rTANDEM
-	
+    // Disable R c-stack
+    R_CStackLimit = (uintptr_t) -1;
 
 	/*
 	* Check the argv array for at least one parameter.
@@ -204,6 +168,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 //	} 
 //	cout << "\nX! TANDEM " << VERSION << "\n\n"; 
 //
+
 	/*
 	* Create an mprocess object array
 	*/
