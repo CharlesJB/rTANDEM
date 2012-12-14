@@ -97,15 +97,16 @@ taxonomy
 Second we will need to determine the parameters for the analysis. There are usually two different sets of parameters: one set of fine-grained parameters (often related to the mass-spectrometer used to acquire the data); and a set of more basic parameters that specify which data file will be analysed and where should the output be written. A default 'fine-grained' parameter set is included in the package, as well as a small data file, so we can use them to create a complete parameter set. We will start by creating an empty parameter object and we will fill the information in:
 <<Building rTParam>>=
 param <- rTParam()
-param$'protein, taxon' <- "yeast"
-param$'list path, taxonomy information' <- taxonomy
-param$'list path, default parameters'   <- 
-  system.file("extdata/default_input.xml", package="rTANDEM")
-param$'spectrum, path' <- 
-  system.file("extdata/test_spectra.mgf", package="rTANDEM")
-param$'output, xsl path' <- 
-  system.file("extdata/tandem-input-style.xsl", package="rTANDEM")
-param$'output, path' <- paste(getwd(), "output.xml", sep="/")
+param <- setParamValue(param, 'protein', 'taxon', value="yeast")
+param <- setParamValue(param, 'list path', 'taxonomy information', taxonomy)
+param <- setParamValue(param, 'list path', 'default parameters',
+  value=system.file("extdata/default_input.xml", package="rTANDEM"))
+param <- setParamValue(param, 'spectrum', 'path',
+  value=system.file("extdata/test_spectra.mgf", package="rTANDEM"))
+param <- setParamValue(param, 'output', 'xsl path',
+  value=system.file("extdata/tandem-input-style.xsl", package="rTANDEM"))
+param <- setParamValue(param, 'output', 'path',
+  value=paste(getwd(), "output.xml", sep="/"))
 @ 
 Now that all the relevant parameters are recorded, we can launch the analysis using the param object:
 <<Launching rTANDEM>>=

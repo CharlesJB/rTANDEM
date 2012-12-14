@@ -38,7 +38,7 @@ rTTaxo <- function(taxon=NA, format=NA, URL=NA) {
   #    format: The format of the database (eg. "peptides" or "spectrum") or a vector of formats.
   #    URL   : The path to the database file or a vector of paths.
   # Returns:
-  #    A rTTaxo object with a pre-assigned data.frame of the given length
+  #    A rTTaxo object.
   rTTaxo <- data.frame(
                        row.names=NULL,
                        taxon=taxon,
@@ -145,4 +145,12 @@ rTParam <- function() {
   return(rTParam)
 }
 
-
+setParamValue <- function(param, category, parameter, value) {
+  key <- paste(category, parameter, sep=", ") 
+  if (is.null(param[[key]])){
+      warning("Unknown category/parameter combination. This parameter will probably remain unused.")
+    }
+  param[[key]] <- value
+  param
+}
+      
