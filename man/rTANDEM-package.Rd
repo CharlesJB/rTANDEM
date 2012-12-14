@@ -54,11 +54,15 @@ taxonomy <- rTTaxo(
 # We will adjust those two objects to use one another and to use,
 # the path of some data and configuration files located
 # in the installation folder:
-param$'list path, taxonomy information' <- taxonomy
-param$'list path, default parameters' <- system.file("extdata/default_input.xml", package="rTANDEM")
-param$'spectrum, path' <- system.file("extdata/test_spectra.mgf", package="rTANDEM")
-param$'output, xsl path' <- system.file("extdata/tandem-input-style.xsl", package="rTANDEM")
-param$'output, path' <- paste(getwd(), "output.xml", sep="/")
+param <- setParamValue(param, 'list path', 'taxonomy information', taxonomy)
+param <- setParamValue(param, 'list path', 'default parameters',
+  value=system.file("extdata/default_input.xml", package="rTANDEM"))
+param <- setParamValue(param, 'spectrum', 'path',
+  value=system.file("extdata/test_spectra.mgf", package="rTANDEM"))
+param <- setParamValue(param, 'output', 'xsl path',
+  value=system.file("extdata/tandem-input-style.xsl", package="rTANDEM"))
+param <- setParamValue(param, 'output', 'path',
+  value=paste(getwd(), "output.xml", sep="/"))
 
 # This is the main command to run rTANDEM. The output will be
 # written to a file in the working directory and the function
