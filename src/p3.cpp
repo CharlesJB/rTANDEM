@@ -1,4 +1,4 @@
-/*
+ /*
  Copyright (C) 2003-2011 Ronald C Beavis, all rights reserved
  X! tandem 
  This software is a component of the X! proteomics software
@@ -250,7 +250,7 @@ int main(int argc, char* argv[])
 	}
 	pProcess[0]->serialize();
 //	cout << "Spectra matching criteria = " << (unsigned long)pProcess[0]->m_vSpectra.size() << "\n";
-	Rprintf("Spectra matching criteria = %l, \n", (unsigned long)pProcess[0]->m_vSpectra.size());
+	Rprintf("Spectra matching criteria = %ul, \n", (unsigned long)pProcess[0]->m_vSpectra.size());
 	//cout.flush();
 #ifdef PLUGGABLE_SCORING
 // 	cout << "Pluggable scoring enabled.\n";
@@ -443,7 +443,7 @@ int main(int argc, char* argv[])
 	}
 #endif
 //	cout << "\tsequences modelled = "<< (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5) << " ks\n";
-	Rprintf("\tsequences modelled = %l ks\n", (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5));
+	Rprintf("\tsequences modelled = %ul ks\n", (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5));
 	//cout.flush();
 	pProcess[0]->merge_spectra();
 	a = 1;
@@ -619,19 +619,19 @@ int main(int argc, char* argv[])
 		dE = 1.0;
 	}
 //	cout << "\nValid models = " << (unsigned long)tValid << "\n";
-	Rprintf("\nValid models = %l\n", (unsigned long)tValid);
+	Rprintf("\nValid models = %ul\n", (unsigned long)tValid);
 	if(tUnique > 0)	{
 //		cout << "Unique models = " << (unsigned long)tUnique << "\n";
-		Rprintf("Unique models = %l\n", (unsigned long)tUnique);
-//		cout << "Estimated false positives = " << lE << " &#177; ";
-		Rprintf("Estimated false positives = %l &#177; ", lE);
+		Rprintf("Unique models = %ul\n", (unsigned long)tUnique);
+//		cout << "Estimated false positives = " << lE << " +/- ";
+		Rprintf("Estimated false positives = %ul +/- ", lE);
 //		cout << lEe << "\n";
-		Rprintf("%l\n", lEe);
+		Rprintf("%ul\n", lEe);
 	}
 	lE = pProcess[0]->get_reversed();
 	if(lE != -1)	{
 //		cout << "False positive rate (reversed sequences) = " << lE << "\n";
-		Rprintf("False positive rate (reversed sequences) = %l\n", lE);
+		Rprintf("False positive rate (reversed sequences) = %ul\n", lE);
 	}
 //	cout << "\n\n";
 	Rprintf("\n\n");
