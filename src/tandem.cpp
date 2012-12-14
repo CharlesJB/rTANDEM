@@ -239,7 +239,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	}
 	pProcess[0]->serialize();
 //	cout << "Spectra matching criteria = " << (unsigned long)pProcess[0]->m_vSpectra.size() << "\n";
-	Rprintf("Spectra matching criteria = %l\n", (unsigned long)pProcess[0]->m_vSpectra.size());
+	Rprintf("Spectra matching criteria = %lu\n", (unsigned long)pProcess[0]->m_vSpectra.size());
 	//cout.flush();
 #ifdef PLUGGABLE_SCORING
 // 	cout << "Pluggable scoring enabled.\n";
@@ -366,11 +366,11 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		if(a > 0 && wait == WAIT_TIMEOUT)	{
 			if(a == 1)	{
 //				cout << "waiting for " << a+1;
-				Rprintf("waiting for %i", a+1);
+				Rprintf("waiting for %lu", a+1);
 			}
 			else	{
 //				cout << a+1;
-				Rprintf("%i",a+1);
+				Rprintf("%lu",a+1);
 			}
 			while(wait == WAIT_TIMEOUT)	{
 				wait = WaitForSingleObject(pHandle[a],dwTime);
@@ -399,7 +399,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 			}
 			if(a == 1)	{
 //				cout << "waiting for " << a+1;
-				Rprintf("waiting for %i", a+1);
+				Rprintf("waiting for %lu", a+1);
 			}
 			else if(a == 0)	{
 //				cout << "\n\t";
@@ -408,7 +408,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 			}
 			else	{
 //				cout << a+1;
-				Rprintf("%i", a+1);
+				Rprintf("%lu", a+1);
 			}
 		}
 		a++;
@@ -435,7 +435,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	}
 #endif
 //	cout << "\tsequences modelled = "<< (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5) << " ks\n";
-	Rprintf("\tsequences modelled = %l ks\n", (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5));
+	Rprintf("\tsequences modelled = %ld ks\n", (long)(pProcess[0]->get_protein_count()/1000.0 + 0.5));
 	//cout.flush();
 	pProcess[0]->merge_spectra();
 	a = 1;
@@ -495,11 +495,11 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		if(a > 0 && wait == WAIT_TIMEOUT)	{
 			if(a == 1)	{
 //				cout << "waiting for " << a+1;
-				Rprintf("waiting for %i", a+1);
+				Rprintf("waiting for %lu", a+1);
 			}
 			else	{
 //				cout << a+1;
-				Rprintf("%i", a+1);
+				Rprintf("%lu", a+1);
 			}
 			//cout.flush();
 			while(wait == WAIT_TIMEOUT)	{
@@ -529,7 +529,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 			}
 			if(a == 1)	{
 //				cout << "waiting for " << a+1;
-				Rprintf("waiting for %i", a+1);
+				Rprintf("waiting for %lu", a+1);
 			}
 			else if(a == 0)	{
 //				cout << "\n\t";
@@ -538,7 +538,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 			}
 			else	{
 //				cout << a+1;
-				Rprintf("%i", a+1);
+				Rprintf("%lu", a+1);
 			}
 		}
 		a++;
@@ -573,11 +573,11 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	while(a < (unsigned long)(dCount))	{
 		if(a == 1)	{
 //			cout << "\tfrom " << a+1;
-			Rprintf("\tfrom %i", a+1);
+			Rprintf("\tfrom %s", a+1);
 		}
 		else	{
 //			cout << a+1;
-			Rprintf("%i", a+1);
+			Rprintf("%s", a+1);
 		}
 		//cout.flush();
 		if(!pProcess[0]->add_spectra(pProcess[a]->m_vSpectra))	{
@@ -612,14 +612,14 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		dE = 1.0;
 	}
 //	cout << "\nValid models = " << (unsigned long)tValid << "\n";
-	Rprintf("\nValid models = %l\n", (unsigned long)tValid);
+	Rprintf("\nValid models = %lu\n", (unsigned long)tValid);
 	if(tUnique > 0)	{
 //		cout << "Unique models = " << (unsigned long)tUnique << "\n";
-		Rprintf("Unique models = %l\n", (unsigned long)tUnique);
-//		cout << "Estimated false positives = " << lE << " &#177; ";
-		Rprintf("Estimated false positives = %l &#177; ", lE);
+		Rprintf("Unique models = %lu\n", (unsigned long)tUnique);
+//		cout << "Estimated false positives = " << lE << " +/- ";
+		Rprintf("Estimated false positives = %lu +/- ", lE);
 //		cout << lEe << "\n";
-		Rprintf("%l\n", lEe);
+		Rprintf("%lu\n", lEe);
 	}
 //	lE = pProcess[0]->get_reversed();
 //	cout << "\n\n";
