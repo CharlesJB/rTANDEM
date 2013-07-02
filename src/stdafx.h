@@ -258,5 +258,5 @@ typedef map<string,string,less<string> > xMap;
 typedef map<string,bool> bMap;
 typedef pair<char,string> prSap;
 
-#define VERSION "CYCLONE (2011.12.01.1)"
+#define VERSION "Jackhammer (2013.06.15)"
 

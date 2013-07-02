@@ -170,6 +170,19 @@ void SAXMzmlHandler::processCVParam(const char* name, const char* accession, con
 	else if(!strcmp(name, "charge state") || !strcmp(accession,"MS:1000041"))	{
 		m_precursorCharge = atoi(value);
 	}
+	else if(!strcmp(name, "filter string") || !strcmp(accession,"MS:1000512"))	{
+		m_strDesc = value;
+	}
+	else if(!strcmp(name, "scan start time") || !strcmp(accession,"MS:1000016"))	{
+		if(atof(value) > 0.0)	{
+			char pLine[256];
+			sprintf(pLine,"PT%.3lfS",60.0*atof(value));
+			m_strRt = pLine;
+		}
+		else	{
+			m_strRt = value;
+		}
+	}
 	else if(!strcmp(name, "selected ion m/z") || !strcmp(accession,"MS:1000744"))	{
 		m_precursorMz =	atof(value);
 	}

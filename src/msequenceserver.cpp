@@ -317,6 +317,14 @@ unsigned long msequenceServer::next(const bool _f)
 					*pValue = '\0';
 				}
 			}
+			if(m_lSize - strlen(m_pLine) < 1024)	{
+				string strTemp = m_pLine;
+				m_lSize = m_lSize + 1024*256;
+				delete m_pLine;
+				m_pLine = new char[m_lSize + 1];
+				strcpy(m_pLine,strTemp.c_str());
+				pValue = m_pLine + strlen(m_pLine);
+			}
 			returnValue = fgets(pValue,m_lSize,m_pInput);
 			returnValue++; /* fool the compiler */
 		}
@@ -387,6 +395,16 @@ bool msequenceServer::bz(char *_p)
 		*pFind = 'Q';
 		pFind = strchr(_p,'Z');
 	}
+	pFind = strchr(_p,'J');
+	while(pFind != NULL)	{
+		*pFind = 'L';
+		pFind = strchr(_p,'J');
+	}
+//	pFind = strchr(_p,'X');
+//	while(pFind != NULL)	{
+//		*pFind = '*';
+//		pFind = strchr(_p,'X');
+//	}
 	return true;
 }
 /*
@@ -433,16 +451,27 @@ unsigned long msequenceServer::next_pro(const bool _f)
 #ifdef OSX
 		lLength = mac_rev(lLength);
 #endif
+		if(lLength > m_lSize)	{
+			delete m_pLine;
+			m_lSize = (unsigned long)(lLength + 1024);
+			m_pLine = new char[m_lSize + 1];
+		}
 		tS = fread(m_pLine,lLength,1,m_pInput);
 		if(feof(m_pInput))	{
 			break;
 		}
-		if(_f)
+		if(_f)	{
 			m_pCol->m_vASequences[iLength].m_strDes = m_pLine;
+		}
 		tS = fread(&lLength,4,1,m_pInput);
 #ifdef OSX
 		lLength = mac_rev(lLength);
 #endif
+		if(lLength > m_lSize)	{
+			delete m_pLine;
+			m_lSize = (unsigned long)(lLength + 1024);
+			m_pLine = new char[m_lSize + 1];
+		}
 		tS = fread(m_pLine,lLength,1,m_pInput);
 
 		tS++; /* fool the compiler */

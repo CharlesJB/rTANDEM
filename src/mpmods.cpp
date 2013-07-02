@@ -192,13 +192,25 @@ bool mpmods::refine()
 	strKey = "scoring, maximum missed cleavage sites";
 	m_pProcess->m_xmlValues.get(strKey,strValue);
 	m_pProcess->m_tMissedCleaves = atoi(strValue.c_str());
-	if(m_pProcess->m_tMissedCleaves < 5)	{
+	if(m_pProcess->m_Cleave.m_lType == 0x01 && m_pProcess->m_tMissedCleaves < 10)	{
+		m_pProcess->m_tMissedCleaves = 50;
+	}
+	else if(m_pProcess->m_tMissedCleaves < 5)	{
 		m_pProcess->m_tMissedCleaves = 5;
 	}
 	strKey = "refine, cleavage semi";
 	m_pProcess->m_xmlValues.get(strKey,strValue);
 	if(strValue == "yes")	{
 		m_pProcess->m_semiState.activate(true);
+		m_pProcess->m_semiState.type(0);
+	}
+	else if(strValue == "amino")	{
+		m_pProcess->m_semiState.activate(true);
+		m_pProcess->m_semiState.type(2);
+	}
+	else if(strValue == "carboxy")	{
+		m_pProcess->m_semiState.activate(true);
+		m_pProcess->m_semiState.type(1);
 	}
 	else	{
 		m_pProcess->m_semiState.activate(false);

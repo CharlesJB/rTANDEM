@@ -132,6 +132,7 @@ The End
 #define MSCOREPAM_H
 
 #include <set>
+#include "saxsaphandler.h"
 
 // File version: 2004-02-01
 /*
@@ -214,6 +215,9 @@ public:
 		m_tPos = 0;
 		m_iPos = 0;
 		m_strId.clear();
+		m_bMods = false;
+		m_smapOld.clear();
+		m_dMod = 0.0;
 		m_bEnd = true;
 	}
 	virtual ~mscoresap(void) { 
@@ -222,11 +226,14 @@ public:
 	int m_iStart;
 	int m_iEnd;
 	int m_iPos;
+	double m_dMod;
+	bool m_bMods;
+	SMap m_smapOld;
 	string m_strId;
-	map<string,multimap<int,prSap> > m_mapSap;
-	multimap<int,prSap>::iterator m_itSap;
-	multimap<int,prSap>::iterator m_itSapEnd;
-	map<string,multimap<int,prSap> >::iterator m_itAcc;
+	map<string,multimap<int,SavInfo> > m_mapSap;
+	multimap<int,SavInfo>::iterator m_itSap;
+	multimap<int,SavInfo>::iterator m_itSapEnd;
+	map<string,multimap<int,SavInfo> >::iterator m_itAcc;
 	char *m_pSeqTrue;
 	set<char> m_setAllowed;
 	size_t m_tSeqTrue;
@@ -254,6 +261,7 @@ public:
 		m_bEnd = true;
 		m_iStart = 0;
 		m_iEnd = 0;
+		m_dMod = 0.0;
 //		cout.flush();
 		return m_bOk;
 	}
@@ -286,6 +294,7 @@ public:
 		m_fSeqTrue = _f;
 		m_tLength = strlen(_p);
 		m_cCurrent = '\0';
+		m_dMod = 0.0;
 		m_iStart = _i + 1;
 		m_iEnd = m_iStart + (int)m_tLength - 1;
 		m_tCount = 0;
@@ -326,6 +335,7 @@ public:
 		m_fSeqTrue = _f;
 		m_tLength = strlen(_p);
 		m_cCurrent = '\0';
+		m_dMod = 0.0;
 		m_iEnd = m_iStart + (int)m_tLength - 1;
 		m_tCount = 0;
 		m_tPos = 0;
@@ -359,7 +369,8 @@ public:
 			m_bEnd = true;
 			return false;
 		}
-		m_cCurrent = m_itSap->second.first;
+		m_cCurrent = m_itSap->second.m_cMut;
+		m_dMod = m_itSap->second.m_dMod;
 		if(!m_setAllowed.empty())	{
 			while(m_setAllowed.find(m_cCurrent) == m_setAllowed.end())	{
 				m_tCount++;
@@ -373,11 +384,12 @@ public:
 					m_bEnd = true;
 					return false;
 				}
-				m_cCurrent = m_itSap->second.first;
+				m_cCurrent = m_itSap->second.m_cMut;
+				m_dMod = m_itSap->second.m_dMod;
 			}
 		}
 		m_tPos = m_iPos - m_iStart;
-		m_strId = m_itSap->second.second;
+		m_strId = m_itSap->second.m_strId;
 		m_tCount++;
 		m_itSap++;
 		if(m_itSap == m_itSapEnd || m_itSap->first > m_iEnd)	{

@@ -162,12 +162,12 @@ mscore_tandem::mscore_tandem(void)
 	}
 	m_uiSimd = 0;
 	m_pfLogs = new float[101];
-	float fV = 0.01;
+	float fV = (float)0.01;
 	a = 1;
 	m_pfLogs[0] = 0;
 	while(a < 101)	{
 		m_pfLogs[a] = log(fV);
-		fV += 0.01;
+		fV += (float)0.01;
 		a++;
 	}
 	m_fLog2 = (float)log(2.0);
@@ -263,7 +263,7 @@ __inline__ bool mscore_tandem::blur(vector<mi> &_s)
  * width is scaled by the measured m/z. 
  * NOTE: the m_fErr value used in the ppm case is: (the error in ppm) x 200
  */
-	float fConvert = m_fErr/m_fWidth;
+	float fConvert = (float)m_dErr/m_fWidth;
 	const float fFactor = (float)200.0/fConvert;
 	const size_t tSize = _s.size();
 	size_t tCount = 0;

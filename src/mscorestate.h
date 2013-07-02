@@ -148,7 +148,7 @@ public:
             m_ppModsS = new char*[m_lSizeS];
             m_piMods = new unsigned long[m_lSizeS];
 			m_lSizeEqualsS = 256;
-            m_plEqualsS = new long[m_lSizeEqualsS];
+            m_plEqualsS = new size_t[m_lSizeEqualsS];
             m_lEqualsS = 0;
             m_lEligibleS = 0;
 			m_bIsPossible = true;
@@ -175,7 +175,7 @@ public:
       unsigned long m_lStates;
       long m_lSizeS; // maximum peptide length
       long m_lSizeEqualsS; // maximum length of EqualS array
-      long *m_plEqualsS; // indexes of spectra with M+H within error of the current modified peptide M+H
+      size_t *m_plEqualsS; // indexes of spectra with M+H within error of the current modified peptide M+H
       unsigned long *m_piMods;
       char **m_ppModsS; // pointers to the potentially modified peptide residues
       char *m_pSeqS; // the unmodified peptide sequence
@@ -202,7 +202,7 @@ public:
           if(m_plEqualsS != NULL)
                delete m_plEqualsS;
 		  m_lSizeEqualsS = _s + 1;
-          m_plEqualsS = new long[m_lSizeEqualsS];
+          m_plEqualsS = new size_t[m_lSizeEqualsS];
           if(m_plEqualsS == NULL)
 				return false;
           return true;

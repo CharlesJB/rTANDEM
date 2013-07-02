@@ -200,37 +200,5 @@ public:
 		}
 		return *this;
 	}
-/*
- * format_description removes special characters from the description line and
- * substitutes characters that are legal in XML files 
- */
-	bool format_description()	{
-		size_t tStart = m_strDes.find(0x01);
-		while(tStart != m_strDes.npos)	{
-			m_strDes[tStart] = '\n';
-			tStart = m_strDes.find(0x01,tStart+1);
-		}
-		tStart = m_strDes.find('<');
-		while(tStart != m_strDes.npos)	{
-			m_strDes[tStart] = ' ';
-			tStart = m_strDes.find('<',tStart+1);
-		}		
-		tStart = m_strDes.find('>');
-		while(tStart != m_strDes.npos)	{
-			m_strDes[tStart] = ' ';
-			tStart = m_strDes.find('<',tStart+1);
-		}		
-		tStart = m_strDes.find('&');
-		while(tStart != m_strDes.npos)	{
-			m_strDes[tStart] = '+';
-			tStart = m_strDes.find('&',tStart+1);
-		}		
-		tStart = m_strDes.find('\"');
-		while(tStart != m_strDes.npos)	{
-			m_strDes[tStart] = '\'';
-			tStart = m_strDes.find('\"',tStart+1);
-		}		
-		return true;
-	}
 };
 #endif

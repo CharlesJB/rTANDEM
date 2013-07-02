@@ -462,6 +462,19 @@ bool loadmatrix::get(mspectrum &_m)
 			specCurrent.m_strDescription += strTemp.substr(tEquals+1,tSize-tEquals+1);
 			specCurrent.m_strDescription += " ";
 		}
+// The RTINSECONDS information was added at the request of Bas Jansen.
+// The inclusion of other, similar extension to MGF can be made by
+// following the same pattern: add an "else if" handler and
+// add the information to the m_strDescription line
+// DO NOT ADD \r or \n characters to this string
+// NOTE: all lines starting with hash tag (#) characters are already
+// automatically included in this string (see above).
+		else if(strTemp.find("RTINSECONDS=") != strTemp.npos)	{
+			specCurrent.m_strRt = strTemp.substr(tEquals+1,tSize-tEquals+1);
+			specCurrent.m_strDescription += "RTINSECONDS=";
+			specCurrent.m_strDescription += strTemp.substr(tEquals+1,tSize-tEquals+1);
+			specCurrent.m_strDescription += " ";
+		}
 		else if(strTemp.find("CHARGE=") != strTemp.npos)	{
 			strTemp = strTemp.substr(tEquals+1,tSize-tEquals+1);
 			specCurrent.m_fZ = (float)atof(strTemp.c_str());
@@ -1055,10 +1068,10 @@ bool loadcmn::get(mspectrum &_m)
 		pLine[cValue] = '\0';
 	}
 	specCurrent.m_strDescription = pLine;
-	if(strstr(pLine,":ETD:"))	{
+	if(strstr(pLine,":ETD"))	{
 		specCurrent.m_uiType = I_C|I_Z;
 	}
-	else if(strstr(pLine,":CID:"))	{
+	else if(strstr(pLine,":CID") || strstr(pLine,":HCD"))	{
 		specCurrent.m_uiType = I_B|I_Y;
 	}
 	fValue = 0.0;

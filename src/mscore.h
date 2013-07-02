@@ -153,23 +153,23 @@ public:
 	mspectrumindex() { }
 	virtual ~mspectrumindex() { }
 	
-	float m_fM; // the M+H + error for an mspectrum
-	unsigned long m_tA; // the index number for an mspectrum, in the m_vSpectra vector
+	double m_dM; // the M+H + error for an mspectrum
+	size_t m_tA; // the index number for an mspectrum, in the m_vSpectra vector
 /*
  * override the less than operator, so that an mspectrumdetails can be easily compared to a
  * float M+H value
  */
 	bool operator<(const mspectrumindex &rhs) const
 	{	
-		return m_fM < rhs.m_fM; 
+		return m_dM < rhs.m_dM; 
 	}
 	bool operator<=(const mspectrumindex &rhs) const
 	{	
-		return m_fM <= rhs.m_fM; 
+		return m_dM <= rhs.m_dM; 
 	}
 	bool operator>=(const mspectrumindex &rhs) const
 	{	
-		return m_fM >= rhs.m_fM; 
+		return m_dM >= rhs.m_dM; 
 	}
 /*
  * override the greater than operator, so that an mspectrumdetails can be easily compared to a
@@ -177,7 +177,7 @@ public:
  */
 	bool operator>(const mspectrumindex &rhs) const
 	{	
-		return m_fM > rhs.m_fM; 
+		return m_dM > rhs.m_dM; 
 	}
 /*
  * override the equivalence operator, so that an mspectrumdetails can be easily compared to a
@@ -185,14 +185,14 @@ public:
  */
 	bool operator ==(const mspectrumindex &rhs) const
 	{	
-		return (rhs.m_fM == m_fM); 
+		return (rhs.m_dM == m_dM); 
 	}
 /*
  * simple copy operation, using the = operator
  */
 	mspectrumindex& operator=(const mspectrumindex &rhs)
 	{
-		m_fM = rhs.m_fM;
+		m_dM = rhs.m_dM;
 		m_tA = rhs.m_tA;
 		return *this;
 	}
@@ -208,41 +208,41 @@ public:
 	mspectrumdetails() { }
 	virtual ~mspectrumdetails() { }
 	
-	float m_fU; // the M+H + error for an mspectrum
-	float m_fL; // the M+H - error for an mspectrum
-	long m_lA; // the index number for an mspectrum, in the m_vSpectra vector
+	double m_dU; // the M+H + error for an mspectrum
+	double m_dL; // the M+H - error for an mspectrum
+	size_t m_tA; // the index number for an mspectrum, in the m_vSpectra vector
 /*
  * override the less than operator, so that an mspectrumdetails can be easily compared to a
  * float M+H value
  */
-	bool operator<(const float &rhs)
+	bool operator<(const double &rhs)
 	{	
-		return m_fL < rhs; 
+		return m_dL < rhs; 
 	}
 /*
  * override the greater than operator, so that an mspectrumdetails can be easily compared to a
  * float M+H value
  */
-	bool operator>(const float &rhs)
+	bool operator>(const double &rhs)
 	{	
-		return m_fU > rhs; 
+		return m_dU > rhs; 
 	}
 /*
  * override the equivalence operator, so that an mspectrumdetails can be easily compared to a
  * float M+H value
  */
-	bool operator ==(const float &rhs)
+	bool operator ==(const double &rhs)
 	{	
-		return (rhs >= m_fL && rhs <= m_fU); 
+		return (rhs >= m_dL && rhs <= m_dU); 
 	}
 /*
  * simple copy operation, using the = operator
  */
 	mspectrumdetails& operator=(const mspectrumdetails &rhs)
 	{
-		m_fU = rhs.m_fU;
-		m_fL = rhs.m_fL;
-		m_lA = rhs.m_lA;
+		m_dU = rhs.m_dU;
+		m_dL = rhs.m_dL;
+		m_tA = rhs.m_tA;
 		return *this;
 	}
 };
@@ -321,13 +321,13 @@ public:
 	mscore(void);
 	virtual ~mscore(void);
 public:
-	float m_fErr; // error for the fragment ions
-	float m_fHomoError;
+	double m_dErr; // error for the fragment ions
+	double m_dHomoError;
 	float m_fHyper; // current hyper score
-	float m_fParentErrMinus; // error for the parent ion M+H (not m/z)
-	float m_fParentErrPlus; // error for the parent ion M+H (not m/z)
-	float m_fMaxMass;
-	float m_fMinMass;
+	double m_dParentErrMinus; // error for the parent ion M+H (not m/z)
+	double m_dParentErrPlus; // error for the parent ion M+H (not m/z)
+	double m_dMaxMass;
+	double m_dMinMass;
 	long m_lMaxCharge; // current parent ion charge
 	unsigned long m_lMaxPeaks; // if > 0, the m_lMaxPeaks most intense peaks will be used
 	double m_dScale; // scale for use in hconvert
@@ -385,6 +385,9 @@ public:
 	unsigned long add_seq(const char *_s,const bool _n,const bool _c,const unsigned long _l,const int _f);
 	bool sort_details();
 	bool get_aa(vector<maa> &_m,const size_t _a,double &_d);
+	double get_mh()	{
+		return m_dSeqMH;
+	};
 	bool load_next(void);
 	bool load_state(void);
 	bool load_seq(const unsigned long _t,const long _c);
@@ -432,6 +435,7 @@ public:
 	} mscore_error; // enum for referencing information about ion mass measurement accuracy.
 
 protected:
+	char *m_pSeq; // the current sequence
 	double m_dWE;
 	bool m_bPhosphoBias;
 	bool m_bUsePam; // true if the peptide will be checked for all possible point mutations
@@ -451,7 +455,7 @@ protected:
 	float *m_pfSeq; // residue masses corresponding to the current sequence in daltons
 	unsigned long *m_plAA;
 	unsigned long *m_plSeq; // residue masses corresponding to the current sequence, converted into integers
-	char *m_pSeq; // the current sequence
+//	char *m_pSeq; // the current sequence
 	size_t m_lId; // id of the current spectrum
 	size_t m_tSeqPos; // zero-based absolute position of the current peptide in the protein sequence
 	long m_lDetails;

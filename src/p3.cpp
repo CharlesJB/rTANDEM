@@ -1,5 +1,5 @@
- /*
- Copyright (C) 2003-2011 Ronald C Beavis, all rights reserved
+/*
+ Copyright (C) 2003-2013 Ronald C Beavis, all rights reserved
  X! tandem 
  This software is a component of the X! proteomics software
  development project
@@ -128,7 +128,7 @@ MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 The End 
 */
 
-// File version: 2011-12-01
+// File version: 2013-04-01
 
 /*
 	tandem.cpp provides a command line interface to the main processing class, mprocess.

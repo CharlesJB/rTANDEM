@@ -160,7 +160,7 @@ public:
 	bool masses(msequtilities &_p);
 	bool performance(XmlParameter &_x);
 	bool sequence(mspectrum &_s,const bool _b,vector<string> &_p,map<string,string> &_ann);
-	bool spectrum(mspectrum &_s);
+	bool spectrum(mspectrum &_s,string &_f);
 	bool start(XmlParameter &_x);
 	bool set_columns(const long _v);
 	bool set_compression(const bool _b);
@@ -175,6 +175,35 @@ private:
 	bool m_bCompress;
 	ofstream m_ofOut; // the output file stream
 	mscore& m_Score; // mscore used to generate scores in report
+	
+	bool format_text(string &_s)	{
+		size_t tStart = _s.find(0x01);
+		while(tStart != _s.npos)	{
+			_s[tStart] = '\n';
+			tStart = _s.find(0x01,tStart+1);
+		}
+		tStart = _s.find('<');
+		while(tStart != _s.npos)	{
+			_s[tStart] = ' ';
+			tStart = _s.find('<',tStart+1);
+		}		
+		tStart = _s.find('>');
+		while(tStart != _s.npos)	{
+			_s[tStart] = ' ';
+			tStart = _s.find('<',tStart+1);
+		}		
+		tStart = _s.find('&');
+		while(tStart != _s.npos)	{
+			_s[tStart] = '+';
+			tStart = _s.find('&',tStart+1);
+		}		
+		tStart = _s.find('\"');
+		while(tStart != _s.npos)	{
+			_s[tStart] = '\'';
+			tStart = _s.find('\"',tStart+1);
+		}		
+		return true;
+	}
 	string m_pathName; // rTANDEM
 };
 #endif

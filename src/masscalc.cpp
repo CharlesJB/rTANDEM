@@ -144,6 +144,7 @@ masscalc::masscalc(massType _t)
 	addMass("H", 1.007825035, 1.00794);
 	addMass("O", 15.99491463, 15.9994);
 	addMass("N", 14.003074, 14.0067);
+	addMass("Se", 79.916520, 78.96);
 	addMass("C", 12.0, 12.0107);
 	addMass("S", 31.9720707, 32.065);
 	addMass("P", 30.973762, 30.973761);

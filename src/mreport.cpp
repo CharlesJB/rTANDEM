@@ -140,6 +140,7 @@ The End
 #include "stdafx.h"
 #include <sys/timeb.h>
 #include <ctime>
+#include "saxsaphandler.h"
 #include "msequence.h"
 #include "msequencecollection.h"
 #include "msequenceserver.h"
@@ -251,7 +252,9 @@ bool mreport::group(const mspectrum &_s)
 		m_ofOut << "rt=\"" << _s.m_strRt.c_str() << "\" ";
 		sprintf(pLine,"%.1e",_s.m_dExpect);
 		m_ofOut << "expect=\"" << pLine << "\" ";
-		get_short_label(_s.m_vseqBest[0].m_strDes,pLine,80,255);
+		string strV = _s.m_vseqBest[0].m_strDes;
+		format_text(strV);
+		get_short_label(strV,pLine,80,255);
 		m_ofOut << "label=\"" << pLine << "\" type=\"model\" ";
 		sprintf(pLine,"%.2lf",log10(_s.m_vdStats[0]));
 		m_ofOut << "sumI=\"" << pLine << "\" maxI=\"" << _s.m_vdStats[1] << "\" fI=\"" << _s.m_vdStats[2] << "\" ";
@@ -281,7 +284,7 @@ bool mreport::get_short_label(const string &_s,char *_p,const unsigned long _l,c
 	}
 	if(a != lLength)	{
 //		cout << _s.c_str() << "||";
-		Rprintf("%s||", _s.c_str());
+		// Rprintf("%s||", _s.c_str());
 		//cout.flush();
 		_p[a] = '.';
 		a++;
@@ -667,7 +670,7 @@ bool mreport::masses(msequtilities &_p)
 /*
  * spectrum is used to output a complete spectrum, using GAML notation.
  */
-bool mreport::spectrum(mspectrum &_s)
+bool mreport::spectrum(mspectrum &_s,string &_f)
 {
 	if(m_ofOut.fail() || !m_ofOut.good())	{
 		return false;
@@ -677,6 +680,9 @@ bool mreport::spectrum(mspectrum &_s)
 		tId -= 100000000;
 	}
 	m_ofOut << "<group type=\"support\" label=\"fragment ion mass spectrum\">\n";
+	if(!_f.empty())	{
+		m_ofOut << "<file type=\"spectra\" URL=\"" << _f.c_str() << "\" />\n";
+	}
 	if(!_s.m_strDescription.empty())	{
 		_s.format();
 		m_ofOut << "<note label=\"Description\">" << _s.m_strDescription.c_str() << "</note>\n";
@@ -756,7 +762,9 @@ bool mreport::sequence(mspectrum &_s,const bool _b,vector<string> &_p,map<string
 		m_ofOut << pLine << "\"";
 		m_ofOut << " id=\"" << tId << "." << (unsigned long)(a+1) << "\"";
 		m_ofOut << " uid=\"" << (unsigned long)_s.m_vseqBest[a].m_tUid << "\" ";
-		get_short_label(_s.m_vseqBest[a].m_strDes,pLine,80,250);
+		string strV = _s.m_vseqBest[a].m_strDes;
+		format_text(strV);
+		get_short_label(strV,pLine,80,250);
 		m_ofOut << "label=\"" << pLine << "\" ";
 		sprintf(pLine,"sumI=\"%.2lf\" ",log10(_s.m_vseqBest[a].m_fIntensity));
 		m_ofOut << pLine;
@@ -767,7 +775,7 @@ bool mreport::sequence(mspectrum &_s,const bool _b,vector<string> &_p,map<string
 		}
 		m_ofOut <<  ">\n";
 		m_ofOut << "<note label=\"description\">";
-		m_ofOut << _s.m_vseqBest[a].m_strDes.c_str() << "</note>\n";
+		m_ofOut << strV.c_str() << "</note>\n";
 		m_ofOut << "<file type=\"peptide\" URL=\"" << _p[_s.m_vseqBest[a].m_siPath] << "\"/>\n";
 		m_ofOut << "<peptide start=\"1\" end=\"" << (unsigned long)_s.m_vseqBest[a].m_strSeq.size() << "\">\n";
 		c = 0;
@@ -843,7 +851,7 @@ bool mreport::sequence(mspectrum &_s,const bool _b,vector<string> &_p,map<string
 				m_ofOut << "<aa type=\"" << _s.m_vseqBest[a].m_vDomains[b].m_vAa[c].m_cRes << "\" at=\"" << _s.m_vseqBest[a].m_vDomains[b].m_vAa[c].m_lPos+1 << "\" ";
 				sprintf(pLine,"%.5lf",_s.m_vseqBest[a].m_vDomains[b].m_vAa[c].m_dMod);
 				m_ofOut << "modified=\"" << pLine << "\" ";
-				if(_s.m_vseqBest[a].m_vDomains[b].m_vAa[c].m_cMut != '\0')	{
+				if(_s.m_vseqBest[a].m_vDomains[b].m_vAa[c].m_cMut != '\0' && _s.m_vseqBest[a].m_vDomains[b].m_vAa[c].m_cMut != _s.m_vseqBest[a].m_vDomains[b].m_vAa[c].m_cRes)	{
 					m_ofOut << "pm=\"" << _s.m_vseqBest[a].m_vDomains[b].m_vAa[c].m_cMut << "\" ";
 				}
 				if(_s.m_vseqBest[a].m_vDomains[b].m_vAa[c].m_strId.size() != 0)	{
