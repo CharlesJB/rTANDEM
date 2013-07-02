@@ -159,14 +159,32 @@ void SAXSapHandler::startElement(const XML_Char *el, const XML_Char **attr)
 		m_strId = getAttrValue("id", attr);
 	}
 	else if(isElement("aa", el)){
+		char res = '\0';
+		char mut = '\0';
 		m_bAa = true;
 		string strValue;
 		strValue = getAttrValue("at",attr);
 		m_pairItem.first = atoi(strValue.c_str());
 		strValue = getAttrValue("mut",attr);
-		m_pairItem.second.first = strValue[0];
-		m_pairItem.second.second = getAttrValue("id",attr);
-		m_mapItem.insert(m_pairItem);
+		mut = strValue[0];
+		m_pairItem.second.m_strId = getAttrValue("id",attr);
+		strValue = getAttrValue("type",attr);
+		res = strValue[0];
+		double dMod = atof(getAttrValue("mod",attr));
+		if(mut != '\0' && res != '\0' && checkMut(res,mut) && m_pairItem.first > 0)	{
+			m_pairItem.second.m_dMod = 0.0;
+			m_pairItem.second.m_cRes = res;
+			m_pairItem.second.m_cMut = mut;
+			m_pairItem.second.m_iPos = m_pairItem.first;
+			m_mapItem.insert(m_pairItem);
+		}
+		else if (dMod != 0.0 && mut == '\0' && res != '\0' && m_pairItem.first > 0){
+			m_pairItem.second.m_dMod = dMod;
+			m_pairItem.second.m_cRes = res;
+			m_pairItem.second.m_cMut = res;
+			m_pairItem.second.m_iPos = m_pairItem.first;
+			m_mapItem.insert(m_pairItem);
+		}
 	}
 }
 
@@ -174,17 +192,17 @@ void SAXSapHandler::endElement(const XML_Char *el)
 {
 	if(isElement("protein", el)){
 		m_bProtein = false;
-		pair <string,multimap <int,prSap> > pairValue;
+		pair <string,multimap <int,SavInfo> > pairValue;
 		pairValue.first = m_strId;
 		pairValue.second.clear();
-		map<string,multimap <int,prSap> >::iterator itValue;
+		map<string,multimap <int,SavInfo> >::iterator itValue;
 		itValue = m_mapSap.find(pairValue.first);
 		if(itValue == m_mapSap.end())	{
 			m_mapSap.insert(pairValue);
 			itValue = m_mapSap.find(pairValue.first);
 		}
 		itValue = m_mapSap.find(pairValue.first);
-		multimap<int,prSap>::iterator itMap = m_mapItem.begin();
+		multimap<int,SavInfo>::iterator itMap = m_mapItem.begin();
 		while(itMap != m_mapItem.end())	{
 			itValue->second.insert(*itMap);
 			itMap++;
@@ -195,3 +213,34 @@ void SAXSapHandler::endElement(const XML_Char *el)
 	}
 }
 
+bool SAXSapHandler::checkMut(char _r,char _m)	
+{
+	if(_r == 'K' && (_m == 'Q' || _m == 'E'))	{
+		return false;
+	}
+	if(_r == 'Q' && (_m == 'K' || _m == 'E'))	{
+		return false;
+	}
+	if(_r == 'E' && (_m == 'K' || _m == 'Q'))	{
+		return false;
+	}
+	if(_r == 'N' && _m == 'D')	{
+		return false;
+	}
+	if(_r == 'D' && _m == 'N')	{
+		return false;
+	}
+	if(_r == 'I' && _m == 'L')	{
+		return false;
+	}
+	if(_r == 'L' && _m == 'I')	{
+		return false;
+	}
+	if(_r == 'F' && _m == 'M')	{
+		return false;
+	}
+	if(_r == 'M' && _m == 'F')	{
+		return false;
+	}
+	return true;
+}

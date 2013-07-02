@@ -142,6 +142,34 @@ The End
 /**
 * Uses eXpat SAX parser to parse Bioml data to obtain protein information.
 */
+class SavInfo
+{
+public:
+	SavInfo(void)
+	{
+		m_cRes = '\0';
+		m_cMut = '\0';
+		m_dMod = 0.0;
+		m_iPos = 0;
+		m_strId = "";
+	}
+	virtual ~SavInfo(void)
+	{
+	}
+	char m_cRes;
+	char m_cMut;
+	double m_dMod;
+	int m_iPos;
+	string m_strId;
+	SavInfo& operator=(const SavInfo &rhs)	{
+		m_cRes = rhs.m_cRes;
+		m_iPos = rhs.m_iPos;
+		m_cMut = rhs.m_cMut;
+		m_dMod = rhs.m_dMod;
+		m_strId = rhs.m_strId;
+		return *this;
+	}
+};
 class SAXSapHandler : public SAXHandler
 {
 public:
@@ -179,14 +207,15 @@ public:
 	* (such as adding the data to a node or buffer, or printing it to
 	* a file).</p>
 	*/
-	map <string,multimap <int,prSap> > m_mapSap;
+	map <string,multimap <int,SavInfo> > m_mapSap;
 private:
 	// Flags indicating parser is inside a particular tag.
 	bool m_bProtein;
 	bool m_bAa;
-	multimap <int,prSap> m_mapItem;
-	pair <int,prSap> m_pairItem;
+	multimap <int,SavInfo> m_mapItem;
+	pair <int,SavInfo> m_pairItem;
 	string m_strId;
+	bool checkMut(char _r,char _m);
 };
 
 #endif              //SAXSAPHANDLER_H

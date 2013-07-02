@@ -152,6 +152,7 @@ The End
 #include "msequtilities.h"
 #include "mspectrum.h"
 #include "xmlparameter.h"
+#include "saxsaphandler.h"
 #include "mscore.h"
 
 /*
@@ -159,7 +160,7 @@ The End
  */
 bool lessThanDetails(const mspectrumdetails &_l,const mspectrumdetails &_r)
 {
-	return _l.m_fL < _r.m_fL; 
+	return _l.m_dL < _r.m_dL; 
 }
 /*
  * global less than operator for mi classes: to be used in sort operations to achieve
@@ -182,9 +183,9 @@ mscore::mscore(void) :
 
 	m_lType = T_Y|T_B;
 	m_lErrorType = T_PARENT_DALTONS|T_FRAGMENT_DALTONS;
-	m_fParentErrPlus = 2.0;
-	m_fParentErrMinus = 2.0;
-	m_fErr = (float)0.45;
+	m_dParentErrPlus = 2.0;
+	m_dParentErrMinus = 2.0;
+	m_dErr = (float)0.45;
 	
 	m_fWidth = 1.0;
 	m_lMaxCharge = 100;
@@ -200,10 +201,10 @@ mscore::mscore(void) :
 		m_pfScore[a] = 0;
 		a++;
 	}
-	m_fMinMass = 0.0;
-	m_fMaxMass = 1.0;
+	m_dMinMass = 0.0;
+	m_dMaxMass = 1.0;
 	m_bUsePam = false;
-	m_fHomoError = 4.5;
+	m_dHomoError = 4.5;
 	m_dScale = 1.0;
 	m_bMini = false;
 	m_iCharge = 1;
@@ -313,7 +314,7 @@ bool mscore::add_A(const unsigned long _t,const long _c)
  * look up appropriate scores from m_pSeqUtilFrag->m_pfAScore
  */
 	const unsigned long tPos = (unsigned long) m_tSeqPos;
-	m_dWE = m_fWidth/m_fErr;
+	m_dWE = m_fWidth/m_dErr;
 	const double dZ = (double)_c;
 	while(a < m_lSeqLength)	{
 		tC = m_pSeq[a];
@@ -385,7 +386,7 @@ bool mscore::add_B(const unsigned long _t,const long _c)
  */
 	const unsigned long tPos = (unsigned long) m_tSeqPos;
 	size_t tC = 0;
-	m_dWE = m_fWidth/m_fErr;
+	m_dWE = m_fWidth/m_dErr;
 	const double dZ = (double)_c;
 	while(a < m_lSeqLength-1)	{
 		tC = m_pSeq[a];
@@ -462,7 +463,7 @@ bool mscore::add_C(const unsigned long _t,const long _c)
  * from N- to C-terminus, calcuate fragment ion m/z values and store the results
  * look up appropriate scores from m_pSeqUtilFrag->m_pfBScore
  */
-	m_dWE = m_fWidth/m_fErr;
+	m_dWE = m_fWidth/m_dErr;
 	double dZ = (double)_c;
 	const unsigned long tPos = (unsigned long) m_tSeqPos;
 	while(a < m_lSeqLength-2)	{
@@ -531,7 +532,7 @@ bool mscore::add_X(const unsigned long _t,const long _c)
  * from C- to N-terminus, calcuate fragment ion m/z values and store the results
  * look up appropriate scores from m_pSeqUtilFrag->m_pfAScore
  */
-	m_dWE = m_fWidth/m_fErr;
+	m_dWE = m_fWidth/m_dErr;
 	double dZ = (double)_c;
 	const unsigned long tPos = (unsigned long) m_tSeqPos;
 	while(a > 0)	{
@@ -600,7 +601,7 @@ bool mscore::add_Y(const unsigned long _t,const long _c)
  */
 	long tPos = (unsigned long) m_tSeqPos;
 	size_t tC = 0;
-	m_dWE = m_fWidth/m_fErr;
+	m_dWE = m_fWidth/m_dErr;
 	double dZ = (double)_c;
 	bool bZero = false;
 	if(_t == 0)	{
@@ -691,7 +692,7 @@ bool mscore::add_Z(const unsigned long _t,const long _c)
  * from C- to N-terminus, calcuate fragment ion m/z values and store the results
  * look up appropriate scores from m_pSeqUtilFrag->m_pfAScore
  */
-	m_dWE = m_fWidth/m_fErr;
+	m_dWE = m_fWidth/m_dErr;
 	double dZ = (double)_c;
 	const unsigned long tPos = (unsigned long) m_tSeqPos;
 	while(a > 0)	{
@@ -749,15 +750,15 @@ bool mscore::sort_details()
 	size_t a = 0;
 	m_sIndex.clear();
 	mspectrumindex indTemp;
-	float fLast = 0.0;
+	double dLast = 0.0;
 	while(a < tLimit)	{
-		indTemp.m_fM = m_vDetails[a].m_fU;
+		indTemp.m_dM = m_vDetails[a].m_dU;
 		indTemp.m_tA = (unsigned long)a;
-		if(indTemp.m_fM != fLast)	{
+		if(indTemp.m_dM != dLast)	{
 			m_sIndex.insert(indTemp);
 		}
-		fLast = indTemp.m_fM;
-		a += 5;
+		dLast = indTemp.m_dM;
+		a++;
 	}
 	return true;
 }
@@ -772,7 +773,7 @@ bool mscore::add_mi(mspectrum &_s)
 /*
  * the fragment ion error cannot be zero
  */
-	if(m_fErr == 0.0)
+	if(m_dErr == 0.0)
 		return false;
 
 	m_lSpectra = (long)m_vSpec.size();
@@ -796,7 +797,7 @@ bool mscore::add_details(mspectrum &_s)
  * from that vector and continue.
  * the fragment ion error cannot be zero
  */
-	if(m_fErr == 0.0)
+	if(m_dErr == 0.0)
 		return false;
 /*
  * create a temporary mspec object
@@ -808,35 +809,31 @@ bool mscore::add_details(mspectrum &_s)
  */
 	m_vSpec.push_back(spCurrent);
 	mspectrumdetails detTemp;
+	double dErrPlus = m_dParentErrPlus;
+	double dErrMinus = m_dParentErrMinus;
 	if(m_lErrorType & T_PARENT_PPM)	{
-		detTemp.m_fL = (float)(_s.m_dMH - (_s.m_dMH*m_fParentErrPlus/1e6));
-		detTemp.m_fU = (float)(_s.m_dMH + (_s.m_dMH*m_fParentErrMinus/1e6));
+		detTemp.m_dL = _s.m_dMH - (_s.m_dMH*dErrPlus/1e6);
+		detTemp.m_dU = _s.m_dMH + (_s.m_dMH*dErrMinus/1e6);
 	}
 	else	{
-		detTemp.m_fL = (float)(_s.m_dMH - m_fParentErrPlus);
-		detTemp.m_fU = (float)(_s.m_dMH + m_fParentErrMinus);
+		detTemp.m_dL = _s.m_dMH - dErrPlus;
+		detTemp.m_dU = _s.m_dMH + dErrMinus;
 	}
-	if(detTemp.m_fU > m_fMaxMass)	{
-		m_fMaxMass = detTemp.m_fU;
+	if(detTemp.m_dU > (double)m_dMaxMass)	{
+		m_dMaxMass = detTemp.m_dU;
 	}
-	detTemp.m_lA = (unsigned long)m_vSpec.size() - 1;
-//	if(m_bIsotopeError)	{
-//			detTemp.m_fL += (float)(1.00335);
-//			detTemp.m_fU += (float)(1.00335);
-//			m_vDetails.push_back(detTemp);
-//			detTemp.m_fL -= (float)(1.00335);
-//			detTemp.m_fU -= (float)(1.00335);
-//	}
+	detTemp.m_tA = (unsigned long)m_vSpec.size() - 1;
+	
 	m_vDetails.push_back(detTemp);
 	if(m_bIsotopeError)	{
 		if(spCurrent.m_fMH > 1000.0)	{
-			detTemp.m_fL -= (float)(1.008664916);
-			detTemp.m_fU -= (float)(1.008664916);
+			detTemp.m_dL -= 1.008664916;
+			detTemp.m_dU -= 1.008664916;
 			m_vDetails.push_back(detTemp);
 		}
 		if(spCurrent.m_fMH > 1500.0)	{
-			detTemp.m_fL -= (float)1.008664916;
-			detTemp.m_fU -= (float)1.008664916;
+			detTemp.m_dL -= 1.008664916;
+			detTemp.m_dU -= 1.008664916;
 			m_vDetails.push_back(detTemp);
 		}
 	}
@@ -911,11 +908,13 @@ unsigned long mscore::add_seq(const char *_s,const bool _n,const bool _c,const u
  * update the mstate object 
  */
 	m_State.m_dSeqMHS = m_dSeqMH;
-	m_fMinMass = (float)m_dSeqMH;
+	m_dMinMass = m_dSeqMH;
 	if(m_bUsePam)	{
 		m_Pam.initialize(m_pSeq,(size_t)m_lSize,(float)m_dSeqMH);
 	}
 	if(m_bUseSaps)	{
+		m_Sap.m_bMods = m_pSeqUtilFrag->m_bSequenceMods;
+		m_Sap.m_smapOld = m_pSeqUtilFrag->m_mapMods;
 		m_Sap.initialize(m_pSeq,(size_t)m_lSize,(float)m_dSeqMH);
 	}
 	return m_lSeqLength;
@@ -938,18 +937,17 @@ __inline__ bool mscore::check_parents(void)	{
 		m_State.m_lEqualsS = 0;
 		return false;
 	}
-	if(m_dSeqMH < m_vDetails[0].m_fL)	{
+	if(m_dSeqMH < m_vDetails[0].m_dL)	{
 		return false;
 	}
-	if(m_dSeqMH > m_vDetails[m_lDetails-1].m_fU)	{
+	if(m_dSeqMH > m_vDetails.back().m_dU)	{
 		return false;
 	}
 	vector<mspectrumdetails>::iterator itDetails = m_vDetails.begin();
 	vector<mspectrumdetails>::iterator itEnd = m_vDetails.end();
-	float fSeqMH = (float)m_dSeqMH;
 	set<mspectrumindex>::iterator itIndex;
 	mspectrumindex indTemp;
-	indTemp.m_fM = fSeqMH;
+	indTemp.m_dM = m_dSeqMH - 4.0;
 	if(!m_sIndex.empty())	{
 		itIndex = m_sIndex.lower_bound(indTemp);
 		if(itIndex != m_sIndex.begin())	{
@@ -957,25 +955,18 @@ __inline__ bool mscore::check_parents(void)	{
 		}
 		itDetails = itDetails + (*itIndex).m_tA;
 	}
-	while(itDetails != itEnd)	{
-		if(*itDetails == fSeqMH)	{
-			m_State.m_lEqualsS = 0;
-			m_State.m_plEqualsS[m_State.m_lEqualsS] = itDetails->m_lA;
+	m_State.m_lEqualsS = 0;
+	while(itDetails != itEnd && itDetails->m_dL < m_dSeqMH + 4.0)	{
+		if(*itDetails == m_dSeqMH)	{
+			m_State.m_plEqualsS[m_State.m_lEqualsS] = itDetails->m_tA;
 			m_State.m_lEqualsS++;
-			itDetails++;
-			while(itDetails != itEnd && *itDetails == fSeqMH)	{
-				m_State.m_plEqualsS[m_State.m_lEqualsS] = itDetails->m_lA;
-				m_State.m_lEqualsS++;
-				itDetails++;
-			}
-			return true;
-		}
-		if(fSeqMH < itDetails->m_fL)	{
-			break;
 		}
 		itDetails++;
 	}
 
+	if(m_State.m_lEqualsS > 0)	{
+		return true;
+	}
 /*
  * this check improves performance because of the way the state machine assigns modifications
  * if the state machine sequence order is modified, this mechanism should be reviewed
@@ -1051,7 +1042,7 @@ bool mscore::get_aa(vector<maa> &_m,const size_t _a,double &_d)
 		while(itValue != itEnd)	{
 			tValue = itValue->first;
 			if(tValue >= m_tSeqPos || tValue < tEnd)	{
-				tValue = tValue - m_tSeqPos;
+				tValue = tValue - m_tSeqPos-1;
 				cRes = m_pSeq[tValue];
 				aaValue.m_cRes = cRes;
 				aaValue.m_dMod = (float)itValue->second;
@@ -1098,7 +1089,7 @@ bool mscore::get_aa(vector<maa> &_m,const size_t _a,double &_d)
 		_d = dDelta;
 		_m.push_back(aaValue);
 	}
-	if(m_Sap.m_tCount > 0)	{
+	if(m_Sap.m_tCount > 0 && m_Sap.m_dMod == 0.0)	{
 		aaValue.m_dMod = (float)(m_seqUtil.m_pdAaMass[(int)m_pSeq[m_Sap.m_tPos]] 
 			- m_seqUtil.m_pdAaMass[(int)m_Sap.m_pSeqTrue[m_Sap.m_tPos]]);
 		aaValue.m_dPrompt = (float)(m_seqUtil.m_pdAaPrompt[(int)m_pSeq[m_Sap.m_tPos]] 
@@ -1134,7 +1125,7 @@ __inline__ unsigned long mscore::mconvert(double _m, const long _c)
  * as referenced in m_vsmapMI
  */
 	const double dZ = (double)_c;
-	return (unsigned long)((m_pSeqUtilFrag->m_dProton + _m/dZ)*m_fWidth/m_fErr);
+	return (unsigned long)((m_pSeqUtilFrag->m_dProton + _m/dZ)*m_fWidth/m_dErr);
 }
 #ifndef PLUGGABLE_SCORING
 
@@ -1255,7 +1246,7 @@ bool mscore::load_next_term(void)
 		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaMod[']'];
 		m_State.initialize(m_pSeq,m_lSeqLength);
 		m_State.m_dSeqMHS = m_dSeqMH;
-		m_fMinMass = (float)m_dSeqMH;
+		m_dMinMass = m_dSeqMH;
 		m_State.m_lEqualsS = 0;
 		check_parents();
 		return false;
@@ -1270,7 +1261,7 @@ bool mscore::load_next_term(void)
 			m_Term.m_lC = 0;
 			m_State.initialize(m_pSeq,m_lSeqLength);
 			m_State.m_dSeqMHS = m_dSeqMH;
-			m_fMinMass = (float)m_dSeqMH;
+			m_dMinMass = m_dSeqMH;
 			m_State.m_lEqualsS = 0;
 			check_parents();
 			return true;
@@ -1283,7 +1274,7 @@ bool mscore::load_next_term(void)
 			m_Term.m_lC = 1;
 			m_State.initialize(m_pSeq,m_lSeqLength);
 			m_State.m_dSeqMHS = m_dSeqMH;
-			m_fMinMass = (float)m_dSeqMH;
+			m_dMinMass = m_dSeqMH;
 			m_State.m_lEqualsS = 0;
 			check_parents();
 			return true;
@@ -1304,7 +1295,7 @@ bool mscore::load_next_term(void)
 		m_Term.m_lState = 2;
 		m_State.initialize(m_pSeq,m_lSeqLength);
 		m_State.m_dSeqMHS = m_dSeqMH;
-		m_fMinMass = (float) m_dSeqMH;
+		m_dMinMass = m_dSeqMH;
 		m_State.m_lEqualsS = 0;
 		check_parents();
 		return true;
@@ -1321,7 +1312,7 @@ bool mscore::load_next_term(void)
 		m_Term.m_lC = 1;
 		m_State.initialize(m_pSeq,m_lSeqLength);
 		m_State.m_dSeqMHS = m_dSeqMH;
-		m_fMinMass = (float)m_dSeqMH;
+		m_dMinMass = m_dSeqMH;
 		m_Term.m_lState = 3;
 		m_State.m_lEqualsS = 0;
 		check_parents();
@@ -1362,7 +1353,7 @@ bool mscore::load_next_pam(void)
 		strcpy(m_pSeq,m_Pam.m_pSeqTrue);
 		m_dSeqMH = m_Pam.m_fSeqTrue;
 		m_State.m_dSeqMHS = m_dSeqMH;
-		m_fMinMass = (float)m_dSeqMH;
+		m_dMinMass = m_dSeqMH;
 		m_State.m_lEqualsS = 0;
 		check_parents();
 		m_Pam.m_tCount = 0;
@@ -1378,7 +1369,7 @@ bool mscore::load_next_pam(void)
 		m_pSeq[m_Pam.m_tPos] = m_Pam.m_pAa[m_Pam.m_tAa];
 		m_State.initialize(m_pSeq,m_lSeqLength);
 		m_State.m_dSeqMHS = m_dSeqMH;
-		m_fMinMass = (float)m_dSeqMH;
+		m_dMinMass = m_dSeqMH;
 		m_State.m_lEqualsS = 0;
 		check_parents();
 		return true;
@@ -1396,19 +1387,19 @@ __inline__ bool mscore::check_pam_mass()
 	const char cNew = m_Pam.m_pAa[m_Pam.m_tAa];
 	const float fTrue = m_pSeqUtilFrag->m_pfAaMass[(int)cTrue] + (float)m_pSeqUtilFrag->m_pdAaFullMod[(int)cTrue];
 	const float fNew = m_pSeqUtilFrag->m_pfAaMass[(int)cNew] + (float)m_pSeqUtilFrag->m_pdAaFullMod[(int)cNew];
-	if(fabs(fTrue - fNew) < m_fHomoError)	{
+	if(fabs(fTrue - fNew) < m_dHomoError)	{
 		return true;
 	}
-	if(fabs(fTrue + m_pSeqUtilFrag->m_pdAaMod[cTrue+32] - fNew) < m_fHomoError)	{
+	if(fabs(fTrue + m_pSeqUtilFrag->m_pdAaMod[cTrue+32] - fNew) < m_dHomoError)	{
 		return true;
 	}
-	if(fabs(fNew + m_pSeqUtilFrag->m_pdAaMod[cNew+32] - fTrue) < m_fHomoError)	{
+	if(fabs(fNew + m_pSeqUtilFrag->m_pdAaMod[cNew+32] - fTrue) < m_dHomoError)	{
 		return true;
 	}
-	if(fabs(fTrue + m_pSeqUtilFrag->m_pdAaMod[cTrue+32] - fNew) < m_fHomoError)	{
+	if(fabs(fTrue + m_pSeqUtilFrag->m_pdAaMod[cTrue+32] - fNew) < m_dHomoError)	{
 		return true;
 	}
-	if(fabs(fNew + m_pSeqUtilFrag->m_pdAaMod[cNew+32] - fTrue - m_pSeqUtilFrag->m_pdAaMod[cTrue+32]) < m_fHomoError)	{
+	if(fabs(fNew + m_pSeqUtilFrag->m_pdAaMod[cNew+32] - fTrue - m_pSeqUtilFrag->m_pdAaMod[cTrue+32]) < m_dHomoError)	{
 		return true;
 	}
 	return false;
@@ -1428,9 +1419,11 @@ bool mscore::load_next_sap(void)
 // Return false if all residues have been checked
 	if(!m_Sap.next())	{
 		memcpy(m_pSeq,m_Sap.m_pSeqTrue,m_lSeqLength);
+		m_pSeqUtilFrag->m_bSequenceMods = m_Sap.m_bMods;
+		m_pSeqUtilFrag->m_mapMods = m_Sap.m_smapOld;
 		m_dSeqMH = m_Sap.m_fSeqTrue;
 		m_State.m_dSeqMHS = m_dSeqMH;
-		m_fMinMass = (float)m_dSeqMH;
+		m_dMinMass = m_dSeqMH;
 		m_State.m_lEqualsS = 0;
 		check_parents();
 		m_Sap.m_tCount = 0;
@@ -1438,15 +1431,21 @@ bool mscore::load_next_sap(void)
 	}
 	else	{
 		memcpy(m_pSeq,m_Sap.m_pSeqTrue,m_lSeqLength);
+		m_pSeqUtilFrag->m_bSequenceMods = m_Sap.m_bMods;
+		m_pSeqUtilFrag->m_mapMods = m_Sap.m_smapOld;
 		m_dSeqMH = m_Sap.m_fSeqTrue;
-		m_dSeqMH += m_pSeqUtilFrag->m_pdAaMass[(int)m_Sap.m_cCurrent];
+		m_dSeqMH += m_pSeqUtilFrag->m_pdAaMass[(int)m_Sap.m_cCurrent] + m_Sap.m_dMod;
 		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaMass[(int)m_Sap.m_pSeqTrue[m_Sap.m_tPos]];
 		m_dSeqMH += m_pSeqUtilFrag->m_pdAaFullMod[(int)m_Sap.m_cCurrent];
 		m_dSeqMH -= m_pSeqUtilFrag->m_pdAaFullMod[(int)m_Sap.m_pSeqTrue[m_Sap.m_tPos]];
 		m_pSeq[m_Sap.m_tPos] = m_Sap.m_cCurrent;
+		if(m_Sap.m_dMod != 0.0)	{
+			m_pSeqUtilFrag->m_bSequenceMods = true;
+			m_pSeqUtilFrag->m_mapMods[m_Sap.m_tPos+m_Sap.m_iStart] = m_Sap.m_dMod;
+		}
 		m_State.initialize(m_pSeq,m_lSeqLength);
 		m_State.m_dSeqMHS = m_dSeqMH;
-		m_fMinMass = (float)m_dSeqMH;
+		m_dMinMass = m_dSeqMH;
 		m_State.m_lEqualsS = 0;
 		check_parents();
 		return true;
@@ -1467,16 +1466,16 @@ bool mscore::load_next_sap(void)
 bool mscore::load_state(void)
 {
 	bool bReturn = run_state_machine();
-	if(m_dSeqMH < m_fMinMass)	{
-		m_fMinMass = (float)m_dSeqMH;
+	if(m_dSeqMH < m_dMinMass)	{
+		m_dMinMass = m_dSeqMH;
 	}
 	while(bReturn)	{
 		if(m_State.m_bIsPossible && check_parents())	{
 			return bReturn;
 		}
 		bReturn = run_state_machine();
-		if(m_dSeqMH < m_fMinMass)	{
-			m_fMinMass =(float) m_dSeqMH;
+		if(m_dSeqMH < m_dMinMass)	{
+			m_dMinMass = m_dSeqMH;
 		}
 	}
 	return bReturn;
@@ -1795,7 +1794,7 @@ float mscore::score(const size_t _i)
 		}
 		double dNeutral = 0.0;
 		unsigned long lNeutral = 0;
-		m_dWE = (double)(m_fWidth/m_fErr);
+		m_dWE = (double)(m_fWidth/m_dErr);
 		if((pS && m_pSeqUtilFrag->m_bPhosphoSerine) || (pT && m_pSeqUtilFrag->m_bPhosphoThreonine))	{
 			nMap::iterator itMap = m_seqUtil.m_mapNeutralLoss.find(m_lId);
 			if(itMap != m_seqUtil.m_mapNeutralLoss.end())	{
@@ -1968,11 +1967,13 @@ unsigned long mscore::set_seq(const char *_s,const bool _n,const bool _c,const u
  * record the M+H value in the mstate object
  */
 	m_State.m_dSeqMHS = m_dSeqMH;
-	m_fMinMass = (float)m_dSeqMH;
+	m_dMinMass = m_dSeqMH;
 	if(m_bUsePam)	{
 		m_Pam.initialize(m_pSeq,m_lSize,(float)m_dSeqMH);
 	}
 	if(m_bUseSaps)	{
+		m_Sap.m_bMods = m_pSeqUtilFrag->m_bSequenceMods;
+		m_Sap.m_smapOld = m_pSeqUtilFrag->m_mapMods;
 		m_Sap.initialize(m_pSeq,(size_t)m_lSize,(float)m_dSeqMH,_f);
 	}
 	return m_lSeqLength;
@@ -2002,8 +2003,8 @@ unsigned long mscore::set_error(const unsigned long _t)
  */
 float mscore::set_homo_error(const float _f)
 {
-	m_fHomoError = _f;
-	return m_fHomoError;
+	m_dHomoError = _f;
+	return (float)m_dHomoError;
 }
 /*
  * sets the value for the fragment error member value m_fErr. this value is interpreted in two ways:
@@ -2018,31 +2019,31 @@ float mscore::set_fragment_error(const float _f)
 {
 	if(_f <= 0.0)
 		return 0.0;
-	m_fErr = _f;
+	m_dErr = _f;
 	if(m_lErrorType & T_FRAGMENT_PPM)	{
-		m_fErr = (float)(200.0*m_fErr/1e6);
+		m_dErr = (200.0*m_dErr/1e6);
 	}
 /*
  * NOTE: the m_fErr value used in the ppm case is: 200 x (the error in ppm)/1000000
  */
-	return m_fErr;
+	return (float)m_dErr;
 }
 /*
- * sets the value for the parent error member values m_fParentErrPlus and m_fParentErrMinus.
+ * sets the value for the parent error member values m_dParentErrPlus and m_dParentErrMinus.
  */
 float mscore::set_parent_error(const float _f,const bool _b)
 {
 	if(_b)	{
 		if(_f < 0.0)
-			m_fParentErrPlus = 0.0;
+			m_dParentErrPlus = 0.0;
 		else
-			m_fParentErrPlus = _f;
+			m_dParentErrPlus = _f;
 	}
 	else	{
 		if(_f < 0.0)
-			m_fParentErrPlus = 0.0;
+			m_dParentErrPlus = 0.0;
 		else
-			m_fParentErrMinus = _f;
+			m_dParentErrMinus = _f;
 	}
 	return _f;
 }

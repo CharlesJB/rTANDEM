@@ -672,7 +672,7 @@ bool msequtilities::set_aa()
 		pdValue['t'] = pdValue['T'] = m_calc.calcMass("C4H7O2N");
 		pValue['t'] = pValue['T'] = (float)pdValue['T'];
 		
-		pdValue['u'] = pdValue['U'] = 150.953640;	// Why?
+		pdValue['u'] = pdValue['U'] = m_calc.calcMass("C3H5ONSe");	// selenocysteine
 		pValue['u'] = pValue['U'] = (float)pdValue['U'];
 		
 		pdValue['v'] = pdValue['V'] = m_calc.calcMass("C5H9ON");
@@ -689,6 +689,9 @@ bool msequtilities::set_aa()
 		
 		pdValue['z'] = pdValue['Z'] = m_calc.calcMass("C5H8O2N2");	// Same as Q
 		pValue['z'] = pValue['Z'] = (float)pdValue['Z'];
+
+		pdValue['b'] = pdValue['B'] = m_calc.calcMass("C10H21O2N3");	// Hypusine
+		pValue['b'] = pValue['B'] = (float)pdValue['B'];
 	}
 	else {
 		/*
@@ -759,7 +762,7 @@ bool msequtilities::set_aa()
 		pdValue['t'] = pdValue['T'] = 101.1051;
 		pValue['t'] = pValue['T'] = (float)pdValue['T'];
 		
-		pdValue['u'] = pdValue['U'] = 0.0;	// Why?
+		pdValue['u'] = pdValue['U'] = 103.1388 - 32.066 + 78.96;	// selenocysteine
 		pValue['u'] = pValue['U'] = (float)pdValue['U'];
 		
 		pdValue['v'] = pdValue['V'] = 99.1326;
@@ -778,6 +781,14 @@ bool msequtilities::set_aa()
 		pValue['z'] = pValue['Z'] = (float)pdValue['Z'];
 	}
 
+/*	char i = 'A';
+	char *pV = new char[256];
+	while(i != 'Z')	{
+		sprintf(pV,"%c = %.6lf\n",i,pdValue[i]);
+		cout << pV;
+		i++;
+	} 
+	delete pV; */
 	return true;
 }
 /*

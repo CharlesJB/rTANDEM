@@ -555,6 +555,13 @@ bool p3mprocess::create_score(const msequence &_s,const size_t _v,const size_t _
  * if the same score has been recorded for another peptide in the same msequence object,
  * add a domain to that object, but do not update the entire object
  */
+		unsigned char ucM = 0;
+		if(_m < 0)	{
+			ucM = 0;
+		}
+		else	{
+			ucM = (unsigned char)_m;
+		}
 		if(bMassCheck && bIonCheck && fHyper == m_vSpectra[a].m_fHyper && m_vSpectra[a].m_tCurrentSequence == _s.m_tUid)	{
 			vector<maa> vAa;
 			mdomain domValue;
@@ -575,7 +582,7 @@ bool p3mprocess::create_score(const msequence &_s,const size_t _v,const size_t _
 				domValue.m_dDelta = m_vSpectra[a].m_dMH - m_pScore->seq_mh();
 				domValue.m_lE = (int)_w;
 				domValue.m_lS = (int)_v;
-				domValue.m_lMissedCleaves = (unsigned char)_m;
+				domValue.m_lMissedCleaves = ucM;
 				domValue.m_bUn = m_bUn;
 				unsigned char lType = 1;
 				unsigned long sType = 1;
@@ -623,7 +630,7 @@ bool p3mprocess::create_score(const msequence &_s,const size_t _v,const size_t _
 				domValue.m_dDelta = m_vSpectra[a].m_dMH - m_pScore->seq_mh();
 				domValue.m_lE = (int)_w;
 				domValue.m_lS = (int)_v;
-				domValue.m_lMissedCleaves = (unsigned char)_m;
+				domValue.m_lMissedCleaves = ucM;
 				domValue.m_bUn = m_bUn;
 				unsigned char lType = 1;
 				unsigned long sType = 1;
@@ -639,7 +646,6 @@ bool p3mprocess::create_score(const msequence &_s,const size_t _v,const size_t _
 				m_mapDesc.insert(DESMAP::value_type(_s.m_strDes,_s.m_tUid));
 				seqValue.m_vDomains.clear();
 				seqValue.m_vDomains.push_back(domValue);
-				seqValue.format_description();
 				bOk = true;
 				b = 0;
 				while(bOk && b < m_vSpectra[a].m_vseqBest.size())	{
@@ -685,15 +691,17 @@ bool p3mprocess::create_score(const msequence &_s,const size_t _v,const size_t _
 				}
 			}
 			if(fabs(dDelta) > 2.5)	{
-				m_vSpectra[a].m_fScoreNext = m_vSpectra[a].m_fScore;
-				m_vSpectra[a].m_fHyperNext = m_vSpectra[a].m_fHyper;
+				if(m_vSpectra[a].m_fHyper > m_vSpectra[a].m_fScoreNext)	{
+					m_vSpectra[a].m_fScoreNext = m_vSpectra[a].m_fScore;
+					m_vSpectra[a].m_fHyperNext = m_vSpectra[a].m_fHyper;
+				}
 				m_vSpectra[a].m_fScore = fScore;
 				m_vSpectra[a].m_fHyper = fHyper;
 				domValue.m_fScore = fScore;
 				domValue.m_fHyper = fHyper;
 				domValue.m_lE = (int)_w;
 				domValue.m_lS = (int)_v;
-				domValue.m_lMissedCleaves = (unsigned char)_m;
+				domValue.m_lMissedCleaves = ucM;
 				domValue.m_dMH = m_pScore->seq_mh();
 				// m_fDelta was changed to m_dDelta in 2006.02.01
 				domValue.m_dDelta = m_vSpectra[a].m_dMH - m_pScore->seq_mh();
@@ -712,15 +720,13 @@ bool p3mprocess::create_score(const msequence &_s,const size_t _v,const size_t _
 				m_mapDesc.insert(DESMAP::value_type(_s.m_strDes,_s.m_tUid));
 				seqValue.m_vDomains.clear();
 				seqValue.m_vDomains.push_back(domValue);
-				seqValue.format_description();
 				m_vSpectra[a].m_tCurrentSequence = _s.m_tUid;
 				seqValue.m_iRound = m_iCurrentRound;
 				m_vSpectra[a].m_vseqBest.clear();
 				m_vSpectra[a].m_vseqBest.push_back(seqValue);
 			}
 		}
-		else if (_p && bIonCheck && fHyper > m_vSpectra[a].m_fHyperNext)
-		{
+		else if(_p && bMassCheck && bIonCheck && fHyper > m_vSpectra[a].m_fHyperNext)	{
 			m_vSpectra[a].m_fScoreNext = fScore;
 			m_vSpectra[a].m_fHyperNext = fHyper;
 		}

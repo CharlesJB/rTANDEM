@@ -153,6 +153,7 @@ The End
 #include "msequtilities.h"
 #include "mspectrum.h"
 #include "xmlparameter.h"
+#include "saxsaphandler.h"
 #include "mspectrumcondition.h"
 #include "mscore.h"
 

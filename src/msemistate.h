@@ -166,6 +166,7 @@ public:
 		m_bStart = true;
 		m_lLimit = 5;
 		m_bActive = false;
+		m_iType = 0;
       }
       virtual ~msemistate(void) {
       }
@@ -173,6 +174,14 @@ public:
 	  bool activate(const bool _b)	{
 		  m_bActive = _b;
 		  return m_bActive;
+	  }
+//		type = 0 for cleavage from both terminii
+//		type = 1 for cleavage from the carboxy terminus only
+//		type = 2 for cleavage from the amino terminus only
+
+  	  int type(const int _t)	{
+		  m_iType = _t;
+		  return m_iType;
 	  }
 
 	  long limit(const long _l)	{
@@ -194,6 +203,19 @@ public:
 		  m_lEnd--;
 		  m_bStart = true;
 		  return true;
+	  }
+	  
+	  bool ok(void)	{
+		  if(m_iType == 0)	{
+				return true;
+		  }
+		  else if(m_iType == 1 && m_bStart)	{
+			  return true;
+		  }
+		  else if(m_iType == 2 && !m_bStart)	{
+			  return true;
+		  }
+		  return false;
 	  }
 
 	  bool next(long &_s,long &_e)	{
@@ -235,6 +257,7 @@ private:
 	  bool m_bStart;
 	  long m_lLimit;
 	  long m_lLastCleave;
+	  int m_iType; //0 - cleave both ways, 1 - cleave from the amino terminus, 2 - cleave from the carboxy terminus
 };
 
 #endif

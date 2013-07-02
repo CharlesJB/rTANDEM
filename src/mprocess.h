@@ -148,6 +148,7 @@ typedef map<size_t,string> SEQMAP;
 #include "mrefine.h" 
 #include <set>
 
+typedef map<uint64_t,vector<msequence> > MSEQMAP;
 #include <Rcpp.h>  // rTANDEM
 #include "dataLoader.h" // rTANDEM
 
@@ -325,16 +326,23 @@ public:
 						// minus the value for 'refine, potential N-terminus modification position limit' before performing cleavage
 	string getPathName() { return m_pathName; } // rTANDEM
 	vector<int> m_viQuality; // contains the data quality scoring vector
+	map<uint64_t,size_t> m_mapCrc;
+	size_t m_tTemp;
 	bool m_bReversedOnly;
 	bool m_bSaps;
 	bool m_bAnnotation;
 	bool m_bMinimalAnnotation;
 	bool m_bSerialize;
 	bool m_bCheckNg;
+	bool m_bSkyline;
+	bool m_bUseCrc;
+	string m_strSkyline;
 	double m_dNt;
 	double m_dNtAve;
 	double m_dNg;
 	double m_dNgAve;
+	float m_fMaxMass;
+	float m_fMaxZ;
 	enum	{
 		I_Y =	0x01,
 		I_B =	0x02,
@@ -436,6 +444,14 @@ protected:
 	bool spectra(void); // loads the m_vSpectra object using the m_specCondition object
 	bool spectra_force(string &_t,string &_v); // forces the spectrum loader to use a specified file type
 	bool subtract(void); // remove redundant mass spectra
+	uint64_t crc(const string &_s);
+	uint64_t *m_pCrcTable;
+	bool initialize_crc(void);
+	MSEQMAP m_mapDups;
+//	SEQMAP m_mapTest;	used to test the utility of the crc function, see commented code in mprocess::score
+	size_t m_tDuplicates;
+	size_t m_tDuplicateIds;
+	bool insert_dups(void);
 	virtual bool taxonomy(void); // loads the taxonomy setting into the m_svrSequences object
 private:
 	string m_pathName; // rTANDEM

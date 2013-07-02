@@ -185,30 +185,8 @@ bool SAXTaxHandler::load(const string &_y)
 	/*
 	* try to open the file and bail out if it isn't available
 	*/
-	ifstream ifXml;
-	
-	ifXml.open(m_strPath.c_str());
-	if(ifXml.fail())	{
-		return false;
-	}
 	m_strType = _y;
 	//check the open file to see if it is a taxonomy file
-	const long lSize = 1024*1024-1;
-	char *pLine = new char[lSize+1];
-	bool bReturn = false;
-	size_t tCount = 0;
-	ifXml.getline(pLine,lSize);   
-	if(strstr(pLine,"<?xml version=\"1.0\"?>"))	{
-		while(!bReturn && ifXml.good() && !ifXml.eof() && tCount < 10000)	{
-			ifXml.getline(pLine,lSize);
-			tCount++;
-			if(strstr(pLine,"<bioml label=\"x! taxon-to-file matching list") != NULL)	{
-				bReturn = true;
-			}
-		}
-	}
-	delete pLine;
-	ifXml.close();
 
 	setFileName( m_strPath.data() );
 	parse();

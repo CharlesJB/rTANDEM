@@ -133,6 +133,7 @@ The End
 
 // File version: 2005-01-23
 
+#include "saxsaphandler.h"
 #include "mscore.h"
 #ifdef MSVC
 	#include <intrin.h>

@@ -157,6 +157,8 @@ public:
 		init();
 		(*this) = rhs;
 	}
+	unsigned short* m_pList; // doubling buffer
+	long m_lLength; // the length of the histogram
 	unsigned long m_ulCount;
 	void init() {
 		m_ulCount = 0;
@@ -176,10 +178,8 @@ protected:
 	double m_dProteinFactor; // a weighting factor
 	float m_fA0; // the intercept of the least-squares fit performed in model
 	float m_fA1; // the slope of the least-squares fit performed in model
-	long m_lLength; // the length of the histogram
 private:
 	vector<long> m_vlSurvive; // the survival function array, reduced to [96] from [256]
-	unsigned short* m_pList; // doubling buffer
 	long m_lSum;
 	double m_dLimit;
 

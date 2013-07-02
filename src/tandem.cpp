@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2003-2011 Ronald C Beavis, all rights reserved
+ Copyright (C) 2003-2013 Ronald C Beavis, all rights reserved
  X! tandem 
  This software is a component of the X! proteomics software
  development project
@@ -128,7 +128,7 @@ MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 The End 
 */
 
-// File version: 2011-12-01
+// File version: 2013-04-01
 
 /*
 	tandem.cpp provides a command line interface to the main processing class, mprocess.
@@ -167,7 +167,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 //	if(argc < 2 || argc > 1 && strstr(argv[1],"-L") == argv[1] || argc > 1 && strstr(argv[1],"-h") == argv[1])	{ 
 //		cout << "\n\nUSAGE: tandem filename\n\nwhere filename is any valid path to an XML input file.\n\n+-+-+-+-+-+-+\n"; 
 // 		cout << "\nX! TANDEM " << VERSION << "\n"; 
-//		cout << "\nCopyright (C) 2003-2011 Ronald C Beavis, all rights reserved\n"; 
+//		cout << "\nCopyright (C) 2003-2013 Ronald C Beavis, all rights reserved\n"; 
 // 		cout << "This software is a component of the GPM  project.\n"; 
 //		cout << "Use of this software governed by the Artistic license.\n"; 
 //		cout << "If you do not have this license, you can get a copy at\n"; 
@@ -184,7 +184,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	/*
 	* Create an mprocess object array
 	*/
-	unsigned long lMaxThreads = 16;
+	unsigned long lMaxThreads = 256;
 	mprocess **pProcess = new mprocess*[lMaxThreads];
 	if(pProcess == NULL)	{
 //		cout << "An error was detected creating the processing objects.\nPlease contact a GPM administrator.\n";
@@ -274,6 +274,12 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 //	cout <<	"Starting threads .";
 	Rprintf("Starting threads .");
 	//cout.flush();
+    size_t tCount = pProcess[0]->m_vSpectra.size();
+	sort(pProcess[0]->m_vSpectra.begin(),pProcess[0]->m_vSpectra.end(),lessThanSpec);
+	float fMax = (float)pProcess[0]->m_vSpectra.back().m_dMH;
+	float fZ = pProcess[0]->m_vSpectra.back().m_fZ;
+	pProcess[0]->m_fMaxMass = fMax;
+	pProcess[0]->m_fMaxZ = fZ;
 	if(lThread != 0xFFFFFFFF)		{
 		while(dCount > 0)		{
 			pProcess[dCount] = new mprocess;
@@ -284,9 +290,10 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 
 			*/
 			pProcess[dCount]->m_vSpectra.reserve(lSpectra);
+			pProcess[dCount]->m_fMaxMass = fMax;
+			pProcess[dCount]->m_fMaxZ = fZ;
 			dCount--;
 		}
-		sort(pProcess[0]->m_vSpectra.begin(),pProcess[0]->m_vSpectra.end(),lessThanSpec);
 
 		size_t tProcesses = lThreads;
 		size_t tRing = 0;
@@ -454,6 +461,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	while(a < (unsigned long)(dCount))	{
 		pProcess[a]->merge_map(pProcess[0]->m_mapSequences);
 		pProcess[a]->m_vseqBest = pProcess[0]->m_vseqBest;
+		pProcess[a]->m_mapCrc.clear();
 		a++;
 	}
 
@@ -589,6 +597,8 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		pProcess[0]->merge_statistics(pProcess[a]);
 		pProcess[a]->clear();
 		pProcess[a]->m_mapSequences.clear();
+		delete pProcess[a];
+		pProcess[a] = NULL;
 		a++;
 	}
 	if(dCount > 1)	{
