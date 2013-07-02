@@ -6,6 +6,7 @@
  *
  */
 
+#include "stdafx.h"
 #include "dataLoader.h"
 
 void dataLoader::convertSEXPToMap(SEXP RData, std::map<std::string, std::string>* ptrMap) {

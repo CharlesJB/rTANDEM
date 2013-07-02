@@ -1,8 +1,9 @@
 #include <Rcpp.h> // rTANDEM
 #include "dataLoader.h" // rTANDEM
 
-// rTANDEM : Declaration initialy in tandem.cpp where move in tandem.h
-#include "stdafx.h"
+// Reverted change:
+// // rTANDEM : Declaration initialy in tandem.cpp where move in tandem.h
+//  #include "stdafx.h"
 #include <sys/timeb.h>
 #include <ctime>
 #include <algorithm>

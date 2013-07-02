@@ -1,18 +1,2 @@
 useDynLib(rTANDEM)
-
-import(methods)
-
-importClassesFrom(data.table, data.table)
-
-importClassesFrom(methods, character, data.frame, integer, numeric,
-                  vector)
-
-importMethodsFrom(XML, saveXML)
-
-importFrom(data.table, data.table, rbindlist, set, setkey, setnames)
-
-importFrom(XML, addChildren, getNodeSet, xmlAttrs, xmlChildren,
-           xmlEventParse, xmlName, xmlNode, xmlRoot, xmlTreeParse,
-           xmlValue)
-
-exportPattern("^[[:alpha:]]+") 
+exportPattern("^[[:alpha:]]+")

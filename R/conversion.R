@@ -195,6 +195,7 @@ env1$pep.dt  <- data.table("prot.uid"=rep(0L,1000),
                            "pep.id"=rep("",1000),
                            "spectrum.id"=rep(0L,1000),
                            "spectrum.mh"=rep(0,1000),
+                           "spectrum.z"=rep(0L,1000),
                            "spectrum.sumI"=rep(0,1000),
                            "spectrum.maxI"=rep(0,1000),
                            "spectrum.fI"=rep(0,1000),
@@ -289,26 +290,27 @@ domain <- function(name, attrs, ...) { #handler function
   }
 
   if( env1$pep.dt.key  < env1$pep.key) {
-    pep2.dt  <- data.table("prot.uid"=rep(0L,1000), "pep.id"=rep("",1000), "spectrum.id"=rep(0L,1000), "spectrum.mh"=rep(0.0,1000), "spectrum.sumI"=rep(0.0,1000), "spectrum.maxI"=rep(0.0,1000), "spectrum.fI"=rep(0.0,1000), "expect.value"=rep(0.0,1000), "tandem.score"=rep(0.0,1000), "mh"=rep(0.0,1000), "delta"=rep(0.0,1000), "peak.count"=rep(as.integer(0),1000), "missed.cleavages"=rep(0L,1000), "start.position"=rep(0L,1000), "end.position"=rep(0L,1000), "sequence"=rep("",1000) )
+    pep2.dt  <- data.table("prot.uid"=rep(0L,1000), "pep.id"=rep("",1000), "spectrum.id"=rep(0L,1000), "spectrum.mh"=rep(0.0,1000), "spectrum.z"=rep(0L,1000),"spectrum.sumI"=rep(0.0,1000), "spectrum.maxI"=rep(0.0,1000), "spectrum.fI"=rep(0.0,1000), "expect.value"=rep(0.0,1000), "tandem.score"=rep(0.0,1000), "mh"=rep(0.0,1000), "delta"=rep(0.0,1000), "peak.count"=rep(as.integer(0),1000), "missed.cleavages"=rep(0L,1000), "start.position"=rep(0L,1000), "end.position"=rep(0L,1000), "sequence"=rep("",1000) )
     env1$pep.dt   <- rbindlist(list(env1$pep.dt, pep2.dt))
     env1$pep.dt.key <- env1$pep.dt.key + 1000L
   }
   set(env1$pep.dt, env1$pep.key, 1L, as.integer(env1$protein.attrs['uid']))
   set(env1$pep.dt, env1$pep.key, 2L, env1$domain.attrs['id'] ) 
   set(env1$pep.dt, env1$pep.key, 3L, as.integer(env1$group.attrs['id'])) 
-  set(env1$pep.dt, env1$pep.key, 4L, as.numeric(env1$group.attrs['mh'])) 
-  set(env1$pep.dt, env1$pep.key, 5L, as.numeric(env1$group.attrs['sumI'])) 
-  set(env1$pep.dt, env1$pep.key, 6L, as.numeric(env1$group.attrs['maxI'])) 
-  set(env1$pep.dt, env1$pep.key, 7L, as.numeric(env1$group.attrs['fI'])) 
-  set(env1$pep.dt, env1$pep.key, 8L, as.numeric(env1$domain.attrs['expect'])) 
-  set(env1$pep.dt, env1$pep.key, 9L, as.numeric(env1$domain.attrs['hyperscore'])) 
-  set(env1$pep.dt, env1$pep.key, 10L, as.numeric(env1$domain.attrs['mh'])) 
-  set(env1$pep.dt, env1$pep.key, 11L, as.numeric(env1$domain.attrs['delta'])) 
-  set(env1$pep.dt, env1$pep.key, 12L, as.integer(env1$domain.attrs['peak_count'])) 
-  set(env1$pep.dt, env1$pep.key, 13L, as.integer(env1$domain.attrs['missed_cleavages'])) 
-  set(env1$pep.dt, env1$pep.key, 14L, as.integer(env1$domain.attrs['start'])) 
-  set(env1$pep.dt, env1$pep.key, 15L, as.integer(env1$domain.attrs['end'])) 
-  set(env1$pep.dt, env1$pep.key, 16L, as.character(env1$domain.attrs['seq'])) 
+  set(env1$pep.dt, env1$pep.key, 4L, as.numeric(env1$group.attrs['mh']))
+  set(env1$pep.dt, env1$pep.key, 5L, as.integer(env1$group.attrs['z']))
+  set(env1$pep.dt, env1$pep.key, 6L, as.numeric(env1$group.attrs['sumI'])) 
+  set(env1$pep.dt, env1$pep.key, 7L, as.numeric(env1$group.attrs['maxI'])) 
+  set(env1$pep.dt, env1$pep.key, 8L, as.numeric(env1$group.attrs['fI'])) 
+  set(env1$pep.dt, env1$pep.key, 9L, as.numeric(env1$domain.attrs['expect'])) 
+  set(env1$pep.dt, env1$pep.key, 10L, as.numeric(env1$domain.attrs['hyperscore'])) 
+  set(env1$pep.dt, env1$pep.key, 11L, as.numeric(env1$domain.attrs['mh'])) 
+  set(env1$pep.dt, env1$pep.key, 12L, as.numeric(env1$domain.attrs['delta'])) 
+  set(env1$pep.dt, env1$pep.key, 13L, as.integer(env1$domain.attrs['peak_count'])) 
+  set(env1$pep.dt, env1$pep.key, 14L, as.integer(env1$domain.attrs['missed_cleavages'])) 
+  set(env1$pep.dt, env1$pep.key, 15L, as.integer(env1$domain.attrs['start'])) 
+  set(env1$pep.dt, env1$pep.key, 16L, as.integer(env1$domain.attrs['end'])) 
+  set(env1$pep.dt, env1$pep.key, 17L, as.character(env1$domain.attrs['seq'])) 
 }
 environment(domain) <- env1
 

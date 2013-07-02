@@ -136,8 +136,10 @@ The End
 	containing the parameters for performing the protein modelling session. The input file 
 	also contains the name of an output file, which will contain the output from the session.
 */
-#ifndef X_P3
 
+#include "stdafx.h"
+
+#ifndef X_P3
 #include "tandem.h"
 
 // For defining R_CStackLimit
