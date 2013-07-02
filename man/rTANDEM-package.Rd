@@ -2,7 +2,7 @@
 \alias{rTANDEM-package}
 \docType{package}
 \title{
-An R encapsulation of X!TANDEM CYCLONE (2010.12.01.1)
+An R encapsulation of X!TANDEM ('Jackhammer' release, 2013.06.15)
 }
 \description{
 X!Tandem is an open source software for protein identification from

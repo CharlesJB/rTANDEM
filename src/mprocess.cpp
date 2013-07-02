@@ -172,9 +172,10 @@ The End
  * global less than operators to be used in sort operations
  */
 bool lessThanSequence(const msequence &_l,const msequence &_r);
-bool lessThanSequenceUid(const msequence &_l,const msequence &_r);
+bool lessThanSequenceId(const msequence &_l,const msequence &_r);
 bool lessThanSequenceDes(const msequence &_l,const msequence &_r);
 bool lessThanSpectrum(const mspectrum &_l,const mspectrum &_r);
+bool lessThanSpectrumUid(const mspectrum &_l,const mspectrum &_r);
 bool lessThanOrder(const mspectrum &l,const mspectrum &r);
 bool lessThanMass(const mi &_l,const mi &_r);
 
@@ -198,6 +199,10 @@ bool lessThanSpectrum(const mspectrum &_l,const mspectrum &_r)
 	return _l.m_dProteinExpect < _r.m_dProteinExpect;
 }
 
+bool lessThanSpectrumId(const mspectrum &_l,const mspectrum &_r)
+{
+	return _l.m_tId < _r.m_tId;
+}
 bool lessThanSpectrumSequence(const mspectrum &_l,const mspectrum &_r)
 {
 	if(_l.m_vseqBest.empty())
@@ -245,9 +250,9 @@ mprocess::mprocess(void)
  */
 	strKey = "process, version";
 #ifdef X_P3
-	strValue = "x! p3 ";
+	strValue = "X! P3 ";
 #else
-	strValue = "x! tandem ";
+	strValue = "X! Tandem ";
 #endif
 	strValue += VERSION;
 	m_xmlPerformance.set(strKey,strValue);
@@ -294,6 +299,18 @@ mprocess::mprocess(void)
 	m_dNg = 0.0;
 	m_dNgAve = 0.0;
 
+	m_tDuplicates = 0;
+	m_tDuplicateIds = 0;
+	m_tTemp = 0;
+	m_bSkyline = false;
+	m_pCrcTable = NULL;
+	m_fMaxMass = 5000;
+	m_fMaxZ = 2;
+	#ifdef X_P3
+		m_bUseCrc = false;
+	#else
+		m_bUseCrc = true;
+	#endif
 }
 
 mprocess::~mprocess(void)
@@ -305,6 +322,9 @@ mprocess::~mprocess(void)
 	if(m_lThread == 0 || m_lThread == 0xFFFFFFFF)	{
 		m_prcLog.log("X! Tandem exiting");
 		m_prcLog.close();
+	}
+	if(m_pCrcTable != NULL)	{
+		delete m_pCrcTable;
 	}
 }
 /*
@@ -422,6 +442,8 @@ bool mprocess::create_score(const msequence &_s,const size_t _v,const size_t _w,
  */
 	set<size_t> setDone;
 	while(lCount < m_pScore->m_State.m_lEqualsS)	{
+		bIonCheck = false;
+		bMassCheck = false;
 		a = m_pScore->m_State.m_plEqualsS[lCount];
 		lCount++;
 		lIonCount = 0;
@@ -472,7 +494,11 @@ bool mprocess::create_score(const msequence &_s,const size_t _v,const size_t _w,
 * one can cause others to score differently from how they would score
 * alone.
 */
-		if (m_vSpectra[a].m_hHyper.m_ulCount < 400)     {
+		if (m_vSpectra[a].m_hHyper.m_ulCount < 400 && m_iCurrentRound == 1)     {
+			if(m_iCurrentRound > 1)	{
+				Rprintf("%s\n", m_vSpectra[a].m_tId);
+//				cout << m_vSpectra[a].m_tId << "\n";
+			}
 			if(m_bCrcCheck && _p)   {
 				m_bPermute = true;
 			}
@@ -501,6 +527,13 @@ bool mprocess::create_score(const msequence &_s,const size_t _v,const size_t _w,
  * if the same score has been recorded for another peptide in the same msequence object,
  * add a domain to that object, but do not update the entire object
  */
+		unsigned char ucM = 0;
+		if(_m < 0)	{
+			ucM = 0;
+		}
+		else	{
+			ucM = (unsigned char)_m;
+		}
 		if(bMassCheck && bIonCheck && fHyper == m_vSpectra[a].m_fHyper && m_vSpectra[a].m_tCurrentSequence == _s.m_tUid)	{
 			vector<maa> vAa;
 			mdomain domValue;
@@ -521,7 +554,7 @@ bool mprocess::create_score(const msequence &_s,const size_t _v,const size_t _w,
 				domValue.m_dDelta = m_vSpectra[a].m_dMH - m_pScore->seq_mh();
 				domValue.m_lE = (int)_w;
 				domValue.m_lS = (int)_v;
-				domValue.m_lMissedCleaves = (int)_m;
+				domValue.m_lMissedCleaves = ucM;
 				domValue.m_bUn = m_bUn;
 				unsigned char lType = 1;
 				unsigned long sType = 1;
@@ -569,7 +602,7 @@ bool mprocess::create_score(const msequence &_s,const size_t _v,const size_t _w,
 				domValue.m_dDelta = m_vSpectra[a].m_dMH - m_pScore->seq_mh();
 				domValue.m_lE = (int)_w;
 				domValue.m_lS = (int)_v;
-				domValue.m_lMissedCleaves = (unsigned char)_m;
+				domValue.m_lMissedCleaves = ucM;
 				domValue.m_bUn = m_bUn;
 				unsigned char lType = 1;
 				unsigned long sType = 1;
@@ -584,7 +617,6 @@ bool mprocess::create_score(const msequence &_s,const size_t _v,const size_t _w,
 				m_mapSequences.insert(SEQMAP::value_type(_s.m_tUid,_s.m_strSeq));
 				seqValue.m_vDomains.clear();
 				seqValue.m_vDomains.push_back(domValue);
-				seqValue.format_description();
 				bOk = true;
 				b = 0;
 				while(bOk && b < m_vSpectra[a].m_vseqBest.size())	{
@@ -631,15 +663,17 @@ bool mprocess::create_score(const msequence &_s,const size_t _v,const size_t _w,
 				}
 			}
 			if(fabs(dDelta) > 2.5)	{
-				m_vSpectra[a].m_fScoreNext = m_vSpectra[a].m_fScore;
-				m_vSpectra[a].m_fHyperNext = m_vSpectra[a].m_fHyper;
+				if(m_vSpectra[a].m_fHyper > m_vSpectra[a].m_fScoreNext)	{
+					m_vSpectra[a].m_fScoreNext = m_vSpectra[a].m_fScore;
+					m_vSpectra[a].m_fHyperNext = m_vSpectra[a].m_fHyper;
+				}
 				m_vSpectra[a].m_fScore = fScore;
 				m_vSpectra[a].m_fHyper = fHyper;
 				domValue.m_fScore = fScore;
 				domValue.m_fHyper = fHyper;
 				domValue.m_lE = (int)_w;
 				domValue.m_lS = (int)_v;
-				domValue.m_lMissedCleaves = (unsigned char)_m;
+				domValue.m_lMissedCleaves = ucM;
 				domValue.m_dMH = m_pScore->seq_mh();
 				// m_fDelta was changed to m_dDelta in 2006.02.01
 				domValue.m_dDelta = m_vSpectra[a].m_dMH - m_pScore->seq_mh();
@@ -657,7 +691,6 @@ bool mprocess::create_score(const msequence &_s,const size_t _v,const size_t _w,
 				m_mapSequences.insert(SEQMAP::value_type(_s.m_tUid,_s.m_strSeq));
 				seqValue.m_vDomains.clear();
 				seqValue.m_vDomains.push_back(domValue);
-				seqValue.format_description();
 				m_vSpectra[a].m_tCurrentSequence = _s.m_tUid;
 				m_vSpectra[a].m_vseqBest.clear();
 				seqValue.m_iRound = m_iCurrentRound;
@@ -665,12 +698,12 @@ bool mprocess::create_score(const msequence &_s,const size_t _v,const size_t _w,
 				m_vSpectra[a].m_vseqBest.push_back(seqValue);
 			}
 		}
-		else if (fScore > 2.0 && fHyper > m_vSpectra[a].m_fHyperNext)
-		{
+		else if(_p && bMassCheck && bIonCheck && fHyper > m_vSpectra[a].m_fHyperNext)	{
 			m_vSpectra[a].m_fScoreNext = fScore;
 			m_vSpectra[a].m_fHyperNext = fHyper;
 		}
-	}
+}
+	
 	return true;
 }
 //
@@ -1058,6 +1091,11 @@ bool mprocess::charge(void)
 		}
 		a++;
 	}
+	if(m_fMaxZ < 3)	{
+		dMH = (double)m_fMaxMass;
+		dMH = dProton + ((dMH - dProton)/m_fMaxZ);
+		m_fMaxMass = (float)(dProton + ((dMH - dProton)*3.0));
+	}
 	return true;
 }
 
@@ -1194,9 +1232,9 @@ bool mprocess::merge_spectra()
 		while(a < m_vSpectra.size())	{
 			m_vSpectra[a].m_hHyper.model();
 			m_vSpectra[a].m_hHyper.set_protein_factor(1.0);
-//			if(m_bUseHomologManagement && m_vSpectra[a].m_vseqBest.size() > 5)	{
-//				m_vSpectra[a].m_vseqBest.erase(m_vSpectra[a].m_vseqBest.begin()+5,m_vSpectra[a].m_vseqBest.end());
-//			}
+			if(m_bUseHomologManagement && m_vSpectra[a].m_vseqBest.size() > 5)	{
+				m_vSpectra[a].m_vseqBest.erase(m_vSpectra[a].m_vseqBest.begin()+5,m_vSpectra[a].m_vseqBest.end());
+			}
 			a++;
 		}
 		a = 0;
@@ -1274,6 +1312,9 @@ bool mprocess::merge_spectra(vector<mspectrum> &_s)
 						itValue = m_mapSequences.find(m_vseqBest[c].m_tUid);
 						m_vseqBest[c].m_strSeq = ((*itValue).second.c_str());
 						m_vseqBest[c].m_vDomains.clear();
+					}
+					if(m_bUseHomologManagement && b >= 5)	{
+						break;
 					}
 					b++;
 				}
@@ -1395,6 +1436,15 @@ bool mprocess::process(void)
 	strKey += strValue;
 	m_prcLog.log(strKey);
 
+	strKey = "spectrum, skyline path";
+	m_xmlValues.get(strKey,strValue);
+	if(strValue.length() != 0)	{
+		m_strSkyline = strValue;
+		m_bSkyline = true;
+	}
+	else	{
+		m_bSkyline = false;
+	}
 #ifndef X_P3
 	strKey = "protein, saps";
 	m_bSaps = false;
@@ -1626,6 +1676,15 @@ bool mprocess::process(void)
 	m_xmlValues.get(strKey,strValue);
 	if(strValue == "yes")	{
 		m_semiState.activate(true);
+		m_semiState.type(0);
+	}
+	else if(strValue == "amino")	{
+		m_semiState.activate(true);
+		m_semiState.type(2);
+	}
+	else if(strValue == "carboxy")	{
+		m_semiState.activate(true);
+		m_semiState.type(1);
 	}
 	strKey = "scoring, minimum ion count";
 	m_xmlValues.get(strKey,strValue);
@@ -1791,6 +1850,7 @@ bool mprocess::refine(void)
 	m_xmlValues.get(strKey,strValue);
 	bool bReturn = false;
 	m_lStartMax = 100000000;
+	sort(m_vseqBest.begin(),m_vseqBest.end(),lessThanSequenceUid);
 	if(strValue == "yes")	{
 		bReturn = refine_model();
 		tTime = clock() - tTime;
@@ -1826,15 +1886,77 @@ bool mprocess::refine_model()
  * two customized output types are given: one which emphasizes protein sequences
  * and one which emphasizes spectra.
  */
+bool mprocess::insert_dups(void)
+{
+	vector<mspectrum>::iterator itS = m_vSpectra.begin();
+	SEQMAP::iterator itSeq;
+	MSEQMAP::iterator itDup = m_mapDups.begin();
+	m_tDuplicates = 0;
+	while(itDup != m_mapDups.end())	{
+		m_tDuplicates += (*itDup).second.size();
+		itDup++;
+	}
+	uint64_t uiCrc = 0;
+	size_t a = 0;
+	size_t tLength = 0;
+	map<size_t,uint64_t> mapCrc;
+	map<size_t,uint64_t>::iterator itCrc;
+	m_tDuplicateIds = 0;
+	while(itS != m_vSpectra.end())	{
+		if(!itS->m_vseqBest.empty())	{
+			tLength = itS->m_vseqBest.size();
+			a = 0;
+			while(a < tLength)	{
+				itCrc = mapCrc.find(itS->m_vseqBest[a].m_tUid);
+				if(itCrc == mapCrc.end())	{
+					itSeq = m_mapSequences.find(itS->m_vseqBest[a].m_tUid);
+					uiCrc = crc((*itSeq).second);
+					itDup = m_mapDups.find(uiCrc);
+					mapCrc[itS->m_vseqBest[a].m_tUid] = uiCrc;
+				}
+				else	{
+					itDup = m_mapDups.find((*itCrc).second);
+				}
+				if(itDup != m_mapDups.end())	{
+					msequence seqTemp = itS->m_vseqBest[a];
+					size_t b = 0;
+					itSeq = m_mapSequences.find(itS->m_vseqBest[a].m_tUid);
+					while(b < (*itDup).second.size())	{
+						seqTemp.m_siPath = (*itDup).second[b].m_siPath;
+						seqTemp.m_strDes = (*itDup).second[b].m_strDes;
+						seqTemp.m_tUid = (*itDup).second[b].m_tUid;
+						if(m_mapSequences.find(seqTemp.m_tUid) == m_mapSequences.end())	{
+							m_mapSequences[seqTemp.m_tUid] = (*itSeq).second;
+						}
+						seqTemp.m_bForward = (*itDup).second[b].m_bForward;
+						itS->m_vseqBest.push_back(seqTemp);
+						m_tDuplicateIds++;
+						b++;
+					}
+				}
+				a++;
+			}
+		}
+		itS++;
+	}
+	m_mapDups.clear();
+	m_mapCrc.clear();
+	return true;
+}
 bool mprocess::report(void)
 {
 	m_prcLog.log("creating report");
 	vector<mspectrum>::iterator itS = m_vSpectra.begin();
 	m_pScore->clear();
+	sort(m_vSpectra.begin(),m_vSpectra.end(),lessThanSpectrumId);
 	while(itS != m_vSpectra.end())	{
 		itS->m_hHyper.model();
 		itS->m_hHyper.set_protein_factor(1.0);
+		sort(itS->m_vseqBest.begin(),itS->m_vseqBest.end(),lessThanSequenceUid);
 		itS++;
+	}
+	if(m_bUseCrc)	{
+		insert_dups();
 	}
 	size_t a = 0;
 	map<size_t,size_t> mapSpec;
@@ -1912,6 +2034,15 @@ bool mprocess::report(void)
 	a = 0;
 	int iIndex;
 	int iQ = 0;
+	vector<size_t> vRoundCount;
+	a = 0;
+	size_t tMaxRounds = 128;
+	while(a < tMaxRounds)	{
+		vRoundCount.push_back(0);
+		a++;
+	}
+	a = 0;
+	size_t r = 0;
 	while(itS != m_vSpectra.end())	{
 		a = 0;
 		if(itS->m_fScore > 0.0 && itS->m_dExpect < 1.0)	{
@@ -1928,8 +2059,21 @@ bool mprocess::report(void)
 		if(a > 0)	{
 			sort(itS->m_vMI.begin(),itS->m_vMI.end(),lessThanMass);
 		}
+		a = 0;
+		while(a < itS->m_vseqBest.size())	{
+			r = itS->m_vseqBest[a].m_iRound;
+			if(r < tMaxRounds)	{
+				vRoundCount[r] = vRoundCount[r] + 1;
+			}
+			a++;
+		}
 		itS++;
 	}
+	m_tRefinePartial = vRoundCount[2];
+	m_tRefineUnanticipated = vRoundCount[3];
+	m_tRefineNterminal = vRoundCount[4];
+	m_tRefineCterminal = vRoundCount[5];
+	m_tRefinePam = vRoundCount[6];
 	char *pLine = new char[256];
 	string strKey = "quality values";
 	string strValue;
@@ -1966,6 +2110,16 @@ bool mprocess::report(void)
 	sprintf(pLine,"%lu",(unsigned long)m_tProteinCount);
 	strValue = pLine;
 	m_xmlPerformance.set(strKey,strValue);
+	if(m_bUseCrc)	{
+		strKey = "modelling, duplicate proteins";
+		sprintf(pLine,"%lu",(unsigned long)m_tDuplicates);
+		strValue = pLine;
+		m_xmlPerformance.set(strKey,strValue);
+		strKey = "modelling, duplicate peptide ids";
+		sprintf(pLine,"%lu",(unsigned long)m_tDuplicateIds);
+		strValue = pLine;
+		m_xmlPerformance.set(strKey,strValue);
+	}
 	strKey = "modelling, total peptides used";
 	sprintf(pLine,"%lu",(unsigned long)m_tPeptideCount);
 	strValue = pLine;
@@ -2175,6 +2329,12 @@ bool mprocess::report_all()
 	map <string,string>::iterator itMod;
 	string strMods;
 
+	strKey = "spectrum, path";
+	m_xmlValues.get(strKey,strValue);
+	string strPath = strValue;
+	string strSky = "";
+	size_t tPos = 0;
+	size_t tEnd = 0;
 	while(a < tLength)	{
 		b = 0;
 		if(!m_vSpectra[a].m_vseqBest.empty() && !m_vSpectra[a].m_vseqBest[0].m_vDomains.empty())	{
@@ -2184,6 +2344,30 @@ bool mprocess::report_all()
 				m_vSpectra[a].m_vseqBest[b].m_strSeq = (*itValue).second;
 				b++;
 			}
+			if(!m_bSkyline)	{
+				strSky = "";
+			}
+			else	{
+				if(m_strSkyline == "1")	{
+					tPos = m_vSpectra[a].m_strDescription.find("|source=");
+					if(tPos != m_vSpectra[a].m_strDescription.npos)	{
+						 tPos += strlen("|source=");
+						 tEnd = m_vSpectra[a].m_strDescription.find("|",tPos);
+						 if(tEnd != m_vSpectra[a].m_strDescription.npos)	{
+							 strSky = m_vSpectra[a].m_strDescription.substr(tPos,tEnd-tPos);
+						 }
+						 else	{
+							 strSky = strPath;
+						 }
+					}
+					else	{
+						strSky = strPath;
+					}
+				}
+				else	{
+					strSky = m_strSkyline;
+				}
+			}
 			if(bSpectra || bHistograms || bProteins)
 				rptValue.group(m_vSpectra[a]);
 			if(bProteins)	{
@@ -2192,7 +2376,7 @@ bool mprocess::report_all()
 			if(bHistograms)
 				rptValue.histogram(m_vSpectra[a]);
 			if(bSpectra)
-				rptValue.spectrum(m_vSpectra[a]);
+				rptValue.spectrum(m_vSpectra[a],strSky);
 			if(bSpectra || bHistograms || bProteins)
 				rptValue.endgroup();
 		}
@@ -2274,6 +2458,7 @@ bool mprocess::report_valid(const double _d)
 	size_t tActive = 0;
 	double dValue = 0.0;
 	size_t b = 0;
+	size_t c = 0;
 	SEQMAP::iterator itValue;
 	m_tValid = 0;
 	m_tUnique = 1;
@@ -2286,8 +2471,17 @@ bool mprocess::report_valid(const double _d)
 	}
 	dProteinMax = log10(dProteinMax);
 	double dProtein = 0.0;
+	strKey = "spectrum, path";
+	m_xmlValues.get(strKey,strValue);
+	string strPath = strValue;
+	string strSky = "";
+	size_t tPos = 0;
+	size_t tEnd = 0;
+	set<string> setUnique;
+	string strPeptide;
 	while(a < tLength)	{
 		dValue = 3.0;
+		size_t c = 0;
 		if(m_vSpectra[a].m_fScore > 0.0 && !m_vSpectra[a].m_vseqBest.empty() && !m_vSpectra[a].m_vseqBest[0].m_vDomains.empty())	{
 			dValue = m_vSpectra[a].m_hHyper.expect(m_pScore->hconvert(m_vSpectra[a].m_vseqBest[0].m_vDomains[0].m_fHyper));
 			dProtein = m_vSpectra[a].m_dProteinExpect;
@@ -2303,17 +2497,47 @@ bool mprocess::report_valid(const double _d)
 				m_vSpectra[a].m_vseqBest[b].m_strSeq = (*itValue).second;
 				b++;
 			}
-			if(tLast > 0)	{
-				if(m_vSpectra[a].m_vseqBest[0].m_vDomains[0].m_lS != m_vSpectra[tLast].m_vseqBest[0].m_vDomains[0].m_lS)	{
-					if(m_vSpectra[a].m_vseqBest[0].m_vDomains[0].m_lE != m_vSpectra[tLast].m_vseqBest[0].m_vDomains[0].m_lE)	{
-						m_tUnique++;
-						if(m_lReversed != -1 && !m_vSpectra[tLast].m_vseqBest[0].m_bForward)	{
-							m_lReversed++;
-						}
+			if(m_lReversed != -1 && !m_vSpectra[a].m_vseqBest[0].m_bForward)	{
+				m_lReversed++;
+			}
+			b = 0;
+			while(b < m_vSpectra[a].m_vseqBest.size())	{
+				c = 0;
+				while(c < m_vSpectra[a].m_vseqBest[b].m_vDomains.size())	{
+					tPos = m_vSpectra[a].m_vseqBest[b].m_vDomains[c].m_lS;
+					tEnd = m_vSpectra[a].m_vseqBest[b].m_vDomains[c].m_lE;
+					strPeptide = m_vSpectra[a].m_vseqBest[b].m_strSeq.substr(tPos,tEnd-tPos+1);
+					if(setUnique.find(strPeptide) == setUnique.end())	{
+						setUnique.insert(strPeptide);
+					}
+					c++;
+				}
+				b++;
+			}
+			if(!m_bSkyline)	{
+				strSky = "";
+			}
+			else	{
+				if(m_strSkyline == "1")	{
+					tPos = m_vSpectra[a].m_strDescription.find("|source=");
+					if(tPos != m_vSpectra[a].m_strDescription.npos)	{
+						 tPos += strlen("|source=");
+						 tEnd = m_vSpectra[a].m_strDescription.find("|",tPos);
+						 if(tEnd != m_vSpectra[a].m_strDescription.npos)	{
+							 strSky = m_vSpectra[a].m_strDescription.substr(tPos,tEnd-tPos);
+						 }
+						 else	{
+							 strSky = strPath;
+						 }
+					}
+					else	{
+						strSky = strPath;
 					}
 				}
+				else	{
+					strSky = m_strSkyline;
+				}
 			}
-			tLast = a;
 			m_tValid++;
 			tActive++;
 			if(bSpectra || bHistograms || bProteins)
@@ -2323,12 +2547,13 @@ bool mprocess::report_valid(const double _d)
 			if(bHistograms)
 				rptValue.histogram(m_vSpectra[a]);
 			if(bSpectra)
-				rptValue.spectrum(m_vSpectra[a]);
+				rptValue.spectrum(m_vSpectra[a],strSky);
 			if(bSpectra || bHistograms || bProteins)
 				rptValue.endgroup();
 		}
 		a++;
 	}
+	m_tUnique = setUnique.size();
 	if(m_tValid == 0)	{
 		m_tUnique = 0;
 	}
@@ -2433,6 +2658,12 @@ bool mprocess::report_stochastic(const double _d)
 	SEQMAP::iterator itValue;
 	size_t tLength = m_vSpectra.size();
 	double dValue = 0.0;
+	strKey = "spectrum, path";
+	m_xmlValues.get(strKey,strValue);
+	string strPath = strValue;
+	string strSky = "";
+	size_t tPos = 0;
+	size_t tEnd = 0;
 	while(a < tLength)	{
 		dValue = 3.0;
 		if(!m_vSpectra[a].m_vseqBest.empty() && !m_vSpectra[a].m_vseqBest[0].m_vDomains.empty())	{
@@ -2444,6 +2675,30 @@ bool mprocess::report_stochastic(const double _d)
 		}
 		if(m_vSpectra[a].m_vseqBest.empty() || dValue > _d)	{
 			b = 0;
+			if(!m_bSkyline)	{
+				strSky = "";
+			}
+			else	{
+				if(m_strSkyline == "1")	{
+					tPos = m_vSpectra[a].m_strDescription.find("|source=");
+					if(tPos != m_vSpectra[a].m_strDescription.npos)	{
+						 tPos += strlen("|source=");
+						 tEnd = m_vSpectra[a].m_strDescription.find("|",tPos);
+						 if(tEnd != m_vSpectra[a].m_strDescription.npos)	{
+							 strSky = m_vSpectra[a].m_strDescription.substr(tPos,tEnd-tPos);
+						 }
+						 else	{
+							 strSky = strPath;
+						 }
+					}
+					else	{
+						strSky = strPath;
+					}
+				}
+				else	{
+					strSky = m_strSkyline;
+				}
+			}
 			while(b < m_vSpectra[a].m_vseqBest.size())	{
 				itValue = m_mapSequences.find(m_vSpectra[a].m_vseqBest[b].m_tUid);
 				m_vSpectra[a].m_vseqBest[b].m_strSeq = (*itValue).second;
@@ -2456,7 +2711,7 @@ bool mprocess::report_stochastic(const double _d)
 			if(bHistograms)
 				rptValue.histogram(m_vSpectra[a]);
 			if(bSpectra)
-				rptValue.spectrum(m_vSpectra[a]);
+				rptValue.spectrum(m_vSpectra[a],strSky);
 			if(bSpectra || bHistograms || bProteins)
 				rptValue.endgroup();
 		}
@@ -2741,6 +2996,36 @@ bool mprocess::report_sort()
 			itStart = itEnd;
 		}
 	}
+	else
+	{
+		sort(m_vSpectra.begin(),m_vSpectra.end(),lessThanSpectrumId);
+		vector<mspectrum>::iterator itStart = m_vSpectra.begin();
+		vector<mspectrum>::iterator itEnd = itStart;
+		while(itStart != m_vSpectra.end() && itEnd != m_vSpectra.end())	{
+			while(itStart != m_vSpectra.end() && itStart->m_vseqBest.empty())
+				itStart++;
+			if(itStart == m_vSpectra.end())
+				break;
+			itEnd = itStart + 1;
+			while(itEnd != m_vSpectra.end())	{
+				if(!itEnd->m_vseqBest.empty())	{
+					if(itStart->m_vseqBest[0].m_tUid == itEnd->m_vseqBest[0].m_tUid)	{
+						itEnd++;
+					}
+					else	{
+						break;
+					}
+				}
+				else	{
+					break;
+				}
+			}
+			if(itEnd != itStart + 1)	{
+				sort(itStart,itEnd,lessThanOrder);
+			}
+			itStart = itEnd;
+		}
+	}
 	return true;
 }
 
@@ -2812,6 +3097,31 @@ bool mprocess::rollback(vector<mspectrum>& _v,const double _m,const double _f)
  */
 bool mprocess::score(const msequence &_s)
 {
+/*  Use CRC mechanism to remove identical protein sequences
+ *		- this can be surprisingly effective at improving performance
+ *		- uncomment the items in this segment to test CRC function for accuracy with 
+ *			specific protein sequences.
+ */
+	if(m_bUseCrc && m_iCurrentRound == 1)	{
+//		m_mapTest[_s.m_tUid] = _s.m_strSeq;
+		uint64_t uiCRC = crc(_s.m_strSeq);
+		if(m_mapCrc.find(uiCRC) == m_mapCrc.end())	{
+			m_mapCrc[uiCRC] = _s.m_tUid;
+		}
+		else	{
+			if(m_lThread == 0 || m_lThread == 0xFFFFFFFF)	{
+//				SEQMAP::iterator itSeq = m_mapTest.find(m_mapCrc[uiCRC]);
+//				if(_s.m_strSeq != itSeq->second)	{
+//					cout << "crc test failed\n";
+//				}
+				msequence mSeq = _s;
+				mSeq.m_strSeq.clear();
+				m_mapDups[uiCRC].push_back(mSeq);
+				
+			}
+			return true;
+		}
+	}
 	size_t m = 0;
 	string strValue;
 	if(!m_vstrModifications.empty())	{
@@ -2917,12 +3227,13 @@ bool mprocess::score_single(const msequence &_s)
 	const long lMissedMax = (long)m_tMissedCleaves;
 	const long lMinAa = (long)m_tMinResidues;
 	long lLastCleave = -1;
-	float fMinMax = 0;
+	double dMinMax = 0;
 	m_semiState.limit(lMinAa);
 	if(m_Cleave.m_lType & 0x01)	{
 		m_semiState.activate(false);
 	}
 	const char cAster = '*';
+	const char cX = 'X';
 	m_dNt = m_pScore->m_seqUtil.m_pdAaMod['['];
 	m_dNtAve = m_pScore->m_seqUtilAvg.m_pdAaMod['['];
 	m_dNg = m_pScore->m_seqUtil.m_pdAaMod['n'];
@@ -2941,7 +3252,8 @@ bool mprocess::score_single(const msequence &_s)
  * the end of the sequence
  */
 	while(lStart < lLength && lStart < m_lStartMax)	{
-		while(m_pSeq[lStart] == cAster && lStart < m_lStartMax)	{
+		bBreak = false;
+		while((m_pSeq[lStart] == cAster || m_pSeq[lStart] == cX) && lStart < m_lStartMax)	{
 			lStart++;
 		}
 		lEnd = lStart;
@@ -2961,7 +3273,7 @@ bool mprocess::score_single(const msequence &_s)
  */
 			bMiss = true;
 			while(lEnd < lLength)	{
-				if(m_pSeq[lEnd] == cAster)	{
+				if(m_pSeq[lEnd] == cAster || m_pSeq[lEnd] == cX)	{
 					if(lMissedCleaves == 0)
 						lNextStart = lEnd+1;
 					lMissedCleaves = lMissedMax;
@@ -3008,23 +3320,27 @@ bool mprocess::score_single(const msequence &_s)
 				lEnd = lLength - 1;
 			if(lEnd - lStart >= lMinAa && lEnd < lLength)	{
 				m_semiState.reset(lStart,lEnd,lLastCleave);
-				fMinMax = 0.0;
-				if(m_bQuickAcetyl && lStart == 0 && m_pSeq[0] == 'M' && (m_dNt == 0.0 || (int)m_dNt == 42) && m_iCurrentRound < 4)	{
-					m_pScore->m_seqUtil.m_pdAaMod['['] = dAcetyl;
-					m_pScore->m_seqUtilAvg.m_pdAaMod['['] = dAcetylAve;
+				dMinMax = 0.0;
+				if(lStart == 0 && m_pSeq[0] == 'M' && (m_dNt == 0.0 || (int)m_dNt == 42) && m_iCurrentRound < 4)	{
+					if(m_bQuickAcetyl)	{
+						m_pScore->m_seqUtil.m_pdAaMod['['] = dAcetyl;
+						m_pScore->m_seqUtilAvg.m_pdAaMod['['] = dAcetylAve;
+					}
 					bFirstAcetyl = true;
 				}
 				do	{
 					cValue = m_pSeq[lEnd+1];
 					m_pSeq[lEnd+1] = '\0';
-					if(m_bQuickAcetyl && lStart <= 2 && m_pSeq[0] == 'M' && (m_dNt == 0.0 || (int)m_dNt == 42) && m_iCurrentRound < 4)	{
-						m_pScore->m_seqUtil.m_pdAaMod['['] = dAcetyl;
-						m_pScore->m_seqUtilAvg.m_pdAaMod['['] = dAcetylAve;
+					if(lStart <= 2 && m_pSeq[0] == 'M' && (m_dNt == 0.0 || (int)m_dNt == 42) && m_iCurrentRound < 4)	{
+						if(m_bQuickAcetyl)	{
+							m_pScore->m_seqUtil.m_pdAaMod['['] = dAcetyl;
+							m_pScore->m_seqUtilAvg.m_pdAaMod['['] = dAcetylAve;
+						}
 						m_pScore->m_seqUtil.m_bPotential = true;
 						m_pScore->m_seqUtilAvg.m_bPotential = true;
 						bFirstAcetyl = true;
 					}
-					else if(m_bQuickAcetyl && bFirstAcetyl)	{
+					else if(bFirstAcetyl)	{
 						m_pScore->m_seqUtil.m_pdAaMod['['] = m_dNt;
 						m_pScore->m_seqUtilAvg.m_pdAaMod['['] = m_dNtAve;
 						m_pScore->m_seqUtil.m_bPotential = bModsUtil;
@@ -3052,19 +3368,15 @@ bool mprocess::score_single(const msequence &_s)
 						m_tPeptideCount += m_pScore->m_State.m_lEqualsS;
 						m_bPermute = false;
 						m_bPermuteHigh = false;
-						create_score(_s,lStart,lEnd,lMissedCleaves - 1,true);
-/*
- * Perform the permutation if the 
- * 1. permutation must be done and the check is fine.
- *  
- * or 
- *
- * 2. we are in a high permutation zone.
- */
-						if((m_bPermute && m_bCrcCheck) || m_bPermuteHigh)	{
+						if(m_semiState.ok())	{
+							create_score(_s,lStart,lEnd,lMissedCleaves - 1,true);
+						}
+						if(m_iCurrentRound == 1 && (m_bPermute && m_bCrcCheck || m_bPermuteHigh))	{
 							m_pScore->reset_permute();
 							while(m_pScore->permute())	{
-								create_score(_s,lStart,lEnd,lMissedCleaves - 1,false);
+								if(m_semiState.ok())	{
+										create_score(_s,lStart,lEnd,lMissedCleaves - 1,false);
+								}
 							}
 						}
 					}
@@ -3090,13 +3402,15 @@ bool mprocess::score_single(const msequence &_s)
 						m_pScore->m_seqUtilAvg.m_bPotential = bModsUtilAvg;
 					bFirstAcetyl = false;
 				}
-				if(!m_semiState.m_bActive && m_bQuickAcetyl && lStart == 0 && m_pSeq[0] == 'M' && (m_dNt == 0.0 || (int)m_dNt == 42) && m_iCurrentRound < 4)	{
+				if(!m_semiState.m_bActive && lStart == 0 && m_pSeq[0] == 'M' && (m_dNt == 0.0 || (int)m_dNt == 42) && m_iCurrentRound < 4)	{
 					lRagged = 1;
 					while(lRagged <= 2)	{
 						lStart = lRagged;
 						if(*(m_pSeq+lStart) != 'Q')	{
-							m_pScore->m_seqUtil.m_pdAaMod['['] = dAcetyl;
-							m_pScore->m_seqUtilAvg.m_pdAaMod['['] = dAcetylAve;
+							if(m_bQuickAcetyl)	{
+								m_pScore->m_seqUtil.m_pdAaMod['['] = dAcetyl;
+								m_pScore->m_seqUtilAvg.m_pdAaMod['['] = dAcetylAve;
+							}
 							m_pScore->m_seqUtil.m_bPotential = true;
 							m_pScore->m_seqUtilAvg.m_bPotential = true;
 						}
@@ -3138,10 +3452,10 @@ bool mprocess::score_single(const msequence &_s)
 						lRagged++;
 					}
 				}
-				if(m_pScore->m_fMinMass > fMinMax)	{
-					fMinMax = m_pScore->m_fMinMass;
+				if(m_pScore->m_dMinMass > dMinMax)	{
+					dMinMax = m_pScore->m_dMinMass;
 				}
-				if(fMinMax - m_pScore->m_fMaxMass > 100.0)	{
+				if(dMinMax - m_fMaxMass > 100.0)	{
 					break;
 				}
 			}
@@ -3507,10 +3821,7 @@ bool mprocess::spectra()
 				if(m_specCondition.condition(spCurrent, *m_pScore))	{
 					m_vSpectra.push_back(spCurrent);
 				}
-			}
-			if(spCurrent.m_vMI.size() > 0)	{
-				m_tSpectraTotal++;
-				m_vSpectra.push_back(spCurrent);
+				spCurrent.m_vMI.clear();
 			}
 			bContinue = false;
 		}
@@ -3580,10 +3891,12 @@ bool mprocess::spectra()
 					lLoaded = 0;
 					m_prcLog.log(".\n");
 				}
-				if(m_specCondition.condition(spCurrent, *m_pScore))
+				if(m_specCondition.condition(spCurrent, *m_pScore))	{
 					m_vSpectra.push_back(spCurrent);
+				}
+				spCurrent.m_vMI.clear();
 			}
-			if(spCurrent.m_vMI.size() > 0)	{
+			if(!spCurrent.m_vMI.empty())	{
 				m_tSpectraTotal++;
 				if(m_specCondition.condition(spCurrent, *m_pScore))
 					m_vSpectra.push_back(spCurrent);
@@ -3610,13 +3923,16 @@ bool mprocess::spectra()
 					m_prcLog.log(".\n");
 
 				}
-				if(m_specCondition.condition(spCurrent, *m_pScore))
+				if(m_specCondition.condition(spCurrent, *m_pScore))	{
 					m_vSpectra.push_back(spCurrent);
+				}
+				spCurrent.m_vMI.clear();
 			}
-			if(spCurrent.m_vMI.size() > 0)	{
+			if(!spCurrent.m_vMI.empty())	{
 				m_tSpectraTotal++;
-				if(m_specCondition.condition(spCurrent, *m_pScore))
+				if(m_specCondition.condition(spCurrent, *m_pScore))	{
 					m_vSpectra.push_back(spCurrent);
+				}
 			}
 			bContinue = false;
 		}
@@ -3682,7 +3998,7 @@ bool mprocess::spectra()
 //			cout << "\nFailed to read spectrum file: " << strValue.c_str() << "\n";
 			Rprintf("\nFailed to read spectrum file: %s\n", strValue.c_str());
 //			cout << "Most likely: an unsupported data file type:\nUse dta, pkl, mgf, mzdata (v.1.05) or mxzml (v.2.0) files ONLY! (4)\n\n";
-			Rprintf("Most likely: an unsupported data file type:\nUse dta, pkl, mgf, mzdata (v.1.05) or mxzml (v.2.0) files ONLY! (4)\n\n");
+			Rprintf("Most likely: an unsupported data file type:\nUse cmn, dta, pkl, mgf, mzdata (v.1.05) or mzXML (v.2.0) files ONLY! (4)\n\n");
 			//cout.flush();
 			m_prcLog.log("error loading spectrum file 4");
 			return false;
@@ -3700,13 +4016,16 @@ bool mprocess::spectra()
 					lLoaded = 0;
 					m_prcLog.log(".\n");
 				}
-				if(m_specCondition.condition(spCurrent, *m_pScore))
+				if(m_specCondition.condition(spCurrent, *m_pScore))	{
 					m_vSpectra.push_back(spCurrent);
+				}
+				spCurrent.m_vMI.clear();
 			}
-			if(spCurrent.m_vMI.size() > 0)	{
+			if(!spCurrent.m_vMI.empty())	{
 				m_tSpectraTotal++;
-				if(m_specCondition.condition(spCurrent, *m_pScore))
+				if(m_specCondition.condition(spCurrent, *m_pScore))	{
 					m_vSpectra.push_back(spCurrent);
+				}
 			}
 		}
 	}
@@ -3719,10 +4038,13 @@ bool mprocess::spectra()
 	m_prcLog.log("spectra loaded");
 	size_t a = 0;
 	while(a < m_vSpectra.size())	{
-		if(m_vSpectra[a].m_strDescription.find(":ETD:") != m_vSpectra[a].m_strDescription.npos)	{
+		if(m_vSpectra[a].m_strDescription.find(":ETD") != m_vSpectra[a].m_strDescription.npos)	{
 			m_vSpectra[a].m_uiType = I_C|I_Z;
 		}
-		else if(m_vSpectra[a].m_strDescription.find(":CID:") != m_vSpectra[a].m_strDescription.npos)	{
+		else if(m_vSpectra[a].m_strDescription.find(":CID") != m_vSpectra[a].m_strDescription.npos)	{
+			m_vSpectra[a].m_uiType = I_B|I_Y;
+		}
+		else if(m_vSpectra[a].m_strDescription.find(":HCD") != m_vSpectra[a].m_strDescription.npos)	{
 			m_vSpectra[a].m_uiType = I_B|I_Y;
 		}
 		a++;
@@ -3741,13 +4063,25 @@ bool mprocess::load_sequences(void)
 	// Check for input sequences for refinement to be loaded from a bioml file
 	// Loading done for each thread
 	m_xmlValues.get(strKey,strValue);
+	FILE *pFile = fopen(strValue.c_str(),"r");
+	if(pFile == NULL)	{
+		return true;
+	}
+	else	{
+		fclose(pFile);
+	}
+	set<size_t> setUids;
+	while(a < m_vseqBest.size())	{
+		setUids.insert(m_vseqBest[a].m_tUid);
+		a++;
+	}
 	if(strValue.size() > 0)	{
 		SAXBiomlHandler saxFile;
 		saxFile.setFileName(strValue.c_str());
 		saxFile.parse();
 		a = 0;
 		while(a < saxFile.m_vseqBest.size())	{
-			if(m_mapSequences.find(saxFile.m_vseqBest[a].m_tUid) == m_mapSequences.end())	{
+			if(setUids.find(saxFile.m_vseqBest[a].m_tUid) == setUids.end())	{
 				short int iPath = saxFile.m_vseqBest[a].m_siPath;
 				string strPath = saxFile.m_vstrPaths[iPath];
 				size_t b = 0;
@@ -3813,10 +4147,6 @@ bool mprocess::spectra_force(string &_t,string &_v)
 					lLoaded = 0;
 					m_prcLog.log(".\n");
 				}
-				m_vSpectra.push_back(spCurrent);
-			}
-			if(spCurrent.m_vMI.size() > 0)	{
-				m_tSpectraTotal++;
 				m_vSpectra.push_back(spCurrent);
 			}
 		}
@@ -4186,10 +4516,10 @@ bool mprocess::load_saps(mprocess *_p)
 		return true;
 	// bail out without error if there aren't any SAP files specified.
 	size_t a = 0;
-	map<string,multimap<int,prSap> >::iterator itMap;
-	map<string,multimap<int,prSap> >::iterator itValue;
-	pair<string,multimap<int,prSap> > pairMap;
-	multimap<int,prSap>::iterator itMulti;
+	map<string,multimap<int,SavInfo> >::iterator itMap;
+	map<string,multimap<int,SavInfo> >::iterator itValue;
+	pair<string,multimap<int,SavInfo> > pairMap;
+	multimap<int,SavInfo>::iterator itMulti;
 	// copy from _p if it exists
 	if(_p != NULL)	{
 		itMap = _p->m_pScore->m_Sap.m_mapSap.begin();
@@ -4262,12 +4592,12 @@ bool mprocess::load_saps(mprocess *_p)
 // new code, version 2007/04/01, Ron Beavis
 // this section finds the file names associated with the taxonomy specification
 // associated with Single Amino acid Polymorphisms (SAPs). The information
-// is parsed using SAXSapHandler and stored in the m_mapSap object of mscore.
+// is parsed using SAXModHandler and stored in the m_mapMod object of mscore.
 // This object will be used to control the state machine that generates the
-// peptides associated with these polymorphisms
-// When the mprocess pointer is NULL, the SAP object is loaded from the object
+// peptides associated with these modifications
+// When the mprocess pointer is NULL, the MOD object is loaded from the object
 // in the original file. If the pointer is not NULL, it is assumed that the mprocess
-// object contains the necessary SAP information, which is simply copied from memory.
+// object contains the necessary MOD information, which is simply copied from memory.
 //
 bool mprocess::load_annotation(mprocess *_p)
 {
@@ -4450,5 +4780,66 @@ bool mprocess::removeMI(void)
 		m_vSpectra[a].clear_intensity_values();
 		a++;
 	}
+	return true;
+}
+
+/*
+ * Improved calculation of CRC-64 values for protein sequences
+ * By David T. Jones (dtj@cs.ucl.ac.uk)  - September 28th 2002
+ * 
+ * Modified from code at URL:
+ * ftp://ftp.ebi.ac.uk/pub/software/swissprot/Swissknife/old/SPcrc.tar.gz
+ */
+
+uint64_t mprocess::crc(const string &_s)
+{
+	uint64_t uiCRC = 0;
+	if(!m_pCrcTable)	{
+		initialize_crc();
+	}
+	size_t a = 0;
+	uint64_t CRCTable[256];
+	while(a < 256)	{
+		CRCTable[a] = m_pCrcTable[a];
+		a++;
+	}
+	a = 0;
+	size_t tLength = _s.length();
+	uint64_t c = 0;
+	const uint64_t f = 0x00000000000000FFULL;
+	while(a < tLength)	{
+		c = _s[a];
+		uiCRC = CRCTable[(uiCRC ^ c) & f] ^ (uiCRC >> 8);
+		a++;
+	}
+	return uiCRC;
+}
+
+bool mprocess::initialize_crc(void)
+{
+	if(m_pCrcTable != NULL)	{
+		return false;
+	}
+	m_pCrcTable = new uint64_t[256];
+	const uint64_t POLY64REV = 0x95AC9329AC4BC9B5ULL;
+	const uint64_t INITIALCRC = 0xFFFFFFFFFFFFFFFFULL;
+    int i = 0, j = 0;
+    uint64_t crc = INITIALCRC, part = 0;
+    int init = 0;
+    if (!init)	{
+		init = 1;
+		for (i = 0; i < 256; i++)	{
+		    part = i;
+		    for (j = 0; j < 8; j++)	{
+				if (part & 1)	{
+				    part = (part >> 1) ^ POLY64REV;
+				}
+				else	{
+					part >>= 1;
+				}
+			}
+			m_pCrcTable[i] = part;
+		}
+    }
 	return true;
 }

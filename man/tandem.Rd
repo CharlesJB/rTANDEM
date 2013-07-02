@@ -3,7 +3,7 @@
 \alias{rtandem}
 \alias{rTANDEM}
 \title{
-  Calls X!TANDEM CYCLONE (2011.12.01.1) from R objects or xml files
+  Calls X!TANDEM ('Jackhammer' release, 2013.06.15) from R objects or xml files
 }
 \description{
   The function \code{tandem(input)} takes a rTParam object or the path of
