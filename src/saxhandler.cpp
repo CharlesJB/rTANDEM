@@ -199,7 +199,7 @@ bool SAXHandler::parse()
 	FILE* pfIn = fopen(m_strFileName.data(), "r");
 	if (pfIn == NULL)
 	{
-//		cerr << "Failed to open input file '" << m_strFileName << "'.\n";
+		cerr << "Input file '" << m_strFileName << "' not available.\n";
 		return false;
 	}
 	char buffer[8192];

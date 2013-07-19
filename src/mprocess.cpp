@@ -2537,6 +2537,7 @@ bool mprocess::report_valid(const double _d)
 				else	{
 					strSky = m_strSkyline;
 				}
+				b++;
 			}
 			m_tValid++;
 			tActive++;

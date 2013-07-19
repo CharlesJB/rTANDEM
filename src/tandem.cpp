@@ -185,6 +185,7 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	* Create an mprocess object array
 	*/
 	unsigned long lMaxThreads = 256;
+	unsigned long lMaxThreads = 256;
 	mprocess **pProcess = new mprocess*[lMaxThreads];
 	if(pProcess == NULL)	{
 //		cout << "An error was detected creating the processing objects.\nPlease contact a GPM administrator.\n";
