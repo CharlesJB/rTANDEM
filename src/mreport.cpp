@@ -765,6 +765,7 @@ bool mreport::sequence(mspectrum &_s,const bool _b,vector<string> &_p,map<string
 		string strV = _s.m_vseqBest[a].m_strDes;
 		format_text(strV);
 		get_short_label(strV,pLine,80,250);
+
 		m_ofOut << "label=\"" << pLine << "\" ";
 		sprintf(pLine,"sumI=\"%.2lf\" ",log10(_s.m_vseqBest[a].m_fIntensity));
 		m_ofOut << pLine;
