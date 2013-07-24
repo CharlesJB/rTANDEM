@@ -31,7 +31,7 @@ void dataLoader::convertSEXPToVector(SEXP RData, std::vector<std::string>* ptrVe
 void dataLoader::convertSEXPToDeque(SEXP RData, std::deque<std::string>* ptrDeque) {
 	Rcpp::CharacterVector data(RData);
 
-	for (int i = 0; i < data.size(); i = i + 2) {
+	for (int i = 0; i < data.size(); i++) {
 		std::string value(data[i]);
 		ptrDeque->push_back(value);
 	}
