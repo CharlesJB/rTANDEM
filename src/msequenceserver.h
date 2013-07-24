@@ -200,6 +200,6 @@ protected:
 	bool bz(char *_p);
 };
 
-#include "p3msequenceserver.h"
+//#include "p3msequenceserver.h"
 
 #endif

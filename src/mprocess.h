@@ -457,6 +457,6 @@ private:
 	string m_pathName; // rTANDEM
 };
 
-#include "p3mprocess.h"
+//#include "p3mprocess.h"
 
 #endif
