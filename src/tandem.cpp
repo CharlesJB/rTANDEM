@@ -320,7 +320,9 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 		}	while(vZero.size() != 0);
 		dCount = lThreads - 1;
 		while(dCount > 0)		{
-			if(!pProcess[dCount]->load(pS,pProcess[0]))	{
+		  //if(!pProcess[dCount]->load(pS,pProcess[0]))	{
+		  if(!pProcess[dCount]->load(param, peptide, saps, mods, spectrum)){
+
 //				cout <<	"error pProcess->LoadParameters	returned error (main)\r\n";
 				Rprintf("error pProcess->LoadParameters	returned error (main)\r\n");
 				delete pProcess;
@@ -583,11 +585,11 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 	while(a < (unsigned long)(dCount))	{
 		if(a == 1)	{
 //			cout << "\tfrom " << a+1;
-			Rprintf("\tfrom %s", a+1);
+			Rprintf("\tfrom %lu", a+1);
 		}
 		else	{
 //			cout << a+1;
-			Rprintf("%s", a+1);
+			Rprintf("%lu", a+1);
 		}
 		//cout.flush();
 		if(!pProcess[0]->add_spectra(pProcess[a]->m_vSpectra))	{
