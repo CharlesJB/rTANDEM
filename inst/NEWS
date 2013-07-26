@@ -1,2 +1,11 @@
+2013-07-26
+rTANDEM is now fully based on the 'jackhammer-2013.06.15'
+version of X!Tandem.
+
+Corrected a bug that would crash rTANDEM when using multi-
+threading.
+Corrected a bug that could affect the results when multiple
+fasta files are assigned to a same taxon.
+
 2012-11-22
 First submission of rTANDEM to Bioconductor.
