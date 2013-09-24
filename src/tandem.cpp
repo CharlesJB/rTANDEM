@@ -234,8 +234,8 @@ SEXP tandem(SEXP param, SEXP peptide, SEXP saps, SEXP mods, SEXP spectrum) // rT
 //		cout << "No input spectra met the acceptance criteria.\n";
 		Rprintf("No input spectra met the acceptance criteria.\n");
 		//cout.flush();
-		delete pProcess[0];
-		delete pProcess;
+		//delete pProcess[0]; //rTANDEM: Cpp memory management tend to crash the R session. Better leave R do the gc.
+		//delete pProcess;    //rTANDEM: Cpp memory management tend to crash the R session. Better leave R do the gc.
 //		return 1; // rTANDEM
 		return R_NilValue; // rTANDEM
 	}

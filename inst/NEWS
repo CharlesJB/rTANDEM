@@ -1,3 +1,6 @@
+2013-09-24
+Bug fix (memory management problem in Cpp)
+
 2013-09-23
 More parameters are added to the rTParam class. x!tandem 
 supported but undocumented parameters are now listed. 
