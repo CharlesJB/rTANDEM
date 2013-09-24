@@ -1,1 +1,1 @@
-PKG_LIBS = -L$(LIB_EXPAT_32) -L$(LIB_EXPAT_64) -shared -lexpat -lpthread $(shell "${R_HOME}/bin/Rscript.exe" -e "Rcpp:::LdFlags()")
+PKG_LIBS = -L$(LIB_EXPAT_32) -L$(LIB_EXPAT_64) -L$(LIB_EXPAT)$(R_ARCH)/lib shared -lexpat -lpthread $(shell "${R_HOME}/bin/Rscript.exe" -e "Rcpp:::LdFlags()")
