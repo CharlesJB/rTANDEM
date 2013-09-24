@@ -17,4 +17,5 @@ A version of pthread is available for win-32 and can be downloaded at http://sou
 When building from sources on Windows systems, linking against the expat library can be problematic. To circumvent this difficulty, create a directory structure like this one: 
 C:\expat\i386
 C:\expat\x64
-Then place the 32 bit and 64 bits libraries respectively in C:\expat\i386\lib and C:\expat\x64\lib. Finally, create an environment variable LIB_EXPAT and set it to "C:/expat/". This should allow the build process to sucessfully link against the expat libraries. 
+Then place the 32 bit and 64 bits libraries respectively in C:\expat\i386\lib and C:\expat\x64\lib. Finally, create an environment variable LIB_EXPAT and set it to "C:/expat/". This should allow the build process to sucessfully link against the expat libraries.
+Alternatively, you have the libraries in any directory structure if you put the path to the libraries in the respective environment variable LIB_EXPAT_32 and LIB_EXPAT_64.
