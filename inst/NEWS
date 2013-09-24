@@ -1,3 +1,7 @@
+2013-09-23
+More parameters are added to the rTParam class. x!tandem 
+supported but undocumented parameters are now listed. 
+
 2013-07-26
 rTANDEM is now fully based on the 'jackhammer-2013.06.15'
 version of X!Tandem.
